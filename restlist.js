@@ -95,6 +95,7 @@ var checkPaths = function(host, base, obj) {
 				wordnet.lookup(x, function(results) {
 					if (results.length === 0) {
 						console.log('NOT A WORD |' + x + '|');
+						console.log('could be this?: ' + x.split(/(?=[A-Z])/));
 					}
 					results.forEach(function(result) {
 						// console.log(x + ' ' + result.pos);
