@@ -1,0 +1,1403 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "The APIs described in this swagger document are part of Alliance portal. In order to execute some tasks from SFDC application to AT&T, CSP application (Common Security Platform) that located inside the AT&T intranet, FlowDesigner is part of APIONE that aims to allow access to services inside AT&T such as CSP, ROME and SMART",
+    "version": "1.0.11",
+    "title": "Alliance Portal APIONE APIs",
+    "contact": {
+      "email": "dj966m@int.att.com"
+    }
+  },
+  "tags": [
+    {
+      "name": "CSP",
+      "description": "The following API`s that preforms action in CSP application"
+    },
+    {
+      "name": "ROME",
+      "description": "ROME APIs"
+    },
+    {
+      "name": "SMART",
+      "description": "SMART APIs"
+    },
+    {
+      "name": "PHOENIX",
+      "description": "PHOENIX APIs"
+    }
+  ],
+  "paths": {
+    "/createEntity": {
+      "post": {
+        "tags": [
+          "CSP"
+        ],
+        "summary": "request that creates a userid, on demand, to ensure that the userid is available. On success, a suspended userid with dummy password is created (ac- countValid=NO). Returns an error if userid is already present. VERY IMORTANT: the  request body describes 2 possibles models 'user' and 'privAdmin' the request can  contains only one of the models descibed",
+        "operationId": "create",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/cspInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success message user/privAdmin not exist and reserved or user created and updated",
+            "schema": {
+              "$ref": "#/definitions/cspOutput"
+            }
+          },
+          "500": {
+            "description": "user/privAdmin exist with updated with details",
+            "schema": {
+              "$ref": "#/definitions/cspErrorRes"
+            }
+          }
+        }
+      }
+    },
+    "/updateEntity": {
+      "post": {
+        "tags": [
+          "CSP"
+        ],
+        "operationId": "update",
+        "summary": "request that updates CSP information about a particular user",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/cspInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success message user/priveAdmin updated",
+            "schema": {
+              "$ref": "#/definitions/cspOutput"
+            }
+          },
+          "500": {
+            "description": "error message",
+            "schema": {
+              "$ref": "#/definitions/cspErrorRes"
+            }
+          }
+        }
+      }
+    },
+    "/rome/company": {
+      "post": {
+        "tags": [
+          "ROME"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/companyModel_ROME"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success message user/priveAdmin updated"
+          }
+        }
+      }
+    },
+    "/rome/user": {
+      "post": {
+        "tags": [
+          "ROME"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userModel_ROME"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success message user/priveAdmin updated"
+          }
+        }
+      }
+    },
+    "/smart/company": {
+      "post": {
+        "tags": [
+          "SMART"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/companyModel_SMART"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/smart/user": {
+      "post": {
+        "tags": [
+          "SMART"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/userModel_SMART"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok"
+          }
+        }
+      }
+    },
+    "/phoenix/encrypt": {
+      "post": {
+        "tags": [
+          "PHOENIX"
+        ],
+        "summary": "SFDC invoke this API with userId, The API Encrypy userid by using cryptor jar. return the generated token to SFDC. SFDC invoke with this token to PHOENIX",
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/phoenixEncryptInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Token for Phoenix",
+            "schema": {
+              "$ref": "#/definitions/phoenixEncryptResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/phoenixEncryptErrResponse"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/phoenixEncryptErrResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "addressType": {
+      "type": "object",
+      "properties": {
+        "Address1": {
+          "type": "string"
+        },
+        "Address2": {
+          "type": "string"
+        },
+        "City": {
+          "type": "string"
+        },
+        "Country": {
+          "type": "string"
+        },
+        "State": {
+          "type": "string"
+        },
+        "Zip": {
+          "type": "string"
+        }
+      }
+    },
+    "cspErrorRes": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "number",
+              "example": 2147483647
+            },
+            "userid": {
+              "type": "string"
+            },
+            "action": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "cspInput": {
+      "type": "object",
+      "properties": {
+        "cspInput": {
+          "type": "object",
+          "required": [
+            "appID",
+            "appPassword"
+          ],
+          "properties": {
+            "appID": {
+              "type": "string"
+            },
+            "appPassword": {
+              "type": "string"
+            },
+            "user": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/cspUser"
+              }
+            },
+            "privAdmin": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/cspPrivAdmin"
+              }
+            }
+          }
+        }
+      }
+    },
+    "cspGroupActionModel": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "$ref": "#/definitions/cspGroupActionType"
+        },
+        "Text": {
+          "type": "string"
+        }
+      }
+    },
+    "cspGroupActionType": {
+      "type": "string",
+      "enum": [
+        "add",
+        "delete"
+      ]
+    },
+    "cspMapTokenActionType": {
+      "type": "string",
+      "enum": [
+        "addtoken",
+        "deletetoken"
+      ]
+    },
+    "cspOutput": {
+      "type": "object",
+      "properties": {
+        "returnCode": {
+          "type": "number",
+          "example": 0
+        },
+        "user": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cspUserAsRes"
+          }
+        }
+      }
+    },
+    "cspPinMgmtType": {
+      "type": "string",
+      "enum": [
+        "email",
+        "online",
+        "restrictedemail",
+        ""
+      ]
+    },
+    "cspPrivAdmin": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "$ref": "#/definitions/cspPrivAdminActionType"
+        },
+        "privGroup": {
+          "type": "string"
+        },
+        "privCode": {
+          "type": "string"
+        },
+        "privGrantByUserid": {
+          "type": "string"
+        },
+        "privGrantByOrgCode": {
+          "type": "string"
+        },
+        "privGrantByTitle": {
+          "type": "string"
+        }
+      }
+    },
+    "cspPrivAdminActionType": {
+      "type": "string",
+      "enum": [
+        "listPrivGroups",
+        "listPrivCodes",
+        "listPrivGrants"
+      ]
+    },
+    "cspUser": {
+      "type": "object",
+      "required": [
+        "userid",
+        "action",
+        "password"
+      ],
+      "properties": {
+        "userid": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "group": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/cspGroupActionModel"
+          }
+        },
+        "tokenusernames": {
+          "type": "object",
+          "properties": {
+            "Text": {
+              "type": "string"
+            },
+            "action": {
+              "$ref": "#/definitions/cspMapTokenActionType"
+            }
+          }
+        },
+        "accountValid": {
+          "type": "string"
+        },
+        "forcePasswordChange": {
+          "type": "string"
+        },
+        "secretQuestion": {
+          "type": "string"
+        },
+        "secretAnswer": {
+          "type": "string"
+        },
+        "userStatus": {
+          "type": "string"
+        },
+        "ssn": {
+          "type": "string"
+        },
+        "numericPin": {
+          "type": "string"
+        },
+        "birtdate": {
+          "type": "string",
+          "example": "yyymmdd"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "middleName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "homePhone": {
+          "type": "string"
+        },
+        "workPhone": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "address1": {
+          "type": "string"
+        },
+        "address2": {
+          "type": "string"
+        },
+        "roomNumber": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "zip": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "locationCode": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "organizationCode": {
+          "type": "string"
+        },
+        "managerID": {
+          "type": "string"
+        },
+        "appFieldHR1": {
+          "type": "string"
+        },
+        "appFieldAC1": {
+          "type": "string"
+        },
+        "pinMgmtPref": {
+          "$ref": "#/definitions/cspPinMgmtType"
+        },
+        "cityOfBirth": {
+          "type": "string"
+        },
+        "accountExpires": {
+          "type": "string"
+        },
+        "secondEmail": {
+          "type": "string"
+        },
+        "nameSuffix": {
+          "type": "string"
+        },
+        "cspAttribs": {
+          "type": "string"
+        },
+        "passwdStrength": {
+          "type": "string",
+          "enum": [
+            "h",
+            "n",
+            "f",
+            "N",
+            "H",
+            "F",
+            ""
+          ]
+        },
+        "lastPwdChange": {
+          "type": "string"
+        },
+        "blockPasswordMgmt": {
+          "$ref": "#/definitions/cspYesNoType"
+        },
+        "blockProfileAccess": {
+          "$ref": "#/definitions/cspYesNoType"
+        },
+        "newUserid": {
+          "type": "string"
+        },
+        "unsetExpiryAfterLogin": {
+          "$ref": "#/definitions/cspYesNoType"
+        },
+        "allowPassword4Token": {
+          "$ref": "#/definitions/cspYesNoType"
+        },
+        "effectiveDate": {
+          "type": "string"
+        },
+        "alternateATTID": {
+          "type": "string"
+        },
+        "silo222": {
+          "$ref": "#/definitions/cspYesNoType"
+        },
+        "silo272": {
+          "$ref": "#/definitions/cspYesNoType"
+        },
+        "managerATTuid": {
+          "type": "string"
+        },
+        "allowPMfromWWW": {
+          "$ref": "#/definitions/cspYesNoType"
+        }
+      }
+    },
+    "cspUserAsRes": {
+      "type": "object",
+      "properties": {
+        "userid": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "group": {
+          "type": "string"
+        },
+        "tokenusernames": {
+          "type": "string"
+        },
+        "accountValid": {
+          "type": "string"
+        },
+        "forcePasswordChange": {
+          "type": "string"
+        },
+        "secretQuestion": {
+          "type": "string"
+        },
+        "secretAnswer": {
+          "type": "string"
+        },
+        "userStatus": {
+          "type": "string"
+        },
+        "ssn": {
+          "type": "string"
+        },
+        "numericPin": {
+          "type": "string"
+        },
+        "birtdate": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "middleName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "homePhone": {
+          "type": "string"
+        },
+        "workPhone": {
+          "type": "string"
+        },
+        "companyName": {
+          "type": "string"
+        },
+        "address1": {
+          "type": "string"
+        },
+        "address2": {
+          "type": "string"
+        },
+        "roomNumber": {
+          "type": "string"
+        },
+        "city": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "zip": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "locationCode": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "organizationCode": {
+          "type": "string"
+        },
+        "managerID": {
+          "type": "string"
+        },
+        "appFieldHR1": {
+          "type": "string"
+        },
+        "appFieldAC1": {
+          "type": "string"
+        },
+        "pinMgmtPref": {
+          "type": "string"
+        },
+        "cityOfBirth": {
+          "type": "string"
+        },
+        "accountExpires": {
+          "type": "string"
+        },
+        "secondEmail": {
+          "type": "string"
+        },
+        "nameSuffix": {
+          "type": "string"
+        },
+        "cspAttribs": {
+          "type": "string"
+        },
+        "passwdStrength": {
+          "type": "string"
+        },
+        "lastPwdChange": {
+          "type": "string"
+        },
+        "blockPasswordMgmt": {
+          "type": "string"
+        },
+        "blockProfileAccess": {
+          "type": "string"
+        },
+        "newUserid": {
+          "type": "string"
+        },
+        "unsetExpiryAfterLogin": {
+          "type": "string"
+        },
+        "allowPassword4Token": {
+          "type": "string"
+        },
+        "effectiveDate": {
+          "type": "string"
+        },
+        "alternateATTID": {
+          "type": "string"
+        },
+        "silo222": {
+          "type": "string"
+        },
+        "silo272": {
+          "type": "string"
+        },
+        "managerATTuid": {
+          "type": "string"
+        },
+        "allowPMfromWWW": {
+          "type": "string"
+        }
+      }
+    },
+    "cspYesNoType": {
+      "type": "string",
+      "enum": [
+        "yes",
+        "no",
+        "YES",
+        "NO"
+      ]
+    },
+    "romeActionType": {
+      "type": "string",
+      "enum": [
+        "Insert",
+        "Update"
+      ]
+    },
+    "romeContractStatusType": {
+      "type": "string",
+      "enum": [
+        "Active (ASP)",
+        "Active (MSP)",
+        "Active (Remote)",
+        "Active (SP)",
+        "Active (Sub-Agent)",
+        "Pending Termination",
+        "Pending Termination (Active ASP)",
+        "Pending Termination (Active MSP)",
+        "Pending Termination (Active SP)",
+        "Pending Termination with ASP Option",
+        "Terminated",
+        "Terminated with ASP Option"
+      ]
+    },
+    "romeStatusType": {
+      "type": "string",
+      "enum": [
+        "Active",
+        "Inactive"
+      ]
+    },
+    "romeCertificateStatusType": {
+      "type": "string",
+      "enum": [
+        "Certified",
+        "Not Certified",
+        "Manual Certified",
+        "Manual Denied"
+      ]
+    },
+    "romeTitleType": {
+      "type": "string",
+      "enum": [
+        "Channel Manager",
+        "Data Networking Consultant",
+        "Data Field Marketing Manager",
+        "Data TSC",
+        "Voice Field Marketing Manager",
+        "Sales Manager",
+        "Mobility Channel Manager",
+        "Regional Vice President",
+        "Voice TSC",
+        "Sales Planning Manager",
+        "Opportunity Contact",
+        "Secondary Contact",
+        "Primary Contact",
+        "SPOT Syst Admin",
+        "Back Office"
+      ]
+    },
+    "romeSourceSystem": {
+      "type": "string",
+      "enum": [
+        "SFDC"
+      ]
+    },
+    "romeContactType": {
+      "type": "string",
+      "enum": [
+        "SP User",
+        "ATT User"
+      ]
+    },
+    "smartDeleteType": {
+      "type": "string",
+      "enum": [
+        "Y",
+        "N"
+      ]
+    },
+    "smartMatchCode": {
+      "type": "string",
+      "enum": [
+        "1",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "40",
+        "41",
+        "42",
+        "43",
+        "44",
+        "45",
+        "46",
+        "47",
+        "48",
+        "49",
+        "50",
+        "51",
+        "52",
+        "53",
+        "54",
+        "55",
+        "56",
+        "57",
+        "58",
+        "59",
+        "60",
+        "61",
+        "62",
+        "63",
+        "64",
+        "65",
+        "66",
+        "67",
+        "68",
+        "70",
+        "71",
+        "72",
+        "73",
+        "76",
+        "77",
+        "78",
+        "80",
+        "81"
+      ],
+      "description": "1 (A), 3 (A-GA), 4 (Terminated), 5 (DO NOT USE), 6 (A-GA-R), 7 (A-R), 8 (A-GA99), 9 (A-GA-99N), 10 (A99), 11 (A99N), 12 (A-GA00), 13 (A-GA-99N-R), 14 (A-GA-00N), 15 (A-GA-00N-R), 16 (A00), 17 (A00N), 18 (A-GA99-V), 19 (A-GA00-C), 20 (A-GA-00N-C), 21 (A-GA-00N-C-R), 22 (A-GA00-C-R), 23 (A-GA00-V), 24 (A-GA-00N-V), 25 (A-GA-00N-V-R), 26 (A-GA00-V-R), 27 (A99-C), 28 (A-GA-99N-C), 29 (A-GA99-C), 30 (A-GA-R-C), 31 (A-GA99-C-R), 32 (A-GA-C-R), 33 (A-GA-99N-C-R), 34 (Pending Termination), 35 (G01PE), 36 (G01PN), 37 (G01RE), 38 (G01RN), 39 (R01PE), 40 (R01PN), 41 (R01RE), 42 (R01RN), 43 (S01PN), 44 (S01RN), 45 (M01PN), 46 (M01PE), 47 (M01RE), 48 (M01RN), 49 (Internal - CM), 50 (X01PE), 51 (X01PN), 52 (Internal - Dallas), 53 (B01PN), 54 (E01PN), 55 (V01PE), 56 (G01PEV), 57 (S01PEV), 58 (V01PN), 59 (G01PNV), 60 (V01RE), 61 (G01REV), 62 (S01REV), 63 (V01RN), 64 (G01RNV), 65 (S01RNV), 66 (S01PNV), 67 (E5K Plus), 68 (ZZ0102 Consortium), 70 (Active), 71 (Test), 72 (Terminated but still paying), 73 (Remote), 76 (Other), 77 (Active - Ref), 78 (Active - Orders Restricted), 80 (Non-renew Hold ACC Only), 81 (Rejected)"
+    },
+    "companyModel_ROME": {
+      "type": "object",
+      "properties": {
+        "CompanyData": {
+          "type": "object",
+          "properties": {
+            "DatabaseKey": {
+              "type": "string"
+            },
+            "SourceSystem": {
+              "$ref": "#/definitions/romeSourceSystem"
+            },
+            "Action": {
+              "$ref": "#/definitions/romeActionType"
+            },
+            "AltName": {
+              "type": "string"
+            },
+            "SolutionProviderID": {
+              "type": "string"
+            },
+            "SolutionProviderName": {
+              "type": "string"
+            },
+            "SolutionProviderAddress": {
+              "$ref": "#/definitions/addressType"
+            },
+            "Certifications": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "CompanyCertification": {
+                    "type": "string"
+                  },
+                  "CertificationStatus": {
+                    "$ref": "#/definitions/romeCertificateStatusType"
+                  }
+                }
+              }
+            },
+            "CompanyHierarchy": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "ParentCompany": {
+                    "type": "object",
+                    "properties": {
+                      "Level1ParentSP": {
+                        "type": "string"
+                      },
+                      "DatabaseKey": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "DateActiveOnProgram": {
+              "type": "string"
+            },
+            "DateTerminatedProgram": {
+              "type": "string"
+            },
+            "LegacyRegionalCodeE": {
+              "type": "string"
+            },
+            "LegacyRegionalCodeMW": {
+              "type": "string"
+            },
+            "LegacyRegionalCodeSE": {
+              "type": "string"
+            },
+            "LegacyRegionalCodeSW": {
+              "type": "string"
+            },
+            "LegacyRegionalCodeW": {
+              "type": "string"
+            },
+            "Tier": {
+              "type": "string"
+            },
+            "DealerCode": {
+              "type": "string"
+            },
+            "ContractStatus": {
+              "$ref": "#/definitions/romeContractStatusType"
+            },
+            "Status": {
+              "$ref": "#/definitions/romeStatusType"
+            },
+            "ContactList": {
+              "type": "object",
+              "properties": {
+                "Contact": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Title": {
+                        "$ref": "#/definitions/romeTitleType"
+                      },
+                      "UserId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "SalesCodes": {
+              "type": "object",
+              "properties": {
+                "SalesCode": {
+                  "type": "object",
+                  "properties": {
+                    "SoutheastSalesCode": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "ContractTypes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "userModel_ROME": {
+      "type": "object",
+      "properties": {
+        "UserData": {
+          "type": "object",
+          "properties": {
+            "DatabaseKey": {
+              "type": "string"
+            },
+            "SourceSystem": {
+              "$ref": "#/definitions/romeSourceSystem"
+            },
+            "Action": {
+              "$ref": "#/definitions/romeActionType"
+            },
+            "ATTUID": {
+              "type": "string"
+            },
+            "ContactType": {
+              "$ref": "#/definitions/romeContactType"
+            },
+            "FirstName": {
+              "type": "string"
+            },
+            "LastName": {
+              "type": "string"
+            },
+            "JobTitle": {
+              "type": "string"
+            },
+            "MobileNumber": {
+              "type": "string"
+            },
+            "PhoneNumber": {
+              "type": "string"
+            },
+            "eMail": {
+              "type": "string"
+            },
+            "FaxNumber": {
+              "type": "string"
+            },
+            "PreferredMailingAddress": {
+              "$ref": "#/definitions/addressType"
+            },
+            "MidwestIndividualSalesCode": {
+              "type": "string"
+            },
+            "SouthwestIndividualSalesCode": {
+              "type": "string"
+            },
+            "SingleSignOnLogins": {
+              "type": "object",
+              "properties": {
+                "SingleSignOnLogin": {
+                  "type": "object",
+                  "properties": {
+                    "GlobalLoginID": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "Organization": {
+              "type": "object",
+              "properties": {
+                "DatabaseKey": {
+                  "type": "string"
+                }
+              }
+            },
+            "Status": {
+              "$ref": "#/definitions/romeStatusType"
+            },
+            "ATTPhoenixAccess": {
+              "type": "boolean"
+            }
+          }
+        }
+      }
+    },
+    "companyModel_SMART": {
+      "type": "object",
+      "properties": {
+        "CompanyData": {
+          "type": "object",
+          "properties": {
+            "DatabaseKey": {
+              "type": "string"
+            },
+            "delete_ind": {
+              "$ref": "#/definitions/smartDeleteType"
+            },
+            "eMail": {
+              "type": "string"
+            },
+            "FirstName": {
+              "type": "string"
+            },
+            "PhoneNumber": {
+              "type": "string"
+            },
+            "SingleSignOnLogins": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "SingleSignOnLogin": {
+                    "type": "object",
+                    "properties": {
+                      "GlobalLoginID": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Partner": {
+              "type": "object",
+              "properties": {
+                "DatabaseKey": {
+                  "type": "string"
+                },
+                "SolutionProviderID": {
+                  "type": "string"
+                },
+                "AccountsPayableVendorCode": {
+                  "type": "string"
+                },
+                "ContractSignatureDateATT": {
+                  "type": "string"
+                },
+                "ContractSignatureDateSP": {
+                  "type": "string"
+                },
+                "ContractSignedByATT": {
+                  "type": "string"
+                },
+                "ContractSignedBySP": {
+                  "type": "string"
+                },
+                "ContractTemplateDate": {
+                  "type": "string"
+                },
+                "MatchCode": {
+                  "$ref": "#/definitions/smartMatchCode"
+                },
+                "DateTerminatedFromProgram": {
+                  "type": "string"
+                },
+                "ATTEBSChannelManager": {
+                  "type": "object",
+                  "properties": {
+                    "DatabaseKey": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "ATTEBSDNConsultant": {
+                  "type": "object",
+                  "properties": {
+                    "DatabaseKey": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "ATTEBSDataAE": {
+                  "type": "object",
+                  "properties": {
+                    "DatabaseKey": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "LegacyBranchCodeMW": {
+                  "type": "string"
+                },
+                "LegacyBranchCodeSW": {
+                  "type": "string"
+                },
+                "LegacyBranchCodeW": {
+                  "type": "string"
+                },
+                "ATTOwningRegion": {
+                  "type": "string"
+                },
+                "BillingAddress": {
+                  "$ref": "#/definitions/addressType"
+                },
+                "ContractTypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "ContractType": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "CorporateAddress": {
+                  "$ref": "#/definitions/addressType"
+                },
+                "DateActiveOnProgram": {
+                  "type": "string"
+                },
+                "DunAndBradStreet": {
+                  "type": "string"
+                },
+                "Tier": {
+                  "type": "string"
+                },
+                "SolutionProviderName": {
+                  "type": "string"
+                },
+                "ParentOrganization": {
+                  "type": "object",
+                  "properties": {
+                    "DatabaseKey": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "SalesContact": {
+                  "type": "object",
+                  "properties": {
+                    "DatabaseKey": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "LegacyBranchCodeSE": {
+                  "type": "string"
+                },
+                "WebAddress": {
+                  "type": "string"
+                },
+                "YearEstablished": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "userModel_SMART": {
+      "type": "object",
+      "properties": {
+        "UserData": {
+          "type": "object",
+          "properties": {
+            "DatabaseKey": {
+              "type": "string"
+            },
+            "delete_ind": {
+              "$ref": "#/definitions/smartDeleteType"
+            },
+            "ATTUID": {
+              "type": "string",
+              "description": "only for Internal"
+            },
+            "ContactType": {
+              "type": "string",
+              "description": "only for Internal"
+            },
+            "FirstName": {
+              "type": "string"
+            },
+            "LastName": {
+              "type": "string"
+            },
+            "JobTitle": {
+              "type": "string"
+            },
+            "MobilePhone": {
+              "type": "string"
+            },
+            "PhoneNumber": {
+              "type": "string"
+            },
+            "eMail": {
+              "type": "string"
+            },
+            "PreferredMailingAddress": {
+              "$ref": "#/definitions/addressType"
+            },
+            "MidwestIndividualSeller": {
+              "type": "string",
+              "description": "only for Internal"
+            },
+            "SouthwestIndividualSeller": {
+              "type": "string",
+              "description": "only for Internal"
+            },
+            "SingleSignOnLogins": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "SingleSignOnLogin": {
+                    "type": "object",
+                    "properties": {
+                      "GlobalLoginID": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Organization": {
+              "type": "object",
+              "properties": {
+                "DatabaseKey": {
+                  "type": "string"
+                }
+              }
+            },
+            "SolutionProviderID": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "phoenixEncryptInput": {
+      "type": "object",
+      "required": [
+        "userId"
+      ],
+      "properties": {
+        "userId": {
+          "type": "string"
+        }
+      }
+    },
+    "phoenixEncryptResponse": {
+      "type": "object",
+      "required": [
+        "authToken"
+      ],
+      "properties": {
+        "authToken": {
+          "type": "string"
+        }
+      }
+    },
+    "phoenixEncryptErrResponse": {
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "schemes": [
+    "https"
+  ],
+  "basePath": "/flow/alliancedev/alliance/V1",
+  "host": "api.att.com"
+}
