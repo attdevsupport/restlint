@@ -30,6 +30,7 @@
       "resolved": "https://registry.npmjs.org/fs-minipass/-/fs-minipass-1.2.5.tgz",
       "version": "1.2.5"
     },
+    "jquery": "^3.3.1",
     "lru-cache": {
       "integrity": "sha1-bUUk6LlV+V1PW1iFHOId1y+06VI=",
       "resolved": "https://registry.npmjs.org/lru-cache/-/lru-cache-2.7.3.tgz",
