@@ -27,6 +27,8 @@ var errors = {
 
 var jsdata = '';
 
+var naming = 'lowerCamel';
+
 
 /**
 * @description gets the properties of 'obj', with a name prefix of 'prefix'
@@ -140,6 +142,22 @@ function checkResources(paths) {
 			msg = "resource must be a noun";
 			errors.paths.push(createErrorObj(key, 'error', msg));
 		}
+		if (naming === 'lowerCamel') {
+			if (/^[/]{0,1}[A-Z_-]/.test(key)) {
+				msg = "resource must be lowerCamel case";
+				errors.paths.push(createErrorObj(key, 'error', msg));
+			}
+		} else if (naming === 'UpperCamel') {
+			if (/^[/]{0,1}[a-z_-]/.test(key)) {
+				msg = "resource must be UpperCamel case";
+				errors.paths.push(createErrorObj(key, 'error', msg));
+			}
+		} else if (naming === 'snake') {
+			if (/[_]/.test(key) == false) {
+				msg = "resource must be in snake_case";
+				errors.paths.push(createErrorObj(key, 'warning', msg));
+			}
+		}
 	});
 }
 
@@ -189,31 +207,10 @@ process.argv.splice(2).forEach(function(item, idx) {
 
 	// parse based on input file type
 	if (ext === 'csv') {
-
 		var ftype = getCsvFileType(filePath);
-		var jsonArray = [];
-		var dataArray = data.split('\n');
-		var head = dataArray[0].split(',');
-		dataArray.splice(1).forEach(function(line) {
-			line.split(',').forEach(function(val, idx) {
-				console.log(head[idx] + ' = ' +val);
-			})
-	 	})
-
+		loadCsv(ftype, data);
 	} else if (ext === 'json') {
-		
-		var jsdata = JSON.parse(data);
-
-		pData.general.basePath = jsdata.basePath;
-		pData.general.host = jsdata.host;
-
-		Object.keys(jsdata.paths).forEach(function(key, index) {
-			pData.paths.push(key);
-			getProps('', pData.paths[index]).forEach(function(key, idx) {
-				// console.log(key);
-			})
-		});
-		
+		loadJson(data);
 	}
 });
 
