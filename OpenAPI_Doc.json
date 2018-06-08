@@ -27,7 +27,7 @@
     }
   ],
   "paths": {
-    "/createEntity": {
+    "/My createEntity": {
       "post": {
         "tags": [
           "CSP"
@@ -1398,6 +1398,6 @@
   "schemes": [
     "https"
   ],
-  "basePath": "/flow/alliancedev/alliance/V1",
+  "basePath": "flow/alliancedev/alliance/V1?",
   "host": "api.att.com"
 }
