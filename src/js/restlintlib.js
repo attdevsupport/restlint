@@ -1,8 +1,5 @@
 'use strict';
 
-(function() {
-	// var wordNet = require( 'wordnet-magic' );
-
 	var pData = {
 		general: {},
 		parameters: [],
@@ -117,6 +114,7 @@
 	*/
 	var checkBasePath = function() {
 		var x = [];
+		var msg = '';
 		x.push(pData.general.basePath);
 		checkPathStructure('basePath', x);
 
@@ -134,22 +132,28 @@
 	*/
 	var checkResources = function(paths) {
 		paths.forEach(function(key, idx) {
-			if (/create|make|delete|update|get|del|remove/i.test(key)) {
+
+			// remove first forward slashes for easier matching
+			var nkeys = key.replace(/^[/]+|[/]$/, '').split('/');
+			var k = nkeys[nkeys.length-1];
+			var msg = '', level='';
+
+			if (k.match(/create|make|delete|update|get|del|remove/i)) {
 				msg = "resource must be a noun";
 				errors.paths.push(createErrorObj(key, 'error', msg));
 			}
 			if (naming === 'lowerCamel') {
-				if (/^[/]{0,1}[A-Z_-]/.test(key)) {
+				if (/^[A-Z_-]+|[_-]+/.test(k)) {
 					msg = "resource must be lowerCamel case";
 					errors.paths.push(createErrorObj(key, 'error', msg));
 				}
 			} else if (naming === 'UpperCamel') {
-				if (/^[/]{0,1}[a-z_-]/.test(key)) {
+				if (k.match(/^[a-z_-]+|[_-]+/)) {
 					msg = "resource must be UpperCamel case";
 					errors.paths.push(createErrorObj(key, 'error', msg));
 				}
 			} else if (naming === 'snake') {
-				if (/[_]/.test(key) == false) {
+				if (k.match(/[_]/) == false) {
 					msg = "resource must be in snake_case";
 					errors.paths.push(createErrorObj(key, 'warning', msg));
 				}
@@ -169,9 +173,10 @@
 		// var allpaths = pData.paths.push(jsdata.basePath);
 
 		paths.forEach(function(key, idx) {
+			var msg = '';
 			var stripped = key.replace(/\//g, '');
 
-			if (/\/\//.test(key)) {
+			if (key.match(/\/\//)) {
 				msg = name + " can not have double forward slash";
 				errors.paths.push(createErrorObj(key, 'error', msg));
 			}
@@ -196,7 +201,21 @@
 
 		return;
 	}
+/**
+* @description retrieves the errors for a specific type of check
+* @param {string} type - paths, parameters, status_codes, errors
+*/
+var getErrors = function(type) {
+	return errors[type];
+}
 
+/**
+* @description retrieves the data for a specific type of check
+* @param {string} type - paths, parameters, status_codes, errors
+*/
+var getData = function(type) {
+	return pData[type];
+}
 	/**
 	* @description load CSV files into internal data structure
 	* @param {string} filenames - variable number of filenames
@@ -228,6 +247,7 @@
 
 		Object.keys(jsdata.paths).forEach(function(key, index) {
 			pData.paths.push(key);
+			console.log(key);
 			getProps('', pData.paths[index]).forEach(function(key, idx) {
 				// console.log(key);
 			})
@@ -237,12 +257,11 @@
 	}
 
 
-	if( typeof exports !== 'undefined' ) {
-	    if( typeof module !== 'undefined' && module.exports ) {
-	      exports = module.exports = jsonic;
-	    }
-	    exports.jsonic = jsonic;
-  	} else {
-    	root.jsonic = jsonic;
-  	}
-}).call(this);
+	// if( typeof exports !== 'undefined' ) {
+	//     if( typeof module !== 'undefined' && module.exports ) {
+	//       exports = module.exports = jsonic;
+	//     }
+	//     exports.jsonic = jsonic;
+ //  	} else {
+ //    	root.jsonic = jsonic;
+ //  	}
