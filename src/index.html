@@ -22,12 +22,12 @@ text-decoration: underline;
 <body class="container">
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="js/bootstrap.fd.js"></script>
     <script src="js/restlintlib.js"></script>
     <script type="text/javascript">
         function clearTables() {
-            ['paths', 'parameters', 'status_codes', 'errors'].forEach(function(k) {
+            ['paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
                 $("#"+k+"-table-body").children("tr").remove();
             });
         }
@@ -38,12 +38,16 @@ text-decoration: underline;
             checkPathStructure('paths', getData('paths'));
             checkResources(getData('paths'));
             checkBasePath();
+            checkStatusCodes(getData('statuses'));
             getErrors('paths').forEach(function(key) {
-                addRow(key.name, key.level, key.msg);
-            })
+                addRow('paths', key.name, key.level, key.msg);
+            });
+            getErrors('statuses').forEach(function(key) {
+                addRow('statuses', key.name, key.level, key.msg);
+            });
         }
 
-        function addRow(item, level, msg) {
+        function addRow(cat, item, level, msg) {
             var lvl = 'bg-' + level;
             if (level === 'error') {
                 lvl = 'bg-danger';
@@ -51,7 +55,7 @@ text-decoration: underline;
             row = $("<tr class='" + lvl + "'></tr>");
             cells = `<td>${item}</td><td>${level}</td><td>${msg}</td>`;
             row.append(cells);
-            $("#paths-table-body").append(row);
+            $("#" + cat + "-table-body").append(row);
         }
 
         $(document).ready(function() {
@@ -89,7 +93,7 @@ text-decoration: underline;
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#paths">Paths</a></li>
         <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
-        <li><a data-toggle="tab" href="#status_codes">Status Codes</a></li>
+        <li><a data-toggle="tab" href="#statuses">Status Codes</a></li>
         <li><a data-toggle="tab" href="#errors">Errors</a></li>
     </ul>
 
@@ -98,7 +102,7 @@ text-decoration: underline;
             <table id="paths-table" class="table table-hover table-sm table-responsive">
                 <thead>
                 <tr>
-                    <th scope="col">Item</th>
+                    <th scope="col">Issue</th>
                     <th scope="col">Level</th>
                     <th scope="col">Message</th>
                 </tr>
@@ -108,41 +112,43 @@ text-decoration: underline;
             </table>
         </div>
         <div id="parameters" class="tab-pane fade in active">
+            <h3>NOT IMPLEMENTED YET</h3>
             <table id="parameters-table" class="table table-hover table-sm table-responsive">
                 <thead>
                 <tr>
-                    <th scope="col">Item</th>
+                    <th scope="col">Issue</th>
                     <th scope="col">Level</th>
                     <th scope="col">Message</th>
                 </tr>
                 </thead>
-                <tbody id="paths-table-body">
+                <tbody id="parameters-table-body">
                 </tbody>
             </table>
         </div>
-        <div id="status_codes" class="tab-pane fade in active">
-            <table id="status_codes-table" class="table table-hover table-sm table-responsive">
+        <div id="statuses" class="tab-pane fade in active">
+            <table id="statuses-table" class="table table-hover table-sm table-responsive">
                 <thead>
                 <tr>
-                    <th scope="col">Item</th>
+                    <th scope="col">Issue</th>
                     <th scope="col">Level</th>
                     <th scope="col">Message</th>
                 </tr>
                 </thead>
-                <tbody id="paths-table-body">
+                <tbody id="statuses-table-body">
                 </tbody>
             </table>
         </div>
         <div id="errors" class="tab-pane fade in active">
+            <h3>NOT IMPLEMENTED YET</h3>
             <table id="errors-table" class="table table-hover table-sm table-responsive">
                 <thead>
                 <tr>
-                    <th scope="col">Item</th>
+                    <th scope="col">Issue</th>
                     <th scope="col">Level</th>
                     <th scope="col">Message</th>
                 </tr>
                 </thead>
-                <tbody id="paths-table-body">
+                <tbody id="errors-table-body">
                 </tbody>
             </table>
         </div>

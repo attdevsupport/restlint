@@ -4,7 +4,7 @@
 		general: {},
 		parameters: [],
 		paths: [],
-		status_codes: [],
+		statuses: [],
 		errors: []
 	};
 
@@ -12,7 +12,7 @@
 		general: [],
 		parameters: [],
 		paths: [],
-		status_codes: [],
+		statuses: [],
 		errors: []
 	};
 
@@ -96,15 +96,30 @@
 
 
 	/**
-	* @description Represents a book
-	* @param {string} title - The title of the book
-	* @param {string} author - The author of the book
+	* @description creates an object that gets added to errors object
+	* @param {string} name - The name of the item that is in error
+	* @param {string} level - info, warning or error
+	* @param {string} msg - error message to display
 	*/
 	var createErrorObj = function(name, level, msg) {
 		var obj = {};
 		obj.name = name;
 		obj.msg = msg;
 		obj.level = level;
+
+		return obj;
+	}
+
+	/**
+	* @description creates an object that gets added to statuses
+	* @param {string} title - The title of the book
+	* @param {string} author - The author of the book
+	*/
+	var createStatusObj = function(path, method, statuses) {
+		var obj = {};
+		obj.path = path;
+		obj.method = method;
+		obj.statuses = statuses;
 
 		return obj;
 	}
@@ -201,9 +216,26 @@
 
 		return;
 	}
+
+	var checkStatusCodes = function(s) {
+		s.forEach(function(key, idx) {
+			if (s[idx].method.match(/post/i)) {
+				if (s[idx].statuses.indexOf('201') < 0) {
+					var msg = 'POST for creating resources should return HTTP status code of 201';
+					msg += " (only show: " + s[idx].statuses.join(',') + ")";
+					var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
+					var obj = createErrorObj(name, 'warning', msg);
+					errors.statuses.push(obj);
+				}
+			}
+			s[idx].statuses.forEach(function(item) {
+				console.log(item);
+			});
+		});
+	}
 /**
 * @description retrieves the errors for a specific type of check
-* @param {string} type - paths, parameters, status_codes, errors
+* @param {string} type - paths, parameters, statuses, errors
 */
 var getErrors = function(type) {
 	return errors[type];
@@ -211,7 +243,7 @@ var getErrors = function(type) {
 
 /**
 * @description retrieves the data for a specific type of check
-* @param {string} type - paths, parameters, status_codes, errors
+* @param {string} type - paths, parameters, statuses, errors
 */
 var getData = function(type) {
 	return pData[type];
@@ -225,7 +257,7 @@ var clearData = function() {
 		general: {},
 		parameters: [],
 		paths: [],
-		status_codes: [],
+		statuses: [],
 		errors: []
 	};
 
@@ -233,7 +265,7 @@ var clearData = function() {
 		general: [],
 		parameters: [],
 		paths: [],
-		status_codes: [],
+		statuses: [],
 		errors: []
 	};
 
@@ -271,8 +303,15 @@ var clearData = function() {
 		pData.general.host = jsdata.host;
 
 		Object.keys(jsdata.paths).forEach(function(key, index) {
-			pData.paths.push(key);
-			console.log(key);
+			pData.paths[index] = key;
+			Object.keys(jsdata.paths[key]).forEach(function(k, i) {
+				var arr = [];
+				Object.keys(jsdata.paths[key][k].responses).forEach(function(kk, ii) {
+					arr.push(kk);
+				});
+				pData.statuses.push(createStatusObj(key, k, arr));
+			});
+
 			getProps('', pData.paths[index]).forEach(function(key, idx) {
 				// console.log(key);
 			})
