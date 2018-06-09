@@ -55,6 +55,8 @@ text-decoration: underline;
         }
 
         $(document).ready(function() {
+            $('.nav-tabs a[href="#parameters"]').tab('show');
+            $('.nav-tabs a[href="#paths"]').tab('show');
             $("#open_btn").click(function() {
                 $.FileDialog({multiple: true, accept: "text/csv, application/json"}).on('files.bs.filedialog', function(ev) {
                     clearTables();
@@ -85,14 +87,14 @@ text-decoration: underline;
     <h3 id="output">  </h3>
     <br>
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#home">Paths</a></li>
+        <li class="active"><a data-toggle="tab" href="#paths">Paths</a></li>
         <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
         <li><a data-toggle="tab" href="#status_codes">Status Codes</a></li>
         <li><a data-toggle="tab" href="#errors">Errors</a></li>
     </ul>
 
     <div class="tab-content">
-        <div id="home" class="tab-pane fade in active">
+        <div id="paths" class="tab-pane fade in active">
             <table id="paths-table" class="table table-hover table-sm table-responsive">
                 <thead>
                 <tr>
