@@ -216,6 +216,31 @@ var getErrors = function(type) {
 var getData = function(type) {
 	return pData[type];
 }
+
+/**
+* @description clears all the data to start over
+*/
+var clearData = function() {
+	pData = {
+		general: {},
+		parameters: [],
+		paths: [],
+		status_codes: [],
+		errors: []
+	};
+
+	errors = {
+		general: [],
+		parameters: [],
+		paths: [],
+		status_codes: [],
+		errors: []
+	};
+
+	jsdata = '';
+
+	return;
+}
 	/**
 	* @description load CSV files into internal data structure
 	* @param {string} filenames - variable number of filenames

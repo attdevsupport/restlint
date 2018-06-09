@@ -5,6 +5,16 @@
 	<title>REST Lint</title>
 	<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="styles/bootstrap.fd.css">
+    <style>
+    .redUnderline {
+text-decoration: underline;
+  -webkit-text-decoration-color: red; /* safari still uses vendor prefix */
+  text-decoration-color: red;
+    }
+    u {
+  color: red;
+}
+    </style>
 	
 	<!-- <script src="js/bootstrap.fd.js"></script> -->
         
@@ -16,55 +26,124 @@
     <script src="js/bootstrap.fd.js"></script>
     <script src="js/restlintlib.js"></script>
     <script type="text/javascript">
-        $(document).ready(function() {
-        $("#open_btn").click(function() {
-            $.FileDialog({multiple: true, accept: "text/csv, application/json"}).on('files.bs.filedialog', function(ev) {
-                var files = ev.files;
-                var text = [], cells, row;
-                files.forEach(function(f) {
-                    text.push(f.name);
-                    row = $("<tr class='info'></tr>");
-                    cells = `<td>${f.name}</td><td>stuff2</td><td>stuff3</td>`;
-                    row.append(cells);
-                    $("#table-body").append(row);
-                });
-                $("#output").html("Checking files: " + text.join(','));
-                
-            }).on('cancel.bs.filedialog', function(ev) {
-                $("#output").html("Cancelled!");
+        function clearTables() {
+            ['paths', 'parameters', 'status_codes', 'errors'].forEach(function(k) {
+                $("#"+k+"-table-body").children("tr").remove();
             });
-        });
-    });
+        }
+
+        function onReaderLoad(event){
+            // var obj = JSON.parse(event.target.result);
+            loadJson(event.target.result);
+            checkPathStructure('paths', getData('paths'));
+            checkResources(getData('paths'));
+            checkBasePath();
+            getErrors('paths').forEach(function(key) {
+                addRow(key.name, key.level, key.msg);
+            })
+        }
+
+        function addRow(item, level, msg) {
+            var lvl = 'bg-' + level;
+            if (level === 'error') {
+                lvl = 'bg-danger';
+            }
+            row = $("<tr class='" + lvl + "'></tr>");
+            cells = `<td>${item}</td><td>${level}</td><td>${msg}</td>`;
+            row.append(cells);
+            $("#paths-table-body").append(row);
+        }
+
+        $(document).ready(function() {
+            $("#open_btn").click(function() {
+                $.FileDialog({multiple: true, accept: "text/csv, application/json"}).on('files.bs.filedialog', function(ev) {
+                    clearTables();
+                    clearData();
+                    var files = ev.files;
+                    var text = [], cells, row;
+                    files.forEach(function(f) {
+                        var reader = new FileReader();
+                        reader.onload = onReaderLoad;
+                        reader.readAsText(f);
+                        text.push(f.name);
+                    });
+                    $("#output").html("Checking files: " + text.join(','));
+                    
+                }).on('cancel.bs.filedialog', function(ev) {
+                    // $("#output").html("Cancelled!");
+                });
+            });
+            $("#clear_btn").click(function() {
+                clearTables();
+                clearData();
+            });
+         });
     </script>
 	<button id="open_btn" class="btn btn-primary">Open files</button>
+    <button id="clear_btn" class="btn btn-secondary">Clear</button>
     <br>
     <h3 id="output">  </h3>
     <br>
-    <table id="table" class="table table-hover table-sm table-responsive">
-        <thead>
-        <tr>
-            <th scope="col">Item</th>
-            <th scope="col">Level</th>
-            <th scope="col">Message</th>
-        </tr>
-        </thead>
-        <tbody id="table-body">
-            <tr class="danger">
-                <td>/path</td>
-                <td>error</td>
-                <td>can't do that here you numb skull idiot fdfdf fdfdfdfdfdfdfdfdfdfdfdfdfdffdfd</td>
-            </tr>
-            <tr class="warning">
-                <td>/path2</td>                
-                <td>warning</td>
-                <td>can't do that here you numb skull idiot fdfdf fdfdfdfdfdfdfdfdfdfdfdfdfdffdfd</td>
-            </tr>
-            <tr class="info">
-                <td>/path3</td>                
-                <td>info</td>
-                <td>can't do that here you numb skull idiot fdfdf fdfdfdfdfdfdfdfdfdfdfdfdfdffdfd</td>
-            </tr>
-        </tbody>
-    </table>
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home">Paths</a></li>
+        <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
+        <li><a data-toggle="tab" href="#status_codes">Status Codes</a></li>
+        <li><a data-toggle="tab" href="#errors">Errors</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <table id="paths-table" class="table table-hover table-sm table-responsive">
+                <thead>
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Message</th>
+                </tr>
+                </thead>
+                <tbody id="paths-table-body">
+                </tbody>
+            </table>
+        </div>
+        <div id="parameters" class="tab-pane fade in active">
+            <table id="parameters-table" class="table table-hover table-sm table-responsive">
+                <thead>
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Message</th>
+                </tr>
+                </thead>
+                <tbody id="paths-table-body">
+                </tbody>
+            </table>
+        </div>
+        <div id="status_codes" class="tab-pane fade in active">
+            <table id="status_codes-table" class="table table-hover table-sm table-responsive">
+                <thead>
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Message</th>
+                </tr>
+                </thead>
+                <tbody id="paths-table-body">
+                </tbody>
+            </table>
+        </div>
+        <div id="errors" class="tab-pane fade in active">
+            <table id="errors-table" class="table table-hover table-sm table-responsive">
+                <thead>
+                <tr>
+                    <th scope="col">Item</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Message</th>
+                </tr>
+                </thead>
+                <tbody id="paths-table-body">
+                </tbody>
+            </table>
+        </div>
+    </div>
 </body>
 </html>
