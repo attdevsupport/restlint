@@ -48,9 +48,9 @@ text-decoration: underline;
         }
 
         function addRow(cat, item, level, msg) {
-            var lvl = 'bg-' + level;
+            var lvl = level;
             if (level === 'error') {
-                lvl = 'bg-danger';
+                lvl = 'danger';
             }
             row = $("<tr class='" + lvl + "'></tr>");
             cells = `<td>${item}</td><td>${level}</td><td>${msg}</td>`;
@@ -85,11 +85,14 @@ text-decoration: underline;
             });
          });
     </script>
+    <br>
 	<button id="open_btn" class="btn btn-primary">Open files</button>
     <button id="clear_btn" class="btn btn-secondary">Clear</button>
     <br>
     <h3 id="output">  </h3>
     <br>
+    
+
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#paths">Paths</a></li>
         <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
@@ -151,6 +154,28 @@ text-decoration: underline;
                 <tbody id="errors-table-body">
                 </tbody>
             </table>
+        </div>
+    </div>
+    <div class="panel-group">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title text-center">
+              <a data-toggle="collapse" href="#collapse1">Legend</a>
+            </h4>
+          </div>
+          <div id="collapse1" class="panel-collapse collapse">
+            <div class="panel-body">
+            <table id="parameters-table" class="table table-hover table-sm table-responsive">
+                <tbody>
+                    <tr>
+                        <td scope="col" class="info col-sm-4"><small><b>info</b> - there is not enough information to make a determination, but user should investigate further if issue is a violation of standards or best practices</small></td>
+                        <td scope="col" class="warning col-sm-4"><small><b>warning</b> - there's a high probability that the issue is a violation</small></td>
+                        <td scope="col" class="danger col-sm-4"><small><b>error</b> - the issue is a violation of a standard (HTTP, etc) or best practice</small></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+          </div>
         </div>
     </div>
 </body>
