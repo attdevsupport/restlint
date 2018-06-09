@@ -13,7 +13,7 @@
 		parameters: [],
 		paths: [],
 		statuses: [],
-		errors: []
+		exceptions: []
 	};
 
 	var jsdata = '';
@@ -266,7 +266,7 @@ var clearData = function() {
 		parameters: [],
 		paths: [],
 		statuses: [],
-		errors: []
+		exceptions: []
 	};
 
 	jsdata = '';
