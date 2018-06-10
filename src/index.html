@@ -39,21 +39,41 @@ text-decoration: underline;
             checkResources(getData('paths'));
             checkBasePath();
             checkStatusCodes(getData('statuses'));
+            var w = 0, e = 0, i = 0, cnt = 1;
             getErrors('paths').forEach(function(key) {
-                addRow('paths', key.name, key.level, key.msg);
+                addRow('paths', cnt, key.name, key.level, key.msg);
+                cnt += 1;
+                if (key.level === 'warning') {
+                    w++;
+                } else if (key.level === 'error') {
+                    e++;
+                } else if (key.level === 'info') {
+                    i++;
+                }
             });
+            $('#paths-issues').html(`Total Paths issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+            var w = 0, e = 0, i = 0, cnt = 1;
             getErrors('statuses').forEach(function(key) {
-                addRow('statuses', key.name, key.level, key.msg);
+                addRow('statuses', cnt, key.name, key.level, key.msg);
+                cnt += 1;
+                if (key.level === 'warning') {
+                    w++;
+                } else if (key.level === 'error') {
+                    e++;
+                } else if (key.level === 'info') {
+                    i++;
+                }
             });
+            $('#status-issues').html(`Total Status issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
         }
 
-        function addRow(cat, item, level, msg) {
+        function addRow(cat, num, item, level, msg) {
             var lvl = level;
             if (level === 'error') {
                 lvl = 'danger';
             }
             row = $("<tr class='" + lvl + "'></tr>");
-            cells = `<td>${item}</td><td>${level}</td><td>${msg}</td>`;
+            cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
             row.append(cells);
             $("#" + cat + "-table-body").append(row);
         }
@@ -102,9 +122,11 @@ text-decoration: underline;
 
     <div class="tab-content">
         <div id="paths" class="tab-pane fade in active">
+            
             <table id="paths-table" class="table table-hover table-sm table-responsive">
                 <thead>
                 <tr>
+                    <th scope="col">#</th>
                     <th scope="col">Issue</th>
                     <th scope="col">Level</th>
                     <th scope="col">Message</th>
@@ -113,6 +135,7 @@ text-decoration: underline;
                 <tbody id="paths-table-body">
                 </tbody>
             </table>
+            <h5 id="paths-issues"></h5>
         </div>
         <div id="parameters" class="tab-pane fade in active">
             <h3>NOT IMPLEMENTED YET</h3>
@@ -140,6 +163,7 @@ text-decoration: underline;
                 <tbody id="statuses-table-body">
                 </tbody>
             </table>
+            <h5 id="status-issues"></h5>
         </div>
         <div id="errors" class="tab-pane fade in active">
             <h3>NOT IMPLEMENTED YET</h3>
