@@ -79,7 +79,7 @@
 		});
 
 		return values;
-	}
+	};
 
 
 	/**
@@ -92,7 +92,7 @@
 		var ftype = fname.slice(dash, dot);
 
 		return ftype;
-	}
+	};
 
 
 	/**
@@ -108,7 +108,7 @@
 		obj.level = level;
 
 		return obj;
-	}
+	};
 
 	/**
 	* @description creates an object that gets added to statuses
@@ -122,7 +122,7 @@
 		obj.statuses = statuses;
 
 		return obj;
-	}
+	};
 
 	/**
 	* @description checks the base path
@@ -139,7 +139,7 @@
 		}
 
 		return;
-	}
+	};
 
 	/**
 	* @description checks the words that make up a path
@@ -176,7 +176,7 @@
 		});
 
 		return;
-	}
+	};
 
 	/**
 	* @description checks if the paths have the correct path separator
@@ -215,7 +215,7 @@
 		});
 
 		return;
-	}
+	};
 
 	var checkStatusCodes = function(s) {
 		s.forEach(function(key, idx) {
@@ -232,14 +232,14 @@
 				console.log(item);
 			});
 		});
-	}
+	};
 /**
 * @description retrieves the errors for a specific type of check
 * @param {string} type - paths, parameters, statuses, errors
 */
 var getErrors = function(type) {
 	return errors[type];
-}
+};
 
 /**
 * @description retrieves the data for a specific type of check
@@ -247,7 +247,7 @@ var getErrors = function(type) {
 */
 var getData = function(type) {
 	return pData[type];
-}
+};
 
 /**
 * @description clears all the data to start over
@@ -272,7 +272,7 @@ var clearData = function() {
 	jsdata = '';
 
 	return;
-}
+};
 	/**
 	* @description load CSV files into internal data structure
 	* @param {string} filenames - variable number of filenames
@@ -285,11 +285,11 @@ var clearData = function() {
 		dataArray.splice(1).forEach(function(line) {
 			line.split(',').forEach(function(val, idx) {
 				console.log(head[idx] + ' = ' +val);
-			})
-	 	})
+			});
+	 	});
 
 	 	return;
-	}
+	};
 
 	/**
 	* @description load JSON (Swagger/OpenAPI) file into internal data structure
@@ -314,12 +314,11 @@ var clearData = function() {
 
 			getProps('', pData.paths[index]).forEach(function(key, idx) {
 				// console.log(key);
-			})
+			});
 		});
 
 		return;
-	}
-
+	};
 
 	// if( typeof exports !== 'undefined' ) {
 	//     if( typeof module !== 'undefined' && module.exports ) {
