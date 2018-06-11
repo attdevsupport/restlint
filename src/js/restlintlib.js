@@ -179,7 +179,7 @@
 
 			// check if collection is plural
 			if ((k.match(/^{.*}$/)) && (k2[k2.length-1] != 's')) {
-				msg = "collections must be plural";
+				msg = 'collections (' + k2 + ') must be plural';
 				errors.paths.push(createErrorObj(key, 'error', msg));
 			}
 
@@ -252,34 +252,32 @@
 			var method = s[idx].method.toLowerCase();
 			if (method === 'post') {
 				if (s[idx].statuses.indexOf('201') < 0) {
-					var msg = 'POST for creating resources should return HTTP status code of 201';
+					var msg = 'POST for <u>creating</u> resources should return HTTP status code of 201';
 					msg += " (only show: " + s[idx].statuses.join(',') + ")";
 					var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
 					var obj = createErrorObj(name, 'warning', msg);
 					errors.statuses.push(obj);
 				}
-				// check mandatory status codes
-				statuscodes[method].mandatory.forEach(function(k, i) {
-					if (s[idx].statuses.indexOf(k)) {
-						var msg = 'missing mandatory HTTP status code: ' + k;
-						var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
-						var obj = createErrorObj(name, 'error', msg);
-						errors.statuses.push(obj);
-					}
-				});
-
-				// check optional status codes
-				statuscodes[method].optional.forEach(function(k, i) {
-					if (s[idx].statuses.indexOf(k)) {
-						var msg = 'missing optional HTTP status code: ' + k + '...confirm if not needed';
-						var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
-						var obj = createErrorObj(name, 'error', msg);
-						errors.statuses.push(obj);
-					}
-				});
 			}
-			s[idx].statuses.forEach(function(item) {
-				console.log(item);
+
+			// check mandatory status codes
+			statuscodes[method].mandatory.forEach(function(k, i) {
+				if (s[idx].statuses.indexOf(k)) {
+					var msg = 'missing mandatory HTTP status code: ' + k;
+					var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
+					var obj = createErrorObj(name, 'error', msg);
+					errors.statuses.push(obj);
+				}
+			});
+
+			// check optional status codes
+			statuscodes[method].optional.forEach(function(k, i) {
+				if (s[idx].statuses.indexOf(k)) {
+					var msg = 'missing optional HTTP status code: ' + k + '...confirm if do not needed';
+					var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
+					var obj = createErrorObj(name, 'warning', msg);
+					errors.statuses.push(obj);
+				}
 			});
 		});
 	};
