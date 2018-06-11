@@ -20,6 +20,29 @@
 
 	var naming = 'lowerCamel';
 
+	var statuscodes = {
+		get: {
+			success: '200|204|206',
+			mandatory: ['400', '401', '403', '404', '405', '406', '410', '429', '431', '500', '503'],
+			optional: ['408','414', '416', '426', '451', '501', '502', '504']
+		},
+		post: {
+			success: '200|201|202|204',
+			mandatory: ['400', '401', '403', '404', '405', '406', '410', '411', '413', '415', '429', '431', '500', '503'],
+			optional: ['408', '409', '412', '417', '426', '428', '451', '501', '502', '504']
+		},
+		put: {
+			success: '200|201|202|204',
+			mandatory: ['400', '401', '403', '404', '405', '406', '409', '410', '411', '413', '415', '429', '431', '500', '503'],
+			optional: ['408', '412', '417', '426', '428', '451', '501', '502', '504']
+		},
+		delete: {
+			success: '200|202|204',
+			mandatory: ['400', '401', '403', '404', '405', '406', '409', '410', '415', '429', '431', '500', '503'],
+			optional: ['408', '412', '414', '417', '426', '451', '501', '502', '504']
+		}
+	}
+
 
 	/**
 	* @description gets the properties of 'obj', with a name prefix of 'prefix'
@@ -152,7 +175,7 @@
 			var nkeys = key.replace(/^[/]+|[/]$/, '').split('/');
 			var k = nkeys[nkeys.length-1];
 			var msg = '', level='';
-
+			
 			if (k.match(/create|make|delete|update|get|del|remove/i)) {
 				msg = "resource must be a noun";
 				errors.paths.push(createErrorObj(key, 'error', msg));
@@ -219,7 +242,8 @@
 
 	var checkStatusCodes = function(s) {
 		s.forEach(function(key, idx) {
-			if (s[idx].method.match(/post/i)) {
+			var method = s[idx].method.toLowerCase();
+			if (method === 'post') {
 				if (s[idx].statuses.indexOf('201') < 0) {
 					var msg = 'POST for creating resources should return HTTP status code of 201';
 					msg += " (only show: " + s[idx].statuses.join(',') + ")";
@@ -227,6 +251,25 @@
 					var obj = createErrorObj(name, 'warning', msg);
 					errors.statuses.push(obj);
 				}
+				// check mandatory status codes
+				statuscodes[method].mandatory.forEach(function(k, i) {
+					if (s[idx].statuses.indexOf(k)) {
+						var msg = 'missing mandatory HTTP status code: ' + k;
+						var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
+						var obj = createErrorObj(name, 'error', msg);
+						errors.statuses.push(obj);
+					}
+				});
+
+				// check optional status codes
+				statuscodes[method].optional.forEach(function(k, i) {
+					if (s[idx].statuses.indexOf(k)) {
+						var msg = 'missing optional HTTP status code: ' + k + '...confirm if not needed';
+						var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
+						var obj = createErrorObj(name, 'error', msg);
+						errors.statuses.push(obj);
+					}
+				});
 			}
 			s[idx].statuses.forEach(function(item) {
 				console.log(item);
