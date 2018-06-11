@@ -219,7 +219,7 @@
 
 		paths.forEach(function(key, idx) {
 			var msg = '';
-			var stripped = key.replace(/\//g, '');
+			var stripped = key.replace(/\/|{|}/g, '');
 
 			if (key.match(/\/\//)) {
 				msg = name + " can not have double forward slash";
@@ -273,7 +273,7 @@
 			// check optional status codes
 			statuscodes[method].optional.forEach(function(k, i) {
 				if (s[idx].statuses.indexOf(k)) {
-					var msg = 'missing optional HTTP status code: ' + k + '...confirm if do not needed';
+					var msg = 'missing optional HTTP status code: ' + k + '...verify if do not need';
 					var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
 					var obj = createErrorObj(name, 'warning', msg);
 					errors.statuses.push(obj);
