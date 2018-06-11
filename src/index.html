@@ -19,6 +19,7 @@
         function clearTables() {
             ['paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
                 $("#"+k+"-table-body").children("tr").remove();
+                $("#"+k+"-issues").html('');
             });
         }
 
@@ -54,7 +55,7 @@
                     i++;
                 }
             });
-            $('#status-issues').html(`Total Status Code issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+            $('#statuses-issues').html(`Total Status Code issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
         }
 
         function addRow(cat, num, item, level, msg) {
@@ -168,7 +169,7 @@
                 <tbody id="statuses-table-body">
                 </tbody>
             </table>
-            <h5 id="status-issues"></h5>
+            <h5 id="statuses-issues"></h5>
         </div>
         <div id="errors" class="tab-pane fade in active">
             <h3>NOT IMPLEMENTED YET</h3>
