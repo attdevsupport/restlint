@@ -174,8 +174,15 @@
 			// remove first forward slashes for easier matching
 			var nkeys = key.replace(/^[/]+|[/]$/, '').split('/');
 			var k = nkeys[nkeys.length-1];
+			var k2 = nkeys[nkeys.length-2];
 			var msg = '', level='';
-			
+
+			// check if collection is plural
+			if ((k.match(/^{.*}$/)) && (k2[k2.length-1] != 's')) {
+				msg = "collections must be plural";
+				errors.paths.push(createErrorObj(key, 'error', msg));
+			}
+
 			if (k.match(/create|make|delete|update|get|del|remove/i)) {
 				msg = "resource must be a noun";
 				errors.paths.push(createErrorObj(key, 'error', msg));
