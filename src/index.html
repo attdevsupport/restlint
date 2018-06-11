@@ -54,7 +54,7 @@
                     i++;
                 }
             });
-            $('#status-issues').html(`Total Status issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+            $('#status-issues').html(`Total Status Code issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
         }
 
         function addRow(cat, num, item, level, msg) {
@@ -145,6 +145,7 @@
             <table id="parameters-table" class="table table-hover table-sm table-responsive">
                 <thead>
                 <tr>
+                    <th scope="col">#</th>
                     <th scope="col">Issue</th>
                     <th scope="col">Level</th>
                     <th scope="col">Message</th>
@@ -158,6 +159,7 @@
             <table id="statuses-table" class="table table-hover table-sm table-responsive">
                 <thead>
                 <tr>
+                    <th scope="col">#</th>
                     <th scope="col">Issue</th>
                     <th scope="col">Level</th>
                     <th scope="col">Message</th>
@@ -173,6 +175,7 @@
             <table id="errors-table" class="table table-hover table-sm table-responsive">
                 <thead>
                 <tr>
+                    <th scope="col">#</th>
                     <th scope="col">Issue</th>
                     <th scope="col">Level</th>
                     <th scope="col">Message</th>
