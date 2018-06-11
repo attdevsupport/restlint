@@ -261,24 +261,32 @@
 			}
 
 			// check mandatory status codes
+			var man = [];
 			statuscodes[method].mandatory.forEach(function(k, i) {
 				if (s[idx].statuses.indexOf(k)) {
-					var msg = 'missing mandatory HTTP status code: ' + k;
-					var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
-					var obj = createErrorObj(name, 'error', msg);
-					errors.statuses.push(obj);
+					man.push(k);
 				}
 			});
+			if (man.length > 0) {
+				var msg = 'missing mandatory HTTP status codes: ' + man.join(', ');
+				var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
+				var obj = createErrorObj(name, 'error', msg);
+				errors.statuses.push(obj);
+			}
 
 			// check optional status codes
+			var opt = [];
 			statuscodes[method].optional.forEach(function(k, i) {
 				if (s[idx].statuses.indexOf(k)) {
-					var msg = 'missing optional HTTP status code: ' + k + '...verify if do not need';
-					var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
-					var obj = createErrorObj(name, 'warning', msg);
-					errors.statuses.push(obj);
+					opt.push(k);
 				}
 			});
+			if (opt.length > 0) {
+				var msg = 'missing optional HTTP status codes (verify if codes are needed): ' + opt.join(', ');
+				var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
+				var obj = createErrorObj(name, 'warning', msg);
+				errors.statuses.push(obj);
+			}
 		});
 	};
 /**
