@@ -1,38 +1,146 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "The APIs described in this swagger document are part of Alliance portal. In order to execute some tasks from SFDC application to AT&T, CSP application (Common Security Platform) that located inside the AT&T intranet, FlowDesigner is part of APIONE that aims to allow access to services inside AT&T such as CSP, ROME and SMART",
+    "description": "The APIs described in this swagger document are part of MyApp portal.",
     "version": "1.0.11",
-    "title": "Alliance Portal APIONE APIs",
+    "title": "MyApp Portal APIONE APIs",
     "contact": {
-      "email": "dj966m@int.att.com"
+      "email": "fred@example.com"
     }
   },
   "tags": [
     {
-      "name": "CSP",
-      "description": "The following API`s that preforms action in CSP application"
+      "name": "ABC",
+      "description": "The following API`s that preforms action in ABC application"
     },
     {
-      "name": "ROME",
-      "description": "ROME APIs"
+      "name": "ABC",
+      "description": "ABC APIs"
     },
     {
-      "name": "SMART",
-      "description": "SMART APIs"
+      "name": "XYZ",
+      "description": "XYZ APIs"
     },
     {
-      "name": "PHOENIX",
-      "description": "PHOENIX APIs"
+      "name": "MNO",
+      "description": "MNO APIs"
     }
   ],
   "paths": {
-    "/My createEntity": {
+    "/service/entities": {
+      "get": {
+        "tags": [
+          "ABC"
+        ],
+        "summary": "junk",
+        "operationId": "get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/abcInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success message",
+            "schema": {
+              "$ref": "#/definitions/abcOutput"
+            }
+          },
+          "500": {
+            "description": "user/privAdmin exist with updated with details",
+            "schema": {
+              "$ref": "#/definitions/abcErrorRes"
+            }
+          }
+        }
+      }
+    },
+    "/service/entity/{entity}": {
+      "delete": {
+        "tags": [
+          "ABC"
+        ],
+        "summary": "junk",
+        "operationId": "get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/abcInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success message",
+            "schema": {
+              "$ref": "#/definitions/abcOutput"
+            }
+          },
+          "500": {
+            "description": "user/privAdmin exist with updated with details",
+            "schema": {
+              "$ref": "#/definitions/abcErrorRes"
+            }
+          }
+        }
+      }
+    },
+    "/service/entity/{entity}": {
+      "put": {
+        "tags": [
+          "ABC"
+        ],
+        "summary": "junk",
+        "operationId": "get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/abcInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success message",
+            "schema": {
+              "$ref": "#/definitions/abcOutput"
+            }
+          },
+          "500": {
+            "description": "user/privAdmin exist with updated with details",
+            "schema": {
+              "$ref": "#/definitions/abcErrorRes"
+            }
+          }
+        }
+      }
+    },
+    "/service/create Entity": {
       "post": {
         "tags": [
-          "CSP"
+          "ABC"
         ],
-        "summary": "request that creates a userid, on demand, to ensure that the userid is available. On success, a suspended userid with dummy password is created (ac- countValid=NO). Returns an error if userid is already present. VERY IMORTANT: the  request body describes 2 possibles models 'user' and 'privAdmin' the request can  contains only one of the models descibed",
+        "summary": "junk",
         "operationId": "create",
         "produces": [
           "application/json"
@@ -43,33 +151,33 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/cspInput"
+              "$ref": "#/definitions/abcInput"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "success message user/privAdmin not exist and reserved or user created and updated",
+            "description": "success message",
             "schema": {
-              "$ref": "#/definitions/cspOutput"
+              "$ref": "#/definitions/abcOutput"
             }
           },
           "500": {
             "description": "user/privAdmin exist with updated with details",
             "schema": {
-              "$ref": "#/definitions/cspErrorRes"
+              "$ref": "#/definitions/abcErrorRes"
             }
           }
         }
       }
     },
-    "/updateEntity": {
+    "updateEntity/": {
       "post": {
         "tags": [
-          "CSP"
+          "ABC"
         ],
         "operationId": "update",
-        "summary": "request that updates CSP information about a particular user",
+        "summary": "junk",
         "produces": [
           "application/json"
         ],
@@ -79,7 +187,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/cspInput"
+              "$ref": "#/definitions/abcInput"
             }
           }
         ],
@@ -87,22 +195,22 @@
           "200": {
             "description": "success message user/priveAdmin updated",
             "schema": {
-              "$ref": "#/definitions/cspOutput"
+              "$ref": "#/definitions/abcOutput"
             }
           },
           "500": {
             "description": "error message",
             "schema": {
-              "$ref": "#/definitions/cspErrorRes"
+              "$ref": "#/definitions/abcErrorRes"
             }
           }
         }
       }
     },
-    "/rome/company": {
+    "/Rome/some_company": {
       "post": {
         "tags": [
-          "ROME"
+          "ABC"
         ],
         "parameters": [
           {
@@ -110,29 +218,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/companyModel_ROME"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "success message user/priveAdmin updated"
-          }
-        }
-      }
-    },
-    "/rome/user": {
-      "post": {
-        "tags": [
-          "ROME"
-        ],
-        "parameters": [
-          {
-            "name": "request body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/userModel_ROME"
+              "$ref": "#/definitions/companyModel_ABC"
             }
           }
         ],
@@ -143,10 +229,10 @@
         }
       }
     },
-    "/smart/company": {
+    "/blue/User": {
       "post": {
         "tags": [
-          "SMART"
+          "ABC"
         ],
         "parameters": [
           {
@@ -154,7 +240,29 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/companyModel_SMART"
+              "$ref": "#/definitions/userModel_ABC"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success message user/priveAdmin updated"
+          }
+        }
+      }
+    },
+    "//smart/company": {
+      "post": {
+        "tags": [
+          "XYZ"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/companyModel_XYZ"
             }
           }
         ],
@@ -168,7 +276,7 @@
     "/smart/user": {
       "post": {
         "tags": [
-          "SMART"
+          "XYZ"
         ],
         "parameters": [
           {
@@ -176,7 +284,7 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/userModel_SMART"
+              "$ref": "#/definitions/userModel_XYZ"
             }
           }
         ],
@@ -190,9 +298,9 @@
     "/phoenix/encrypt": {
       "post": {
         "tags": [
-          "PHOENIX"
+          "MNO"
         ],
-        "summary": "SFDC invoke this API with userId, The API Encrypy userid by using cryptor jar. return the generated token to SFDC. SFDC invoke with this token to PHOENIX",
+        "summary": "SFDC invoke this API with userId, The API Encrypy userid by using cryptor jar. return the generated token to SFDC. SFDC invoke with this token to MNO",
         "parameters": [
           {
             "name": "request body",
@@ -250,7 +358,7 @@
         }
       }
     },
-    "cspErrorRes": {
+    "abcErrorRes": {
       "type": "object",
       "properties": {
         "error": {
@@ -270,10 +378,10 @@
         }
       }
     },
-    "cspInput": {
+    "abcInput": {
       "type": "object",
       "properties": {
-        "cspInput": {
+        "abcInput": {
           "type": "object",
           "required": [
             "appID",
@@ -289,45 +397,45 @@
             "user": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/cspUser"
+                "$ref": "#/definitions/abcUser"
               }
             },
             "privAdmin": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/cspPrivAdmin"
+                "$ref": "#/definitions/abcPrivAdmin"
               }
             }
           }
         }
       }
     },
-    "cspGroupActionModel": {
+    "abcGroupActionModel": {
       "type": "object",
       "properties": {
         "action": {
-          "$ref": "#/definitions/cspGroupActionType"
+          "$ref": "#/definitions/abcGroupActionType"
         },
         "Text": {
           "type": "string"
         }
       }
     },
-    "cspGroupActionType": {
+    "abcGroupActionType": {
       "type": "string",
       "enum": [
         "add",
         "delete"
       ]
     },
-    "cspMapTokenActionType": {
+    "abcMapTokenActionType": {
       "type": "string",
       "enum": [
         "addtoken",
         "deletetoken"
       ]
     },
-    "cspOutput": {
+    "abcOutput": {
       "type": "object",
       "properties": {
         "returnCode": {
@@ -337,12 +445,12 @@
         "user": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/cspUserAsRes"
+            "$ref": "#/definitions/abcUserAsRes"
           }
         }
       }
     },
-    "cspPinMgmtType": {
+    "abcPinMgmtType": {
       "type": "string",
       "enum": [
         "email",
@@ -351,11 +459,11 @@
         ""
       ]
     },
-    "cspPrivAdmin": {
+    "abcPrivAdmin": {
       "type": "object",
       "properties": {
         "action": {
-          "$ref": "#/definitions/cspPrivAdminActionType"
+          "$ref": "#/definitions/abcPrivAdminActionType"
         },
         "privGroup": {
           "type": "string"
@@ -374,7 +482,7 @@
         }
       }
     },
-    "cspPrivAdminActionType": {
+    "abcPrivAdminActionType": {
       "type": "string",
       "enum": [
         "listPrivGroups",
@@ -382,7 +490,7 @@
         "listPrivGrants"
       ]
     },
-    "cspUser": {
+    "abcUser": {
       "type": "object",
       "required": [
         "userid",
@@ -402,7 +510,7 @@
         "group": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/cspGroupActionModel"
+            "$ref": "#/definitions/abcGroupActionModel"
           }
         },
         "tokenusernames": {
@@ -412,7 +520,7 @@
               "type": "string"
             },
             "action": {
-              "$ref": "#/definitions/cspMapTokenActionType"
+              "$ref": "#/definitions/abcMapTokenActionType"
             }
           }
         },
@@ -502,7 +610,7 @@
           "type": "string"
         },
         "pinMgmtPref": {
-          "$ref": "#/definitions/cspPinMgmtType"
+          "$ref": "#/definitions/abcPinMgmtType"
         },
         "cityOfBirth": {
           "type": "string"
@@ -516,7 +624,7 @@
         "nameSuffix": {
           "type": "string"
         },
-        "cspAttribs": {
+        "abcAttribs": {
           "type": "string"
         },
         "passwdStrength": {
@@ -535,19 +643,19 @@
           "type": "string"
         },
         "blockPasswordMgmt": {
-          "$ref": "#/definitions/cspYesNoType"
+          "$ref": "#/definitions/abcYesNoType"
         },
         "blockProfileAccess": {
-          "$ref": "#/definitions/cspYesNoType"
+          "$ref": "#/definitions/abcYesNoType"
         },
         "newUserid": {
           "type": "string"
         },
         "unsetExpiryAfterLogin": {
-          "$ref": "#/definitions/cspYesNoType"
+          "$ref": "#/definitions/abcYesNoType"
         },
         "allowPassword4Token": {
-          "$ref": "#/definitions/cspYesNoType"
+          "$ref": "#/definitions/abcYesNoType"
         },
         "effectiveDate": {
           "type": "string"
@@ -556,20 +664,20 @@
           "type": "string"
         },
         "silo222": {
-          "$ref": "#/definitions/cspYesNoType"
+          "$ref": "#/definitions/abcYesNoType"
         },
         "silo272": {
-          "$ref": "#/definitions/cspYesNoType"
+          "$ref": "#/definitions/abcYesNoType"
         },
         "managerATTuid": {
           "type": "string"
         },
         "allowPMfromWWW": {
-          "$ref": "#/definitions/cspYesNoType"
+          "$ref": "#/definitions/abcYesNoType"
         }
       }
     },
-    "cspUserAsRes": {
+    "abcUserAsRes": {
       "type": "object",
       "properties": {
         "userid": {
@@ -686,7 +794,7 @@
         "nameSuffix": {
           "type": "string"
         },
-        "cspAttribs": {
+        "abcAttribs": {
           "type": "string"
         },
         "passwdStrength": {
@@ -730,7 +838,7 @@
         }
       }
     },
-    "cspYesNoType": {
+    "abcYesNoType": {
       "type": "string",
       "enum": [
         "yes",
@@ -739,14 +847,14 @@
         "NO"
       ]
     },
-    "romeActionType": {
+    "blueActionType": {
       "type": "string",
       "enum": [
         "Insert",
         "Update"
       ]
     },
-    "romeContractStatusType": {
+    "blueContractStatusType": {
       "type": "string",
       "enum": [
         "Active (ASP)",
@@ -763,14 +871,14 @@
         "Terminated with ASP Option"
       ]
     },
-    "romeStatusType": {
+    "blueStatusType": {
       "type": "string",
       "enum": [
         "Active",
         "Inactive"
       ]
     },
-    "romeCertificateStatusType": {
+    "blueCertificateStatusType": {
       "type": "string",
       "enum": [
         "Certified",
@@ -779,7 +887,7 @@
         "Manual Denied"
       ]
     },
-    "romeTitleType": {
+    "blueTitleType": {
       "type": "string",
       "enum": [
         "Channel Manager",
@@ -799,13 +907,13 @@
         "Back Office"
       ]
     },
-    "romeSourceSystem": {
+    "blueSourceSystem": {
       "type": "string",
       "enum": [
         "SFDC"
       ]
     },
-    "romeContactType": {
+    "blueContactType": {
       "type": "string",
       "enum": [
         "SP User",
@@ -901,7 +1009,7 @@
       ],
       "description": "1 (A), 3 (A-GA), 4 (Terminated), 5 (DO NOT USE), 6 (A-GA-R), 7 (A-R), 8 (A-GA99), 9 (A-GA-99N), 10 (A99), 11 (A99N), 12 (A-GA00), 13 (A-GA-99N-R), 14 (A-GA-00N), 15 (A-GA-00N-R), 16 (A00), 17 (A00N), 18 (A-GA99-V), 19 (A-GA00-C), 20 (A-GA-00N-C), 21 (A-GA-00N-C-R), 22 (A-GA00-C-R), 23 (A-GA00-V), 24 (A-GA-00N-V), 25 (A-GA-00N-V-R), 26 (A-GA00-V-R), 27 (A99-C), 28 (A-GA-99N-C), 29 (A-GA99-C), 30 (A-GA-R-C), 31 (A-GA99-C-R), 32 (A-GA-C-R), 33 (A-GA-99N-C-R), 34 (Pending Termination), 35 (G01PE), 36 (G01PN), 37 (G01RE), 38 (G01RN), 39 (R01PE), 40 (R01PN), 41 (R01RE), 42 (R01RN), 43 (S01PN), 44 (S01RN), 45 (M01PN), 46 (M01PE), 47 (M01RE), 48 (M01RN), 49 (Internal - CM), 50 (X01PE), 51 (X01PN), 52 (Internal - Dallas), 53 (B01PN), 54 (E01PN), 55 (V01PE), 56 (G01PEV), 57 (S01PEV), 58 (V01PN), 59 (G01PNV), 60 (V01RE), 61 (G01REV), 62 (S01REV), 63 (V01RN), 64 (G01RNV), 65 (S01RNV), 66 (S01PNV), 67 (E5K Plus), 68 (ZZ0102 Consortium), 70 (Active), 71 (Test), 72 (Terminated but still paying), 73 (Remote), 76 (Other), 77 (Active - Ref), 78 (Active - Orders Restricted), 80 (Non-renew Hold ACC Only), 81 (Rejected)"
     },
-    "companyModel_ROME": {
+    "companyModel_ABC": {
       "type": "object",
       "properties": {
         "CompanyData": {
@@ -911,10 +1019,10 @@
               "type": "string"
             },
             "SourceSystem": {
-              "$ref": "#/definitions/romeSourceSystem"
+              "$ref": "#/definitions/blueSourceSystem"
             },
             "Action": {
-              "$ref": "#/definitions/romeActionType"
+              "$ref": "#/definitions/blueActionType"
             },
             "AltName": {
               "type": "string"
@@ -937,7 +1045,7 @@
                     "type": "string"
                   },
                   "CertificationStatus": {
-                    "$ref": "#/definitions/romeCertificateStatusType"
+                    "$ref": "#/definitions/blueCertificateStatusType"
                   }
                 }
               }
@@ -989,10 +1097,10 @@
               "type": "string"
             },
             "ContractStatus": {
-              "$ref": "#/definitions/romeContractStatusType"
+              "$ref": "#/definitions/blueContractStatusType"
             },
             "Status": {
-              "$ref": "#/definitions/romeStatusType"
+              "$ref": "#/definitions/blueStatusType"
             },
             "ContactList": {
               "type": "object",
@@ -1003,7 +1111,7 @@
                     "type": "object",
                     "properties": {
                       "Title": {
-                        "$ref": "#/definitions/romeTitleType"
+                        "$ref": "#/definitions/blueTitleType"
                       },
                       "UserId": {
                         "type": "string"
@@ -1036,7 +1144,7 @@
         }
       }
     },
-    "userModel_ROME": {
+    "userModel_ABC": {
       "type": "object",
       "properties": {
         "UserData": {
@@ -1046,16 +1154,16 @@
               "type": "string"
             },
             "SourceSystem": {
-              "$ref": "#/definitions/romeSourceSystem"
+              "$ref": "#/definitions/blueSourceSystem"
             },
             "Action": {
-              "$ref": "#/definitions/romeActionType"
+              "$ref": "#/definitions/blueActionType"
             },
             "ATTUID": {
               "type": "string"
             },
             "ContactType": {
-              "$ref": "#/definitions/romeContactType"
+              "$ref": "#/definitions/blueContactType"
             },
             "FirstName": {
               "type": "string"
@@ -1109,7 +1217,7 @@
               }
             },
             "Status": {
-              "$ref": "#/definitions/romeStatusType"
+              "$ref": "#/definitions/blueStatusType"
             },
             "ATTPhoenixAccess": {
               "type": "boolean"
@@ -1118,7 +1226,7 @@
         }
       }
     },
-    "companyModel_SMART": {
+    "companyModel_XYZ": {
       "type": "object",
       "properties": {
         "CompanyData": {
@@ -1284,7 +1392,7 @@
         }
       }
     },
-    "userModel_SMART": {
+    "userModel_XYZ": {
       "type": "object",
       "properties": {
         "UserData": {
@@ -1398,6 +1506,6 @@
   "schemes": [
     "https"
   ],
-  "basePath": "flow/alliancedev/alliance/V1?",
+  "basePath": "flow/myAppdev/myApp/V1?",
   "host": "api.att.com"
 }
