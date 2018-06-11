@@ -17,7 +17,7 @@
     <script src="js/restlintlib.js"></script>
     <script type="text/javascript">
         function clearTables() {
-            ['paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
+            ['general', 'paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
                 $("#"+k+"-table-body").children("tr").remove();
                 $("#"+k+"-issues").html('');
             });
@@ -26,10 +26,25 @@
         function onReaderLoad(event){
             // var obj = JSON.parse(event.target.result);
             loadJson(event.target.result);
+            checkGeneral();
             checkPathStructure('paths', getData('paths'));
             checkResources(getData('paths'));
             checkBasePath();
             checkStatusCodes(getData('statuses'));
+            var w = 0, e = 0, i = 0, cnt = 1;
+            getErrors('general').forEach(function(key) {
+                addRow('general', cnt, key.name, key.level, key.msg);
+                cnt += 1;
+                if (key.level === 'warning') {
+                    w++;
+                } else if (key.level === 'error') {
+                    e++;
+                } else if (key.level === 'info') {
+                    i++;
+                }
+            });
+            $('#general-issues').html(`Total General issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+
             var w = 0, e = 0, i = 0, cnt = 1;
             getErrors('paths').forEach(function(key) {
                 addRow('paths', cnt, key.name, key.level, key.msg);
@@ -43,6 +58,7 @@
                 }
             });
             $('#paths-issues').html(`Total Paths issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+
             var w = 0, e = 0, i = 0, cnt = 1;
             getErrors('statuses').forEach(function(key) {
                 addRow('statuses', cnt, key.name, key.level, key.msg);
@@ -81,7 +97,7 @@
 // });
 
             $('.nav-tabs a[href="#parameters"]').tab('show');
-            $('.nav-tabs a[href="#paths"]').tab('show');
+            $('.nav-tabs a[href="#general"]').tab('show');
             $("#open_btn").click(function() {
                 $.FileDialog({multiple: true, accept: "text/csv, application/json"}).on('files.bs.filedialog', function(ev) {
                     clearTables();
@@ -117,16 +133,57 @@
     <br>
     
 
+    <div class="panel-group">
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <h4 class="panel-title text-center">
+                  <a data-toggle="collapse" href="#collapsefile">Files</a>
+                </h4>
+              </div>
+              <div id="collapsefile" class="panel-collapse collapse">
+                <div class="panel-body">
+                <table id="parameters-table" class="table table-hover table-sm table-responsive">
+                    <tbody>
+                        <tr>
+                            <td scope="col" class="info col-sm-4"><small><b>info</b> - there is not enough information to make a solid determination, but user should investigate further if issue is a violation of standards or best practices</small></td>
+                            <td scope="col" class="warning col-sm-4"><small><b>warning</b> - there's a high probability that the issue is a violation</small></td>
+                            <td scope="col" class="danger col-sm-4"><small><b>error</b> - the issue is a violation of a standard (HTTP, etc) or best practice</small></td>
+                        </tr>
+                    </tbody>
+                </table>
+                </div>
+              </div>
+            </div>
+        </div>
+
+
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#paths">Paths</a></li>
+        <li class="active"><a data-toggle="tab" href="#general">General</a></li>
+        <li><a data-toggle="tab" href="#paths">Paths</a></li>
         <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
         <li><a data-toggle="tab" href="#statuses">Status Codes</a></li>
         <li><a data-toggle="tab" href="#errors">Exceptions</a></li>
     </ul>
 
     <div class="tab-content">
+
+        <div id="general" class="tab-pane fade in active">
+            <table id="general-table" class="table table-hover table-sm table-responsive">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Issue</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Message</th>
+                </tr>
+                </thead>
+                <tbody id="general-table-body">
+                </tbody>
+            </table>
+            <h5 id="general-issues"></h5>
+        </div>
+
         <div id="paths" class="tab-pane fade in active">
-            
             <table id="paths-table" class="table table-hover table-sm table-responsive">
                 <thead>
                 <tr>
@@ -141,6 +198,7 @@
             </table>
             <h5 id="paths-issues"></h5>
         </div>
+
         <div id="parameters" class="tab-pane fade in active">
             <h3>NOT IMPLEMENTED YET</h3>
             <table id="parameters-table" class="table table-hover table-sm table-responsive">
@@ -156,6 +214,7 @@
                 </tbody>
             </table>
         </div>
+
         <div id="statuses" class="tab-pane fade in active">
             <table id="statuses-table" class="table table-hover table-sm table-responsive">
                 <thead>
@@ -171,6 +230,7 @@
             </table>
             <h5 id="statuses-issues"></h5>
         </div>
+
         <div id="errors" class="tab-pane fade in active">
             <h3>NOT IMPLEMENTED YET</h3>
             <table id="errors-table" class="table table-hover table-sm table-responsive">
@@ -187,6 +247,7 @@
             </table>
         </div>
     </div>
+
     <div class="panel-group">
         <div class="panel panel-default">
           <div class="panel-heading">

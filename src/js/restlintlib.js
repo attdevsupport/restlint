@@ -44,6 +44,14 @@
 	};
 
 
+	var errordetails = {
+		STATUSCODES_GET_MAN: {
+			short: 'Missing mandatory HTTP status codes: $1',
+			long: 'The HTTP method GET should have the following status codes possible, and should be accounted for in the design of the API: '
+		}
+
+	}
+
 	/**
 	* @description gets the properties of 'obj', with a name prefix of 'prefix'
 	* @param {string} prefix - the name to prefix to any properties found (for recursion)
@@ -203,6 +211,8 @@
 					errors.paths.push(createErrorObj(key, 'warning', msg));
 				}
 			}
+
+			console.log(pData.general.basePath+key);
 		});
 
 		return;
@@ -291,6 +301,21 @@
 			}
 		});
 	};
+
+/**
+* @description checks errors that fall into the General category
+*/
+var checkGeneral = function() {
+	console.log('SCHEME: ' + pData.general.schemes);
+	var msg = '', obj = {};
+	if (pData.general.schemes.length != 1 || pData.general.schemes.indexOf('https') < 0) {
+		console.log('TROUBLE');
+		msg = 'schemes must have <em>https</em> and only <em>https</em>';
+		obj = createErrorObj(pData.general.schemes.join(','), 'error', msg);
+		errors.general.push(obj);
+	}
+};
+
 /**
 * @description retrieves the errors for a specific type of check
 * @param {string} type - paths, parameters, statuses, errors
@@ -359,6 +384,7 @@ var clearData = function() {
 
 		pData.general.basePath = jsdata.basePath;
 		pData.general.host = jsdata.host;
+		pData.general.schemes = jsdata.schemes;
 
 		Object.keys(jsdata.paths).forEach(function(key, index) {
 			pData.paths[index] = key;

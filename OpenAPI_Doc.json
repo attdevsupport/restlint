@@ -1504,8 +1504,8 @@
     }
   },
   "schemes": [
-    "https"
+    "http", "https"
   ],
-  "basePath": "flow/myAppdev/myApp/V1?",
+  "basePath": "flow/myAppdev/myApp/V1",
   "host": "api.att.com"
 }
