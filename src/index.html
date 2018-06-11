@@ -69,6 +69,16 @@
         }
 
         $(document).ready(function() {
+// $('#paths-table').on('click-row.bs.table', function (e, row, $element) {
+//     alert(row, $element);
+// });
+
+// $('#paths-table').bootstrapTable({
+//     onClickRow: function (row, $element) {
+//         alert(row, $element);
+//     };
+// });
+
             $('.nav-tabs a[href="#parameters"]').tab('show');
             $('.nav-tabs a[href="#paths"]').tab('show');
             $("#open_btn").click(function() {
@@ -96,10 +106,13 @@
          });
     </script>
     <br>
+    <h2> RestLint - A ReST API Design Static Checker</h2>
+    <br>
+
 	<button id="open_btn" class="btn btn-primary">Open files</button>
     <button id="clear_btn" class="btn btn-secondary">Clear</button>
     <br>
-    <h3 id="output">  </h3>
+    <h4 id="output">  </h4>
     <br>
     
 
