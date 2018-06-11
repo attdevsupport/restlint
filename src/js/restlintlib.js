@@ -41,7 +41,7 @@
 			mandatory: ['400', '401', '403', '404', '405', '406', '409', '410', '415', '429', '431', '500', '503'],
 			optional: ['408', '412', '414', '417', '426', '451', '501', '502', '504']
 		}
-	}
+	};
 
 
 	/**
@@ -248,14 +248,16 @@
 	};
 
 	var checkStatusCodes = function(s) {
+		
 		s.forEach(function(key, idx) {
+			var msg = '', name = '', obj = {};
 			var method = s[idx].method.toLowerCase();
 			if (method === 'post') {
 				if (s[idx].statuses.indexOf('201') < 0) {
-					var msg = 'POST for <u>creating</u> resources should return HTTP status code of 201';
+					msg = 'POST for <u>creating</u> resources should return HTTP status code of 201';
 					msg += " (only show: " + s[idx].statuses.join(',') + ")";
-					var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
-					var obj = createErrorObj(name, 'warning', msg);
+					name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
+					obj = createErrorObj(name, 'warning', msg);
 					errors.statuses.push(obj);
 				}
 			}
@@ -268,9 +270,9 @@
 				}
 			});
 			if (man.length > 0) {
-				var msg = 'missing mandatory HTTP status codes: ' + man.join(', ');
-				var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
-				var obj = createErrorObj(name, 'error', msg);
+				msg = 'missing mandatory HTTP status codes: ' + man.join(', ');
+				name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
+				obj = createErrorObj(name, 'error', msg);
 				errors.statuses.push(obj);
 			}
 
@@ -282,9 +284,9 @@
 				}
 			});
 			if (opt.length > 0) {
-				var msg = 'missing optional HTTP status codes (verify if codes are needed): ' + opt.join(', ');
-				var name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
-				var obj = createErrorObj(name, 'warning', msg);
+				msg = 'missing optional HTTP status codes (verify if codes are needed): ' + opt.join(', ');
+				name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
+				obj = createErrorObj(name, 'warning', msg);
 				errors.statuses.push(obj);
 			}
 		});
