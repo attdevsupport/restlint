@@ -355,7 +355,7 @@ var checkGeneral = function() {
 
 	// this might depend if it's being exposed externally or not.
 	if (isExternal && allowedHostsExt.indexOf(pData.general.host) < 0) {
-		msg = 'host names must be either <em>lgw.att.com</em> or <em>api.att.com</em>';
+		msg = 'host names for externally exposed APIs must be either <em>lgw.att.com</em> or <em>api.att.com</em>';
 		obj = createErrorObj(pData.general.host, 'error', msg);
 		errors.general.push(obj);
 	}
