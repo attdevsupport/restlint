@@ -17,7 +17,6 @@
     <script src="js/restlintlib.js"></script>
     <script type="text/javascript">
         function clearTables() {
-            // ['general', 'methods', 'paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
             getCategories().forEach(function(k) {
                 $("#"+k+"-table-body").children("tr").remove();
                 $("#"+k+"-issues").html('');
@@ -36,79 +35,30 @@
             checkStatusCodes(getData('statuscodes'));
             checkMethods(getData('statuscodes'));
 
-
-            var w = 0, wt = 0, e = 0, et = 0, i = 0, it = 0, cnt = 1;
-            getErrors('general').forEach(function(key) {
-                addRow('general', cnt, key.name, key.level, key.msg);
-                cnt += 1;
-                if (key.level === 'warning') {
-                    w++;
-                } else if (key.level === 'error') {
-                    e++;
-                } else if (key.level === 'info') {
-                    i++;
-                }
+            var wt = 0, et = 0, it = 0;
+            var cats = getCategories();
+            var index = cats.indexOf('summary');
+            cats.splice(index, 1);
+            cats.forEach(function(cat, idx) {
+                console.log('CAT: ' + cat);
+                var w = 0, e = 0, i = 0, cnt = 1;
+                getErrors(cat).forEach(function(key) {
+                    addRow(cat, cnt, key.name, key.level, key.msg);
+                    cnt += 1;
+                    if (key.level === 'warning') {
+                        w++;
+                    } else if (key.level === 'error') {
+                        e++;
+                    } else if (key.level === 'info') {
+                        i++;
+                    }
+                });
+                $('#' + cat + '-issues').html(`Total ${capitalize(cat)} issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+                addSummaryRow(cat, i, w, e);
+                it += i;
+                wt += w;
+                et += e;
             });
-            $('#general-issues').html(`Total General issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-            addSummaryRow('general', i, w, e);
-            it += i;
-            wt += w;
-            et += e;
-
-
-            var w = 0, e = 0, i = 0, cnt = 1;
-            getErrors('verbs').forEach(function(key) {
-                addRow('methods', cnt, key.name, key.level, key.msg);
-                cnt += 1;
-                if (key.level === 'warning') {
-                    w++;
-                } else if (key.level === 'error') {
-                    e++;
-                } else if (key.level === 'info') {
-                    i++;
-                }
-            });
-            $('#methods-issues').html(`Total Methods issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-            addSummaryRow('methods', i, w, e);
-            it += i;
-            wt += w;
-            et += e;
-
-            var w = 0, e = 0, i = 0, cnt = 1;
-            getErrors('paths').forEach(function(key) {
-                addRow('paths', cnt, key.name, key.level, key.msg);
-                cnt += 1;
-                if (key.level === 'warning') {
-                    w++;
-                } else if (key.level === 'error') {
-                    e++;
-                } else if (key.level === 'info') {
-                    i++;
-                }
-            });
-            $('#paths-issues').html(`Total Paths issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-            addSummaryRow('paths', i, w, e);
-            it += i;
-            wt += w;
-            et += e;
-
-            var w = 0, e = 0, i = 0, cnt = 1;
-            getErrors('statuscodes').forEach(function(key) {
-                addRow('status-codes', cnt, key.name, key.level, key.msg);
-                cnt += 1;
-                if (key.level === 'warning') {
-                    w++;
-                } else if (key.level === 'error') {
-                    e++;
-                } else if (key.level === 'info') {
-                    i++;
-                }
-            });
-            $('#status-codes-issues').html(`Total Status Code issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-            addSummaryRow('status-codes', i, w, e);
-            it += i;
-            wt += w;
-            et += e;
 
             addSummaryRow('total', it, wt, et);
         }
@@ -216,7 +166,7 @@
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#summary">Summary</a></li>
         <li><a data-toggle="tab" href="#general">General</a></li>
-        <li><a data-toggle="tab" href="#methods">Methods</a></li>
+        <li><a data-toggle="tab" href="#http-methods">HTTP Methods</a></li>
         <li><a data-toggle="tab" href="#paths">Paths</a></li>
         <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
         <li><a data-toggle="tab" href="#status-codes">Status Codes</a></li>
@@ -260,8 +210,8 @@
             <h5 id="general-issues"></h5>
         </div>
 
-       <div id="methods" class="tab-pane fade in active">
-            <table id="methods-table" class="table table-hover table-sm table-responsive table-condensed">
+       <div id="http-methods" class="tab-pane fade in active">
+            <table id="http-methods-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -270,10 +220,10 @@
                     <th scope="col">Message</th>
                 </tr>
                 </thead>
-                <tbody id="methods-table-body">
+                <tbody id="http-methods-table-body">
                 </tbody>
             </table>
-            <h5 id="methods-issues"></h5>
+            <h5 id="http-methods-issues"></h5>
         </div>
 
         <div id="paths" class="tab-pane fade in active">

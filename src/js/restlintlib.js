@@ -10,14 +10,14 @@
 
 	var errors = {
 		general: [],
-		verbs: [],
+		httpmethods: [],
 		parameters: [],
 		paths: [],
 		statuscodes: [],
 		exceptions: []
 	};
 
-	var categories = ['summary', 'general', 'methods', 'paths', 'parameters', 'status-codes', 'exceptions'];
+	var categories = ['summary', 'general', 'http-methods', 'paths', 'parameters', 'status-codes', 'exceptions'];
 
 	var allowedHttpMethods = ['POST', 'PUT', 'GET', 'DELETE'];
 	var allowedHostsExt = ['lgw.att.com', 'api.att.com'];
@@ -360,7 +360,7 @@ var checkMethods = function(s) {
 		if (allowedHttpMethods.indexOf(method) < 0) {
 			msg = 'The only HTTP methods allowed are: ' + allowedHttpMethods.join(',');
 			obj = createErrorObj(method, 'error', msg);
-			errors.verbs.push(obj);				
+			errors.httpmethods.push(obj);				
 		}
 
 	});
@@ -395,6 +395,7 @@ var checkGeneral = function() {
 * @param {string} type - paths, parameters, statuscodes, errors
 */
 var getErrors = function(type) {
+	type = type.replace('-', '');
 	return errors[type];
 };
 
