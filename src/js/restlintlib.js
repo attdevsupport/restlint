@@ -19,6 +19,7 @@
 	var jsdata = '';
 
 	var naming = 'lowerCamel';
+	var isExternal = true;
 
 	var statuscodes = {
 		get: {
@@ -251,6 +252,7 @@
 				msg = name + " can not have reserved characters";
 				errors.paths.push(createErrorObj(key, 'error', msg));
 			}
+			// not sure if this is redundant or needed
 			if (! (key.match(/\//g) || []).length) {
 				msg = name + " should have at least one forward slash";
 				errors.paths.push(createErrorObj(key, 'warning', msg));
@@ -319,7 +321,6 @@
 * @description checks errors that fall into the General category
 */
 var checkGeneral = function() {
-	console.log('SCHEME: ' + pData.general.schemes);
 	var msg = '', obj = {};
 	if (pData.general.schemes.length != 1 || pData.general.schemes.indexOf('https') < 0) {
 		console.log('TROUBLE');
@@ -327,6 +328,14 @@ var checkGeneral = function() {
 		obj = createErrorObj(pData.general.schemes.join(','), 'error', msg);
 		errors.general.push(obj);
 	}
+
+	// this might depend if it's being exposed externally or not.
+	if (isExternal && ['lgw.att.com', 'api.att.com'].indexOf(pData.general.host) < 0) {
+		msg = 'host names must be either <em>lgw.att.com</em> or <em>api.att.com</em>';
+		obj = createErrorObj(pData.general.host, 'error', msg);
+		errors.general.push(obj);
+	}
+
 	return;
 };
 
