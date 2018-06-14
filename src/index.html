@@ -17,10 +17,13 @@
     <script src="js/restlintlib.js"></script>
     <script type="text/javascript">
         function clearTables() {
-            ['general', 'methods', 'paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
+            // ['general', 'methods', 'paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
+            getCategories().forEach(function(k) {
                 $("#"+k+"-table-body").children("tr").remove();
                 $("#"+k+"-issues").html('');
             });
+            $("#summary-table-footer").children("tr").remove();
+            
         }
 
         function onReaderLoad(event){
@@ -30,8 +33,8 @@
             checkPathStructure('paths', getData('paths'));
             checkResources(getData('paths'));
             checkBasePath();
-            checkStatusCodes(getData('statuses'));
-            checkMethods(getData('statuses'));
+            checkStatusCodes(getData('statuscodes'));
+            checkMethods(getData('statuscodes'));
 
 
             var w = 0, wt = 0, e = 0, et = 0, i = 0, it = 0, cnt = 1;
@@ -90,8 +93,8 @@
             et += e;
 
             var w = 0, e = 0, i = 0, cnt = 1;
-            getErrors('statuses').forEach(function(key) {
-                addRow('statuses', cnt, key.name, key.level, key.msg);
+            getErrors('statuscodes').forEach(function(key) {
+                addRow('status-codes', cnt, key.name, key.level, key.msg);
                 cnt += 1;
                 if (key.level === 'warning') {
                     w++;
@@ -101,8 +104,8 @@
                     i++;
                 }
             });
-            $('#statuses-issues').html(`Total Status Code issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-            addSummaryRow('statuses', i, w, e);
+            $('#status-codes-issues').html(`Total Status Code issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+            addSummaryRow('status-codes', i, w, e);
             it += i;
             wt += w;
             et += e;
@@ -120,26 +123,20 @@
             // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
             row.append(cells);
             $("#" + cat + "-table-body").append(row);
+
+            return;
         };
 
         function addSummaryRow(cat, infos, warnings, errors) {
-            // var lvl = level;
-            // if (level === 'error') {
-            //     lvl = 'danger';
-            // }
-            // row = $("<tr></tr>");
             var total = infos + warnings + errors;
             if (cat === 'total') {
-                row = `<tr><th>${cat}</th><th class='info'>${infos}</th><th class='warning'>${warnings}</th><th class='danger'>${errors}</th><th>${total}</th></tr>`;
+                row = `<tr><th>${capitalize(cat)}</th><th class='info'>${infos}</th><th class='warning'>${warnings}</th><th class='danger'>${errors}</th><th>${total}</th></tr>`;
                 $("#summary-table-footer").append(row);
             } else {
-                row = `<tr><td>${cat}</td><td class='info'>${infos}</td><td class='warning'>${warnings}</td><td class='danger'>${errors}</td><td>${total}</td><tr>`;
+                row = `<tr><td>${capitalize(cat)}</td><td class='info'>${infos}</td><td class='warning'>${warnings}</td><td class='danger'>${errors}</td><td>${total}</td><tr>`;
                 $("#summary-table-body").append(row);
             }
-
-            // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
-            // row.append(cells);
-            // $("#summary-table-footer").append(row);
+            return;
         };
 
 
@@ -222,7 +219,7 @@
         <li><a data-toggle="tab" href="#methods">Methods</a></li>
         <li><a data-toggle="tab" href="#paths">Paths</a></li>
         <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
-        <li><a data-toggle="tab" href="#statuses">Status Codes</a></li>
+        <li><a data-toggle="tab" href="#status-codes">Status Codes</a></li>
         <li><a data-toggle="tab" href="#errors">Exceptions</a></li>
     </ul>
 
@@ -311,8 +308,8 @@
             </table>
         </div>
 
-        <div id="statuses" class="tab-pane fade in active">
-            <table id="statuses-table" class="table table-hover table-sm table-responsive table-condensed">
+        <div id="status-codes" class="tab-pane fade in active">
+            <table id="status-codes-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -321,10 +318,10 @@
                     <th scope="col">Message</th>
                 </tr>
                 </thead>
-                <tbody id="statuses-table-body">
+                <tbody id="status-codes-table-body">
                 </tbody>
             </table>
-            <h5 id="statuses-issues"></h5>
+            <h5 id="status-codes-issues"></h5>
         </div>
 
         <div id="errors" class="tab-pane fade in active">
