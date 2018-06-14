@@ -4,18 +4,20 @@
 		general: {},
 		parameters: [],
 		paths: [],
-		statuses: [],
+		statuscodes: [],
 		errors: []
 	};
 
 	var errors = {
 		general: [],
-		verbs: [],
+		httpmethods: [],
 		parameters: [],
 		paths: [],
-		statuses: [],
+		statuscodes: [],
 		exceptions: []
 	};
+
+	var categories = ['summary', 'general', 'http-methods', 'paths', 'parameters', 'status-codes', 'exceptions'];
 
 	var allowedHttpMethods = ['POST', 'PUT', 'GET', 'DELETE'];
 	var allowedHostsExt = ['lgw.att.com', 'api.att.com'];
@@ -55,6 +57,26 @@
 		}
 
 	}
+
+	/**
+	* @description returns the list of categories
+	*/
+	var getCategories = function() {
+		return categories;
+	};
+
+	/**
+	* @description capitalizes and splits string at '-'
+	* @param {string} title - string to capitalize
+	*/
+	var capitalize = function(string) {
+		var ret = [];
+		string.split('-').forEach(function(k) {
+			ret.push(k.charAt(0).toUpperCase() + k.substr(1));
+		});
+
+		return ret.join(' ');
+	};
 
 	/**
 	* @description gets the properties of 'obj', with a name prefix of 'prefix'
@@ -146,7 +168,7 @@
 	};
 
 	/**
-	* @description creates an object that gets added to statuses
+	* @description creates an object that gets added to statuscodes
 	* @param {string} title - The title of the book
 	* @param {string} author - The author of the book
 	*/
@@ -283,7 +305,7 @@
 					msg += " (only show: " + s[idx].statuses.join(',') + ")";
 					name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
 					obj = createErrorObj(name, 'warning', msg);
-					errors.statuses.push(obj);
+					errors.statuscodes.push(obj);
 				}
 			}
 
@@ -300,7 +322,7 @@
 				msg = 'missing mandatory HTTP status codes: ' + man.join(', ');
 				name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
 				obj = createErrorObj(name, 'error', msg);
-				errors.statuses.push(obj);
+				errors.statuscodes.push(obj);
 			}
 
 			// check optional status codes
@@ -316,7 +338,7 @@
 				msg = 'missing optional HTTP status codes (verify if codes are needed): ' + opt.join(', ');
 				name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
 				obj = createErrorObj(name, 'warning', msg);
-				errors.statuses.push(obj);
+				errors.statuscodes.push(obj);
 			}
 		});
 
@@ -333,7 +355,7 @@ var checkMethods = function(s) {
 		if (allowedHttpMethods.indexOf(method) < 0) {
 			msg = 'The only HTTP methods allowed are: ' + allowedHttpMethods.join(',');
 			obj = createErrorObj(method, 'error', msg);
-			errors.verbs.push(obj);				
+			errors.httpmethods.push(obj);				
 		}
 
 	});
@@ -370,15 +392,16 @@ var checkGeneral = function() {
 
 /**
 * @description retrieves the errors for a specific type of check
-* @param {string} type - paths, parameters, statuses, errors
+* @param {string} type - paths, parameters, statuscodes, errors
 */
 var getErrors = function(type) {
+	type = type.replace('-', '');
 	return errors[type];
 };
 
 /**
 * @description retrieves the data for a specific type of check
-* @param {string} type - paths, parameters, statuses, errors
+* @param {string} type - paths, parameters, statuscodes, errors
 */
 var getData = function(type) {
 	return pData[type];
@@ -448,7 +471,7 @@ var clearData = function() {
 				Object.keys(jsdata.paths[key][k].responses).forEach(function(kk, ii) {
 					arr.push(kk);
 				});
-				pData.statuses.push(createStatusObj(key, k, arr));
+				pData.statuscodes.push(createStatusObj(key, k, arr));
 			});
 
 			getProps('', pData.paths[index]).forEach(function(key, idx) {

@@ -17,10 +17,13 @@
     <script src="js/restlintlib.js"></script>
     <script type="text/javascript">
         function clearTables() {
-            ['general', 'methods', 'paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
+            getCategories().forEach(function(k) {
                 $("#"+k+"-table-body").children("tr").remove();
                 $("#"+k+"-issues").html('');
             });
+            $("#summary-table-footer").children("tr").remove();
+            
+            return;
         }
 
         function onReaderLoad(event){
@@ -30,66 +33,38 @@
             checkPathStructure('paths', getData('paths'));
             checkResources(getData('paths'));
             checkBasePath();
-            checkStatusCodes(getData('statuses'));
-            checkMethods(getData('statuses'));
+            checkStatusCodes(getData('statuscodes'));
+            checkMethods(getData('statuscodes'));
 
-            var w = 0, e = 0, i = 0, cnt = 1;
-            getErrors('general').forEach(function(key) {
-                addRow('general', cnt, key.name, key.level, key.msg);
-                cnt += 1;
-                if (key.level === 'warning') {
-                    w++;
-                } else if (key.level === 'error') {
-                    e++;
-                } else if (key.level === 'info') {
-                    i++;
-                }
+            var wt = 0, et = 0, it = 0;
+            var cats = getCategories();
+            var index = cats.indexOf('summary');
+            cats.splice(index, 1);
+            cats.forEach(function(cat, idx) {
+                console.log('CAT: ' + cat);
+                var w = 0, e = 0, i = 0, cnt = 1;
+                getErrors(cat).forEach(function(key) {
+                    addRow(cat, cnt, key.name, key.level, key.msg);
+                    cnt += 1;
+                    if (key.level === 'warning') {
+                        w++;
+                    } else if (key.level === 'error') {
+                        e++;
+                    } else if (key.level === 'info') {
+                        i++;
+                    }
+                });
+                $('#' + cat + '-issues').html(`Total ${capitalize(cat)} issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+                addSummaryRow(cat, i, w, e);
+                it += i;
+                wt += w;
+                et += e;
             });
-            $('#general-issues').html(`Total General issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
 
+            addSummaryRow('total', it, wt, et);
 
-            var w = 0, e = 0, i = 0, cnt = 1;
-            getErrors('verbs').forEach(function(key) {
-                addRow('methods', cnt, key.name, key.level, key.msg);
-                cnt += 1;
-                if (key.level === 'warning') {
-                    w++;
-                } else if (key.level === 'error') {
-                    e++;
-                } else if (key.level === 'info') {
-                    i++;
-                }
-            });
-            $('#methods-issues').html(`Total Methods issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-
-            var w = 0, e = 0, i = 0, cnt = 1;
-            getErrors('paths').forEach(function(key) {
-                addRow('paths', cnt, key.name, key.level, key.msg);
-                cnt += 1;
-                if (key.level === 'warning') {
-                    w++;
-                } else if (key.level === 'error') {
-                    e++;
-                } else if (key.level === 'info') {
-                    i++;
-                }
-            });
-            $('#paths-issues').html(`Total Paths issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-
-            var w = 0, e = 0, i = 0, cnt = 1;
-            getErrors('statuses').forEach(function(key) {
-                addRow('statuses', cnt, key.name, key.level, key.msg);
-                cnt += 1;
-                if (key.level === 'warning') {
-                    w++;
-                } else if (key.level === 'error') {
-                    e++;
-                } else if (key.level === 'info') {
-                    i++;
-                }
-            });
-            $('#statuses-issues').html(`Total Status Code issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-        }
+            return;
+        };
 
         function addRow(cat, num, item, level, msg) {
             var lvl = level;
@@ -101,7 +76,23 @@
             // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
             row.append(cells);
             $("#" + cat + "-table-body").append(row);
-        }
+
+            return;
+        };
+
+        function addSummaryRow(cat, infos, warnings, errors) {
+            var total = infos + warnings + errors;
+            if (cat === 'total') {
+                row = `<tr><th>${capitalize(cat)}</th><th class='info'>${infos}</th><th class='warning'>${warnings}</th><th class='danger'>${errors}</th><th>${total}</th></tr>`;
+                $("#summary-table-footer").append(row);
+            } else {
+                row = `<tr><td>${capitalize(cat)}</td><td class='info'>${infos}</td><td class='warning'>${warnings}</td><td class='danger'>${errors}</td><td>${total}</td><tr>`;
+                $("#summary-table-body").append(row);
+            }
+            return;
+        };
+
+
 
         $(document).ready(function() {
 // $('#paths-table').on('click-row.bs.table', function (e, row, $element) {
@@ -115,7 +106,7 @@
 // });
 
             $('.nav-tabs a[href="#parameters"]').tab('show');
-            $('.nav-tabs a[href="#general"]').tab('show');
+            $('.nav-tabs a[href="#summary"]').tab('show');
             $("#open_btn").click(function() {
                 $.FileDialog({multiple: true, accept: "text/csv, application/json"}).on('files.bs.filedialog', function(ev) {
                     clearTables();
@@ -176,18 +167,38 @@
 
 
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#general">General</a></li>
-        <li><a data-toggle="tab" href="#methods">Methods</a></li>
+        <li class="active"><a data-toggle="tab" href="#summary">Summary</a></li>
+        <li><a data-toggle="tab" href="#general">General</a></li>
+        <li><a data-toggle="tab" href="#http-methods">HTTP Methods</a></li>
         <li><a data-toggle="tab" href="#paths">Paths</a></li>
         <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
-        <li><a data-toggle="tab" href="#statuses">Status Codes</a></li>
+        <li><a data-toggle="tab" href="#status-codes">Status Codes</a></li>
         <li><a data-toggle="tab" href="#errors">Exceptions</a></li>
     </ul>
 
     <div class="tab-content">
 
+       <div id="summary" class="tab-pane fade in active">
+            <table id="summary-table" class="table table-hover table-sm table-responsive table-condensed table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Category</th>
+                    <th scope="col"># of Infos</th>
+                    <th scope="col"># of Warnings</th>
+                    <th scope="col"># of Errors</th>
+                    <th scope="col">Total</th>
+                </tr>
+                </thead>
+                <tfoot  id='summary-table-footer'>
+                </tfoot>
+                <tbody id="summary-table-body">
+                </tbody>
+            </table>
+            <h5 id="summary-issues"></h5>
+        </div>
+
         <div id="general" class="tab-pane fade in active">
-            <table id="general-table" class="table table-hover table-sm table-responsive">
+            <table id="general-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -202,8 +213,8 @@
             <h5 id="general-issues"></h5>
         </div>
 
-       <div id="methods" class="tab-pane fade in active">
-            <table id="methods-table" class="table table-hover table-sm table-responsive">
+       <div id="http-methods" class="tab-pane fade in active">
+            <table id="http-methods-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -212,14 +223,14 @@
                     <th scope="col">Message</th>
                 </tr>
                 </thead>
-                <tbody id="methods-table-body">
+                <tbody id="http-methods-table-body">
                 </tbody>
             </table>
-            <h5 id="methods-issues"></h5>
+            <h5 id="http-methods-issues"></h5>
         </div>
 
         <div id="paths" class="tab-pane fade in active">
-            <table id="paths-table" class="table table-hover table-sm table-responsive">
+            <table id="paths-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -236,7 +247,7 @@
 
         <div id="parameters" class="tab-pane fade in active">
             <h3>NOT IMPLEMENTED YET</h3>
-            <table id="parameters-table" class="table table-hover table-sm table-responsive">
+            <table id="parameters-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -250,8 +261,8 @@
             </table>
         </div>
 
-        <div id="statuses" class="tab-pane fade in active">
-            <table id="statuses-table" class="table table-hover table-sm table-responsive">
+        <div id="status-codes" class="tab-pane fade in active">
+            <table id="status-codes-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -260,15 +271,15 @@
                     <th scope="col">Message</th>
                 </tr>
                 </thead>
-                <tbody id="statuses-table-body">
+                <tbody id="status-codes-table-body">
                 </tbody>
             </table>
-            <h5 id="statuses-issues"></h5>
+            <h5 id="status-codes-issues"></h5>
         </div>
 
         <div id="errors" class="tab-pane fade in active">
             <h3>NOT IMPLEMENTED YET</h3>
-            <table id="errors-table" class="table table-hover table-sm table-responsive">
+            <table id="errors-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
