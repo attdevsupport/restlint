@@ -1,5 +1,5 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>REST Lint</title><link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"><style>.bfd-dropfield{display:inline;padding:5px}.bfd-dropfield-inner{border:5px dashed #888;color:#888;cursor:pointer;font-size:32px;text-align:center}.bfd-dropfield-inner.bfd-dragover,.bfd-dropfield-inner:hover{border-color:#bbb;color:#bbb}.bfd-info{overflow:hidden;white-space:nowrap}.bfd-error-message{text-align:center}.bfd-remove{cursor:pointer}</style></head><body class="container"><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script src="js/bootstrap.fd.js"></script><script src="js/restlintlib.js"></script><script type="text/javascript">function clearTables() {
-            ['paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
+            ['general', 'methods', 'paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
                 $("#"+k+"-table-body").children("tr").remove();
                 $("#"+k+"-issues").html('');
             });
@@ -8,10 +8,42 @@
         function onReaderLoad(event){
             // var obj = JSON.parse(event.target.result);
             loadJson(event.target.result);
+            checkGeneral();
             checkPathStructure('paths', getData('paths'));
             checkResources(getData('paths'));
             checkBasePath();
             checkStatusCodes(getData('statuses'));
+            checkMethods(getData('statuses'));
+
+            var w = 0, e = 0, i = 0, cnt = 1;
+            getErrors('general').forEach(function(key) {
+                addRow('general', cnt, key.name, key.level, key.msg);
+                cnt += 1;
+                if (key.level === 'warning') {
+                    w++;
+                } else if (key.level === 'error') {
+                    e++;
+                } else if (key.level === 'info') {
+                    i++;
+                }
+            });
+            $('#general-issues').html(`Total General issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+
+
+            var w = 0, e = 0, i = 0, cnt = 1;
+            getErrors('verbs').forEach(function(key) {
+                addRow('methods', cnt, key.name, key.level, key.msg);
+                cnt += 1;
+                if (key.level === 'warning') {
+                    w++;
+                } else if (key.level === 'error') {
+                    e++;
+                } else if (key.level === 'info') {
+                    i++;
+                }
+            });
+            $('#methods-issues').html(`Total Methods issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+
             var w = 0, e = 0, i = 0, cnt = 1;
             getErrors('paths').forEach(function(key) {
                 addRow('paths', cnt, key.name, key.level, key.msg);
@@ -25,6 +57,7 @@
                 }
             });
             $('#paths-issues').html(`Total Paths issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+
             var w = 0, e = 0, i = 0, cnt = 1;
             getErrors('statuses').forEach(function(key) {
                 addRow('statuses', cnt, key.name, key.level, key.msg);
@@ -46,7 +79,8 @@
                 lvl = 'danger';
             }
             row = $("<tr class='" + lvl + "'></tr>");
-            cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
+            cells = `<td>${num}</td><td>${item}</td><td>${msg}</td>`;
+            // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
             row.append(cells);
             $("#" + cat + "-table-body").append(row);
         }
@@ -63,7 +97,7 @@
 // });
 
             $('.nav-tabs a[href="#parameters"]').tab('show');
-            $('.nav-tabs a[href="#paths"]').tab('show');
+            $('.nav-tabs a[href="#general"]').tab('show');
             $("#open_btn").click(function() {
                 $.FileDialog({multiple: true, accept: "text/csv, application/json"}).on('files.bs.filedialog', function(ev) {
                     clearTables();
@@ -86,4 +120,4 @@
                 clearTables();
                 clearData();
             });
-         });</script><br><h2>RestLint - A ReST API Design Static Checker</h2><br><button id="open_btn" class="btn btn-primary">Open files</button> <button id="clear_btn" class="btn btn-secondary">Clear</button><br><h4 id="output"></h4><br><ul class="nav nav-tabs"><li class="active"><a data-toggle="tab" href="#paths">Paths</a></li><li><a data-toggle="tab" href="#parameters">Parameters</a></li><li><a data-toggle="tab" href="#statuses">Status Codes</a></li><li><a data-toggle="tab" href="#errors">Exceptions</a></li></ul><div class="tab-content"><div id="paths" class="tab-pane fade in active"><table id="paths-table" class="table table-hover table-sm table-responsive"><thead><tr><th scope="col">#</th><th scope="col">Issue</th><th scope="col">Level</th><th scope="col">Message</th></tr></thead><tbody id="paths-table-body"></tbody></table><h5 id="paths-issues"></h5></div><div id="parameters" class="tab-pane fade in active"><h3>NOT IMPLEMENTED YET</h3><table id="parameters-table" class="table table-hover table-sm table-responsive"><thead><tr><th scope="col">#</th><th scope="col">Issue</th><th scope="col">Level</th><th scope="col">Message</th></tr></thead><tbody id="parameters-table-body"></tbody></table></div><div id="statuses" class="tab-pane fade in active"><table id="statuses-table" class="table table-hover table-sm table-responsive"><thead><tr><th scope="col">#</th><th scope="col">Issue</th><th scope="col">Level</th><th scope="col">Message</th></tr></thead><tbody id="statuses-table-body"></tbody></table><h5 id="statuses-issues"></h5></div><div id="errors" class="tab-pane fade in active"><h3>NOT IMPLEMENTED YET</h3><table id="errors-table" class="table table-hover table-sm table-responsive"><thead><tr><th scope="col">#</th><th scope="col">Issue</th><th scope="col">Level</th><th scope="col">Message</th></tr></thead><tbody id="errors-table-body"></tbody></table></div></div><div class="panel-group"><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title text-center"><a data-toggle="collapse" href="#collapse1">Legend</a></h4></div><div id="collapse1" class="panel-collapse collapse"><div class="panel-body"><table id="parameters-table" class="table table-hover table-sm table-responsive"><tbody><tr><td scope="col" class="info col-sm-4"><small><b>info</b> - there is not enough information to make a solid determination, but user should investigate further if issue is a violation of standards or best practices</small></td><td scope="col" class="warning col-sm-4"><small><b>warning</b> - there's a high probability that the issue is a violation</small></td><td scope="col" class="danger col-sm-4"><small><b>error</b> - the issue is a violation of a standard (HTTP, etc) or best practice</small></td></tr></tbody></table></div></div></div></div></body></html>
+         });</script><br><h2>RestLint - A ReST API Design Static Checker</h2><br><button id="open_btn" class="btn btn-primary">Open files</button> <button id="clear_btn" class="btn btn-secondary">Clear</button><br><h4 id="output"></h4><br><ul class="nav nav-tabs"><li class="active"><a data-toggle="tab" href="#general">General</a></li><li><a data-toggle="tab" href="#methods">Methods</a></li><li><a data-toggle="tab" href="#paths">Paths</a></li><li><a data-toggle="tab" href="#parameters">Parameters</a></li><li><a data-toggle="tab" href="#statuses">Status Codes</a></li><li><a data-toggle="tab" href="#errors">Exceptions</a></li></ul><div class="tab-content"><div id="general" class="tab-pane fade in active"><table id="general-table" class="table table-hover table-sm table-responsive"><thead><tr><th scope="col">#</th><th scope="col">Issue</th><th scope="col">Message</th></tr></thead><tbody id="general-table-body"></tbody></table><h5 id="general-issues"></h5></div><div id="methods" class="tab-pane fade in active"><table id="methods-table" class="table table-hover table-sm table-responsive"><thead><tr><th scope="col">#</th><th scope="col">Issue</th><th scope="col">Message</th></tr></thead><tbody id="methods-table-body"></tbody></table><h5 id="methods-issues"></h5></div><div id="paths" class="tab-pane fade in active"><table id="paths-table" class="table table-hover table-sm table-responsive"><thead><tr><th scope="col">#</th><th scope="col">Issue</th><th scope="col">Message</th></tr></thead><tbody id="paths-table-body"></tbody></table><h5 id="paths-issues"></h5></div><div id="parameters" class="tab-pane fade in active"><h3>NOT IMPLEMENTED YET</h3><table id="parameters-table" class="table table-hover table-sm table-responsive"><thead><tr><th scope="col">#</th><th scope="col">Issue</th><th scope="col">Message</th></tr></thead><tbody id="parameters-table-body"></tbody></table></div><div id="statuses" class="tab-pane fade in active"><table id="statuses-table" class="table table-hover table-sm table-responsive"><thead><tr><th scope="col">#</th><th scope="col">Issue</th><th scope="col">Message</th></tr></thead><tbody id="statuses-table-body"></tbody></table><h5 id="statuses-issues"></h5></div><div id="errors" class="tab-pane fade in active"><h3>NOT IMPLEMENTED YET</h3><table id="errors-table" class="table table-hover table-sm table-responsive"><thead><tr><th scope="col">#</th><th scope="col">Issue</th><th scope="col">Message</th></tr></thead><tbody id="errors-table-body"></tbody></table></div></div><div class="panel-group"><div class="panel panel-default"><div class="panel-heading"><h4 class="panel-title text-center"><a data-toggle="collapse" href="#collapse1">Legend</a></h4></div><div id="collapse1" class="panel-collapse collapse"><div class="panel-body"><table id="parameters-table" class="table table-hover table-sm table-responsive"><tbody><tr><td scope="col" class="info col-sm-4"><small><b>info</b> - There is not enough information to make a solid determination, or is just a suggestion. But user should investigate further to determine if the suggestion makes sense.<td scope="col" class="warning col-sm-4"><small><b>warning</b> - There's a high probability that the issue is a violation, but further investigation is needed. Check with the <a href="https://tools.ietf.org/html/rfc7230" target="_blank">HTTP standards (RFC 7230-7235)</a> and <a href="http://tss.att.com/document/R113140.pdf" target="_blank">AT&T RESTful Standards</a>.</small></td><td scope="col" class="danger col-sm-4"><small><b>error</b> - The issue is a violation of a standard (HTTP, AT&T, etc) or best practice. This issue <em>must</em> be fixed. Check with the <a href="https://tools.ietf.org/html/rfc7230" target="_blank">HTTP standards (RFC 7230-7235)</a> and <a href="http://tss.att.com/document/R113140.pdf" target="_blank">AT&T RESTful Standards</a>.</small></td></small></td></tr></tbody></table></div></div></div></div></body></html>
