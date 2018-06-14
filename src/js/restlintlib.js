@@ -383,30 +383,19 @@ var getData = function(type) {
 * @description clears all the data to start over
 */
 var clearData = function() {
-	pData = {
-		general: {},
-		parameters: [],
-		paths: [],
-		statuses: [],
-		errors: []
-	};
-// Object.keys(pData).forEach(function(key, idx) {
-// 	console.log(key + ' ' + idx + ' ' + pData[key].length);
-// 	pData.key.length = 0;
-// });
+
+	Object.keys(pData).forEach(function(key, idx) {
+		if (Array.isArray(pData[key])) {
+			pData[key].length = 0;
+		} else {
+			pData[key] = {};
+		}
+		
+	});
 
 	Object.keys(errors).forEach(function(key, idx) {
 		errors[key].length = 0;
 	});
-
-	// errors = {
-	// 	general: [],
-	// 	verbs: [],
-	// 	parameters: [],
-	// 	paths: [],
-	// 	statuses: [],
-	// 	exceptions: []
-	// };
 
 	jsdata = '';
 
