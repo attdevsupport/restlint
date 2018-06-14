@@ -31,6 +31,7 @@
             checkResources(getData('paths'));
             checkBasePath();
             checkStatusCodes(getData('statuses'));
+            checkMethods(getData('statuses'));
             var w = 0, e = 0, i = 0, cnt = 1;
             getErrors('general').forEach(function(key) {
                 addRow('general', cnt, key.name, key.level, key.msg);
@@ -44,6 +45,21 @@
                 }
             });
             $('#general-issues').html(`Total General issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+
+
+            var w = 0, e = 0, i = 0, cnt = 1;
+            getErrors('verbs').forEach(function(key) {
+                addRow('methods', cnt, key.name, key.level, key.msg);
+                cnt += 1;
+                if (key.level === 'warning') {
+                    w++;
+                } else if (key.level === 'error') {
+                    e++;
+                } else if (key.level === 'info') {
+                    i++;
+                }
+            });
+            $('#methods-issues').html(`Total Methods issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
 
             var w = 0, e = 0, i = 0, cnt = 1;
             getErrors('paths').forEach(function(key) {
@@ -133,7 +149,7 @@
     <br>
     
 
-    <div class="panel-group">
+<!--     <div class="panel-group">
             <div class="panel panel-default">
               <div class="panel-heading">
                 <h4 class="panel-title text-center">
@@ -154,11 +170,12 @@
                 </div>
               </div>
             </div>
-        </div>
+        </div> -->
 
 
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="tab" href="#general">General</a></li>
+        <li><a data-toggle="tab" href="#methods">Methods</a></li>
         <li><a data-toggle="tab" href="#paths">Paths</a></li>
         <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
         <li><a data-toggle="tab" href="#statuses">Status Codes</a></li>
@@ -181,6 +198,22 @@
                 </tbody>
             </table>
             <h5 id="general-issues"></h5>
+        </div>
+
+       <div id="methods" class="tab-pane fade in active">
+            <table id="methods-table" class="table table-hover table-sm table-responsive">
+                <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Issue</th>
+                    <th scope="col">Level</th>
+                    <th scope="col">Message</th>
+                </tr>
+                </thead>
+                <tbody id="methods-table-body">
+                </tbody>
+            </table>
+            <h5 id="methods-issues"></h5>
         </div>
 
         <div id="paths" class="tab-pane fade in active">

@@ -10,12 +10,14 @@
 
 	var errors = {
 		general: [],
+		verbs: [],
 		parameters: [],
 		paths: [],
 		statuses: [],
 		exceptions: []
 	};
 
+	var allowedHttpMethods = ['POST', 'PUT', 'GET', 'DELETE'];
 	var jsdata = '';
 
 	var naming = 'lowerCamel';
@@ -287,11 +289,13 @@
 
 			// check mandatory status codes
 			var man = [];
-			statuscodes[method].mandatory.forEach(function(k, i) {
-				if (s[idx].statuses.indexOf(k)) {
-					man.push(k);
-				}
-			});
+			if (typeof statuscodes[method] != 'undefined') {
+				statuscodes[method].mandatory.forEach(function(k, i) {
+					if (s[idx].statuses.indexOf(k)) {
+						man.push(k);
+					}
+				});
+			}
 			if (man.length > 0) {
 				msg = 'missing mandatory HTTP status codes: ' + man.join(', ');
 				name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
@@ -301,11 +305,13 @@
 
 			// check optional status codes
 			var opt = [];
-			statuscodes[method].optional.forEach(function(k, i) {
-				if (s[idx].statuses.indexOf(k)) {
-					opt.push(k);
-				}
-			});
+			if (typeof statuscodes[method] != 'undefined') {
+				statuscodes[method].optional.forEach(function(k, i) {
+					if (s[idx].statuses.indexOf(k)) {
+						opt.push(k);
+					}
+				});
+			}
 			if (opt.length > 0) {
 				msg = 'missing optional HTTP status codes (verify if codes are needed): ' + opt.join(', ');
 				name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
@@ -317,13 +323,31 @@
 		return;
 	};
 
+
+var checkMethods = function(s) {
+		
+	s.forEach(function(key, idx) {
+		var msg = '', name = '', obj = {};
+		var method = key.method.toUpperCase();
+
+		if (allowedHttpMethods.indexOf(method) < 0) {
+			msg = 'The only HTTP methods allowed are: ' + allowedHttpMethods.join(',');
+			obj = createErrorObj(method, 'error', msg);
+			errors.verbs.push(obj);				
+		}
+
+	});
+
+	return;
+};
+
+
 /**
 * @description checks errors that fall into the General category
 */
 var checkGeneral = function() {
 	var msg = '', obj = {};
 	if (pData.general.schemes.length != 1 || pData.general.schemes.indexOf('https') < 0) {
-		console.log('TROUBLE');
 		msg = 'schemes must have <em>https</em> and only <em>https</em>';
 		obj = createErrorObj(pData.general.schemes.join(','), 'error', msg);
 		errors.general.push(obj);
@@ -369,6 +393,7 @@ var clearData = function() {
 
 	errors = {
 		general: [],
+		verbs: [],
 		parameters: [],
 		paths: [],
 		statuses: [],
