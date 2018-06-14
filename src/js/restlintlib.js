@@ -184,6 +184,11 @@
 			errors.paths.push(createErrorObj(pData.general.basePath, 'warning', msg));
 		}
 
+		if (pData.general.version === '2.0') {
+			msg = "Consider upgrading to the newer <a href='https://www.openapis.org/' target='_blank'>OpenAPI</a> spec. The Swagger spec will be outdated, and has less features. You can convert your Swagger spec into OpenAPI online (e.g. <a href='https://github.com/mermade/swagger2openapi' target='_blank'>swagger2openapi</a>).";
+			errors.general.push(createErrorObj('Version = ' + pData.general.version, 'info', msg));
+		}
+
 		return;
 	};
 
@@ -430,6 +435,11 @@ var clearData = function() {
 		pData.general.basePath = jsdata.basePath;
 		pData.general.host = jsdata.host;
 		pData.general.schemes = jsdata.schemes;
+		if (jsdata.swagger) {
+			pData.general.version = jsdata.swagger;
+		} else {
+			pData.general.version = jsdata.openapi;
+		}
 
 		Object.keys(jsdata.paths).forEach(function(key, index) {
 			pData.paths[index] = key;
