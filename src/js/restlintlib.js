@@ -184,11 +184,6 @@
 			errors.paths.push(createErrorObj(pData.general.basePath, 'warning', msg));
 		}
 
-		if (pData.general.version === '2.0') {
-			msg = "Consider upgrading to the newer <a href='https://www.openapis.org/' target='_blank'>OpenAPI</a> spec. The Swagger spec will be outdated, and has less features. You can convert your Swagger spec into OpenAPI online (e.g. <a href='https://github.com/mermade/swagger2openapi' target='_blank'>swagger2openapi</a>).";
-			errors.general.push(createErrorObj('Version = ' + pData.general.version, 'info', msg));
-		}
-
 		return;
 	};
 
@@ -363,6 +358,11 @@ var checkGeneral = function() {
 		msg = 'host names for externally exposed APIs must be either <em>lgw.att.com</em> or <em>api.att.com</em>';
 		obj = createErrorObj(pData.general.host, 'error', msg);
 		errors.general.push(obj);
+	}
+
+	if (pData.general.version === '2.0') {
+		msg = "Consider upgrading to the newer <a href='https://www.openapis.org/' target='_blank'>OpenAPI</a> spec. The Swagger spec will be outdated, and has less features. You can convert your Swagger spec into OpenAPI online (e.g. <a href='https://github.com/mermade/swagger2openapi' target='_blank'>swagger2openapi</a>).";
+		errors.general.push(createErrorObj('Version = ' + pData.general.version, 'info', msg));
 	}
 
 	return;
