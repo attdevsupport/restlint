@@ -23,6 +23,7 @@
             });
             $("#summary-table-footer").children("tr").remove();
             
+            return;
         }
 
         function onReaderLoad(event){
@@ -61,7 +62,9 @@
             });
 
             addSummaryRow('total', it, wt, et);
-        }
+
+            return;
+        };
 
         function addRow(cat, num, item, level, msg) {
             var lvl = level;
