@@ -17,7 +17,7 @@
     <script src="js/restlintlib.js"></script>
     <script type="text/javascript">
         function clearTables() {
-            ['general', 'paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
+            ['general', 'methods', 'paths', 'parameters', 'statuses', 'errors'].forEach(function(k) {
                 $("#"+k+"-table-body").children("tr").remove();
                 $("#"+k+"-issues").html('');
             });
