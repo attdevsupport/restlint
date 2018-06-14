@@ -164,9 +164,20 @@
 		x.push(pData.general.basePath);
 		checkPathStructure('basePath', x);
 
-		if (! (pData.general.basePath.match(/v[0-9]/g) || []).length) {
-			msg = "basePath should have version string (v[0-9], e.g. v1)";
-			errors.paths.push(createErrorObj(pData.general.basePath, 'error', msg));
+		if (! (pData.general.basePath.match(/^(\/.*){1,3}\/v[0-9]/) || []).length) {
+
+			if (! (pData.general.basePath.match(/v[0-9]/g) || []).length) {
+				msg = "basePath should have version string (v[0-9], e.g. v1)";
+				errors.paths.push(createErrorObj(pData.general.basePath, 'error', msg));
+			} else {
+				msg = "basePath should be of the form {/routing}*{/APIName}/{version}{/resourcePath}, where routing can contain 0-2 path segments.";
+				errors.paths.push(createErrorObj(pData.general.basePath, 'error', msg));
+			}
+		}
+
+		if ((pData.general.basePath.match(/(\/)?flow\//) || []).length) {
+			msg = "basePath should have 'flow' as a path segment <em>only</em> if the API is Flow based and is being exposed through BlackFlag";
+			errors.paths.push(createErrorObj(pData.general.basePath, 'warning', msg));
 		}
 
 		return;
@@ -300,6 +311,8 @@
 				errors.statuses.push(obj);
 			}
 		});
+
+		return;
 	};
 
 /**
@@ -314,6 +327,7 @@ var checkGeneral = function() {
 		obj = createErrorObj(pData.general.schemes.join(','), 'error', msg);
 		errors.general.push(obj);
 	}
+	return;
 };
 
 /**
