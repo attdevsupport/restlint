@@ -33,7 +33,8 @@
             checkStatusCodes(getData('statuses'));
             checkMethods(getData('statuses'));
 
-            var w = 0, e = 0, i = 0, cnt = 1;
+
+            var w = 0, wt = 0, e = 0, et = 0, i = 0, it = 0, cnt = 1;
             getErrors('general').forEach(function(key) {
                 addRow('general', cnt, key.name, key.level, key.msg);
                 cnt += 1;
@@ -46,6 +47,10 @@
                 }
             });
             $('#general-issues').html(`Total General issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+            addSummaryRow('general', i, w, e);
+            it += i;
+            wt += w;
+            et += e;
 
 
             var w = 0, e = 0, i = 0, cnt = 1;
@@ -61,6 +66,10 @@
                 }
             });
             $('#methods-issues').html(`Total Methods issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+            addSummaryRow('methods', i, w, e);
+            it += i;
+            wt += w;
+            et += e;
 
             var w = 0, e = 0, i = 0, cnt = 1;
             getErrors('paths').forEach(function(key) {
@@ -75,6 +84,10 @@
                 }
             });
             $('#paths-issues').html(`Total Paths issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+            addSummaryRow('paths', i, w, e);
+            it += i;
+            wt += w;
+            et += e;
 
             var w = 0, e = 0, i = 0, cnt = 1;
             getErrors('statuses').forEach(function(key) {
@@ -89,6 +102,12 @@
                 }
             });
             $('#statuses-issues').html(`Total Status Code issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+            addSummaryRow('statuses', i, w, e);
+            it += i;
+            wt += w;
+            et += e;
+
+            addSummaryRow('total', it, wt, et);
         }
 
         function addRow(cat, num, item, level, msg) {
@@ -101,7 +120,29 @@
             // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
             row.append(cells);
             $("#" + cat + "-table-body").append(row);
-        }
+        };
+
+        function addSummaryRow(cat, infos, warnings, errors) {
+            // var lvl = level;
+            // if (level === 'error') {
+            //     lvl = 'danger';
+            // }
+            // row = $("<tr></tr>");
+            var total = infos + warnings + errors;
+            if (cat === 'total') {
+                row = `<tr><th>${cat}</th><th class='info'>${infos}</th><th class='warning'>${warnings}</th><th class='danger'>${errors}</th><th>${total}</th></tr>`;
+                $("#summary-table-footer").append(row);
+            } else {
+                row = `<tr><td>${cat}</td><td class='info'>${infos}</td><td class='warning'>${warnings}</td><td class='danger'>${errors}</td><td>${total}</td><tr>`;
+                $("#summary-table-body").append(row);
+            }
+
+            // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
+            // row.append(cells);
+            // $("#summary-table-footer").append(row);
+        };
+
+
 
         $(document).ready(function() {
 // $('#paths-table').on('click-row.bs.table', function (e, row, $element) {
@@ -115,7 +156,7 @@
 // });
 
             $('.nav-tabs a[href="#parameters"]').tab('show');
-            $('.nav-tabs a[href="#general"]').tab('show');
+            $('.nav-tabs a[href="#summary"]').tab('show');
             $("#open_btn").click(function() {
                 $.FileDialog({multiple: true, accept: "text/csv, application/json"}).on('files.bs.filedialog', function(ev) {
                     clearTables();
@@ -176,7 +217,8 @@
 
 
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#general">General</a></li>
+        <li class="active"><a data-toggle="tab" href="#summary">Summary</a></li>
+        <li><a data-toggle="tab" href="#general">General</a></li>
         <li><a data-toggle="tab" href="#methods">Methods</a></li>
         <li><a data-toggle="tab" href="#paths">Paths</a></li>
         <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
@@ -186,8 +228,27 @@
 
     <div class="tab-content">
 
+       <div id="summary" class="tab-pane fade in active">
+            <table id="summary-table" class="table table-hover table-sm table-responsive table-condensed table-striped">
+                <thead>
+                <tr>
+                    <th scope="col">Category</th>
+                    <th scope="col"># of Infos</th>
+                    <th scope="col"># of Warnings</th>
+                    <th scope="col"># of Errors</th>
+                    <th scope="col">Total</th>
+                </tr>
+                </thead>
+                <tfoot  id='summary-table-footer'>
+                </tfoot>
+                <tbody id="summary-table-body">
+                </tbody>
+            </table>
+            <h5 id="summary-issues"></h5>
+        </div>
+
         <div id="general" class="tab-pane fade in active">
-            <table id="general-table" class="table table-hover table-sm table-responsive">
+            <table id="general-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -203,7 +264,7 @@
         </div>
 
        <div id="methods" class="tab-pane fade in active">
-            <table id="methods-table" class="table table-hover table-sm table-responsive">
+            <table id="methods-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -219,7 +280,7 @@
         </div>
 
         <div id="paths" class="tab-pane fade in active">
-            <table id="paths-table" class="table table-hover table-sm table-responsive">
+            <table id="paths-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -236,7 +297,7 @@
 
         <div id="parameters" class="tab-pane fade in active">
             <h3>NOT IMPLEMENTED YET</h3>
-            <table id="parameters-table" class="table table-hover table-sm table-responsive">
+            <table id="parameters-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -251,7 +312,7 @@
         </div>
 
         <div id="statuses" class="tab-pane fade in active">
-            <table id="statuses-table" class="table table-hover table-sm table-responsive">
+            <table id="statuses-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
@@ -268,7 +329,7 @@
 
         <div id="errors" class="tab-pane fade in active">
             <h3>NOT IMPLEMENTED YET</h3>
-            <table id="errors-table" class="table table-hover table-sm table-responsive">
+            <table id="errors-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
