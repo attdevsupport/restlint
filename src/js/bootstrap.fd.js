@@ -206,7 +206,7 @@ $.FileDialog.defaults = {
     "ok_button": "OK",
     "readAs": "DataURL", /* possible choices: BinaryString, Text, DataURL, ArrayBuffer, */
     "remove_message": "Remove&nbsp;file",
-    "title": "Load file(s)"
+    "title": "Load OpenAPI (Swagger) file(s)"
 };
 
 })(jQuery);
