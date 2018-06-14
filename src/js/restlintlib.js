@@ -18,6 +18,7 @@
 	};
 
 	var allowedHttpMethods = ['POST', 'PUT', 'GET', 'DELETE'];
+	var allowedHostsExt = ['lgw.att.com', 'api.att.com'];
 	var jsdata = '';
 
 	var naming = 'lowerCamel';
@@ -226,7 +227,6 @@
 				}
 			}
 
-			console.log(pData.general.basePath+key);
 		});
 
 		return;
@@ -354,7 +354,7 @@ var checkGeneral = function() {
 	}
 
 	// this might depend if it's being exposed externally or not.
-	if (isExternal && ['lgw.att.com', 'api.att.com'].indexOf(pData.general.host) < 0) {
+	if (isExternal && allowedHostsExt.indexOf(pData.general.host) < 0) {
 		msg = 'host names must be either <em>lgw.att.com</em> or <em>api.att.com</em>';
 		obj = createErrorObj(pData.general.host, 'error', msg);
 		errors.general.push(obj);
@@ -390,15 +390,23 @@ var clearData = function() {
 		statuses: [],
 		errors: []
 	};
+// Object.keys(pData).forEach(function(key, idx) {
+// 	console.log(key + ' ' + idx + ' ' + pData[key].length);
+// 	pData.key.length = 0;
+// });
 
-	errors = {
-		general: [],
-		verbs: [],
-		parameters: [],
-		paths: [],
-		statuses: [],
-		exceptions: []
-	};
+	Object.keys(errors).forEach(function(key, idx) {
+		errors[key].length = 0;
+	});
+
+	// errors = {
+	// 	general: [],
+	// 	verbs: [],
+	// 	parameters: [],
+	// 	paths: [],
+	// 	statuses: [],
+	// 	exceptions: []
+	// };
 
 	jsdata = '';
 
