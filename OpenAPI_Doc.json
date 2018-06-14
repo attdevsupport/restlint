@@ -172,7 +172,7 @@
       }
     },
     "updateEntity/": {
-      "post": {
+      "patch": {
         "tags": [
           "ABC"
         ],
@@ -1507,5 +1507,5 @@
     "http", "https"
   ],
   "basePath": "flow/myAppdev/myApp/V1",
-  "host": "api.att.com"
+  "host": "xxx.att.com"
 }
