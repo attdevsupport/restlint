@@ -376,7 +376,7 @@ var checkMethods = function(s) {
 var checkGeneral = function() {
 	var msg = '', obj = {};
 	if (pData.general.schemes.length != 1 || pData.general.schemes.indexOf('https') < 0) {
-		msg = 'schemes must have <em>https</em> and only <em>https</em>';
+		msg = 'schemes must only have <em>https</em>';
 		obj = createErrorObj(pData.general.schemes.join(','), 'error', msg);
 		errors.general.push(obj);
 	}
