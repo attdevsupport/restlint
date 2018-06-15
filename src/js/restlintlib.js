@@ -14,10 +14,10 @@
 		parameters: [],
 		paths: [],
 		statuscodes: [],
-		exceptions: []
+		errors: []
 	};
 
-	var categories = ['summary', 'general', 'http-methods', 'paths', 'parameters', 'status-codes', 'exceptions'];
+	var categories = ['summary', 'general', 'http-methods', 'paths', 'parameters', 'status-codes', 'errors'];
 
 	var allowedHttpMethods = ['POST', 'PUT', 'GET', 'DELETE'];
 	var allowedHostsExt = ['lgw.att.com', 'api.att.com'];
@@ -62,6 +62,7 @@
 	* @description returns the list of categories
 	*/
 	var getCategories = function() {
+		console.log('CATS: ' + categories);
 		return categories;
 	};
 
