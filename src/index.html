@@ -53,7 +53,7 @@
                 var w = 0, e = 0, i = 0, cnt = 1;
                 getErrors(cat).forEach(function(key) {
                     addRow(cat, cnt, key.name, key.level, key.msg);
-                    xlsdata[cat].push([cnt, key.name, key.level, key.msg]);
+                    // xlsdata[cat].push([cnt, key.name, key.level, key.msg]);
                     cnt += 1;
                     if (key.level === 'warning') {
                         w++;
@@ -65,14 +65,14 @@
                 });
                 $('#' + cat + '-issues').html(`Total ${capitalize(cat)} issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
                 addSummaryRow(cat, i, w, e);
-                xlsdata['summary'].push([cat, i, w, e, i+w+e]);
+                // xlsdata['summary'].push([cat, i, w, e, i+w+e]);
                 it += i;
                 wt += w;
                 et += e;
             });
 
             addSummaryRow('total', it, wt, et);
-            xlsdata['summary'].push(['total', it, wt, et, it+wt+et]);
+            // xlsdata['summary'].push(['total', it, wt, et, it+wt+et]);
 
             return;
         };
@@ -87,7 +87,7 @@
             // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
             row.append(cells);
             $("#" + cat + "-table-body").append(row);
-
+            xlsdata[cat].push([num, item, level, msg]);
             return;
         };
 
@@ -100,6 +100,7 @@
                 row = `<tr><td>${capitalize(cat)}</td><td class='info'>${infos}</td><td class='warning'>${warnings}</td><td class='danger'>${errors}</td><td>${total}</td><tr>`;
                 $("#summary-table-body").append(row);
             }
+            xlsdata['summary'].push([capitalize(cat), infos, warnings, errors, total]);
             return;
         };
 
