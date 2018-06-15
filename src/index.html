@@ -13,9 +13,11 @@
     
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script lang="javascript" src="js/xlsx.full.min.js"></script>
     <script src="js/bootstrap.fd.js"></script>
     <script src="js/restlintlib.js"></script>
     <script type="text/javascript">
+        var xlsdata = {};
         function clearTables() {
             getCategories().forEach(function(k) {
                 $("#"+k+"-table-body").children("tr").remove();
@@ -36,15 +38,22 @@
             checkStatusCodes(getData('statuscodes'));
             checkMethods(getData('statuscodes'));
 
+            // var xlsdata = {};
+            xlsdata['summary'] = [];
+            xlsdata['summary'].push(['Category', '# of Infos', '# of Warnings', '# on Errors', 'Total']);
             var wt = 0, et = 0, it = 0;
             var cats = getCategories();
-            var index = cats.indexOf('summary');
-            cats.splice(index, 1);
+            // var index = cats.indexOf('summary');
+            // cats.splice(index, 1);
             cats.forEach(function(cat, idx) {
+                if (cat === 'summary') {return;}
                 console.log('CAT: ' + cat);
+                xlsdata[cat] = [];
+                xlsdata[cat].push(['#', 'Issue', 'Level', 'Message']);
                 var w = 0, e = 0, i = 0, cnt = 1;
                 getErrors(cat).forEach(function(key) {
                     addRow(cat, cnt, key.name, key.level, key.msg);
+                    xlsdata[cat].push([cnt, key.name, key.level, key.msg]);
                     cnt += 1;
                     if (key.level === 'warning') {
                         w++;
@@ -56,12 +65,14 @@
                 });
                 $('#' + cat + '-issues').html(`Total ${capitalize(cat)} issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
                 addSummaryRow(cat, i, w, e);
+                xlsdata['summary'].push([cat, i, w, e, i+w+e]);
                 it += i;
                 wt += w;
                 et += e;
             });
 
             addSummaryRow('total', it, wt, et);
+            xlsdata['summary'].push(['total', it, wt, et, it+wt+et]);
 
             return;
         };
@@ -129,6 +140,30 @@
                 clearTables();
                 clearData();
             });
+            $("#export_btn").click(function() {
+                var wb = XLSX.utils.book_new();
+console.log(getCategories());
+                getCategories().forEach(function(key, idx) {
+                    console.log('TABLE: ' + key);
+                    // var tbl = document.getElementById(key + '-table');
+                    // var ws = XLSX.utils.table_to_sheet(tbl);
+                    var ws = XLSX.utils.aoa_to_sheet(xlsdata[key]);
+                    var ws_name = capitalize(key);
+
+                    // /* make worksheet */
+                    // var ws_data = [
+                    //   [ "S", "h", "e", "e", "t", "J", "S" ],
+                    //   [  1 ,  2 ,  3 ,  4 ,  5 ]
+                    // ];
+                    // var ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+                    /* Add the worksheet to the workbook */
+                    XLSX.utils.book_append_sheet(wb, ws, ws_name);
+                });
+
+                XLSX.writeFile(wb, 'out.xlsb');
+                delete wb;
+            });
          });
     </script>
     <br>
@@ -137,6 +172,7 @@
 
 	<button id="open_btn" class="btn btn-primary">Open files</button>
     <button id="clear_btn" class="btn btn-secondary">Clear</button>
+    <button id="export_btn" class="btn btn-secondary">Export</button>
     <br>
     <h4 id="output">  </h4>
     <br>
