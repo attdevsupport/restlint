@@ -71,7 +71,8 @@
         "summary": "junk",
         "operationId": "get",
         "consumes": [
-          "application/json"
+          "application/json",
+          "application/xml"
         ],
         "parameters": [
           {
@@ -107,7 +108,7 @@
         "summary": "junk",
         "operationId": "get",
         "produces": [
-          "application/json"
+          "application/xml"
         ],
         "parameters": [
           {
