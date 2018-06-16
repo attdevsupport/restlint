@@ -381,12 +381,26 @@ var checkMethods = function(s) {
 			obj = createErrorObj(method + ' ' + key.path, 'error', msg);
 			errors.httpmethods.push(obj);
 		}
-// 		console.log('METHODS: ' + key + ' ' + s);
-// if (s[key].hasOwnProperty('produces')) {
-// 	console.log('PRODUCES: ' + s + ' ' + s[key].produces);
-// }
-		if (method === 'GET' && key.hasOwnProperty('consumes') && key.consumes.length > 0) {
-			msg = 'GET HTTP methods must only <em>produce</em> (response body), not <em>consume</em> (request body)';
+
+		if (method.match(/GET|DELETE/) && key.consumes.length > 0) {
+			msg = method + ' HTTP methods must only <em>produce</em> (response body), not <em>consume</em> (request body)';
+			obj = createErrorObj(method + ' ' + key.path, 'error', msg);
+			errors.httpmethods.push(obj);
+		}
+
+		if (method === 'GET' && key.produces.length === 0) {
+			msg = 'GET HTTP methods must <em>produce</em> (response body)';
+			obj = createErrorObj(method + ' ' + key.path, 'error', msg);
+			errors.httpmethods.push(obj);
+		}
+
+		if (method.match(/POST|PUT/) && key.consumes.length === 0) {
+			msg = method + ' HTTP methods must <em>consume</em> (request body)';
+			obj = createErrorObj(method + ' ' + key.path, 'error', msg);
+			errors.httpmethods.push(obj);
+		}
+		if (method.match(/POST|PUT/) && key.paramlocation.indexOf('query') >= 0) {
+			msg = method + ' HTTP methods must not have query parameters.';
 			obj = createErrorObj(method + ' ' + key.path, 'error', msg);
 			errors.httpmethods.push(obj);
 		}
@@ -500,7 +514,6 @@ var clearData = function() {
 				});
 				pData.statuscodes.push(createStatusObj(key, k, arr));
 
-
 				var produces = [];
 				if (jsdata.paths[key][k].hasOwnProperty('produces')) {
 					produces = jsdata.paths[key][k].produces;
@@ -511,10 +524,13 @@ var clearData = function() {
 					consumes = jsdata.paths[key][k].consumes;
 				}
 
-				var loc = '';
-				if (jsdata.paths[key][k].parameters.hasOwnProperty('in')) {
-					loc = jsdata.paths[key][k].parameters.in;
-				}
+				var loc = [];
+				jsdata.paths[key][k].parameters.forEach(function(key, idx) {
+					if (key.hasOwnProperty('in')) {
+						loc.push(key.in);
+					}
+				});
+				
 
 				pData.httpmethods.push(createMethodObj(key, k, produces, consumes, loc));
 			});
