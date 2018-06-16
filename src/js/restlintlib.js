@@ -2,6 +2,7 @@
 
 	var pData = {
 		general: {},
+		httpmethods: [],
 		parameters: [],
 		paths: [],
 		statuscodes: [],
@@ -56,7 +57,7 @@
 			long: 'The HTTP method GET should have the following status codes possible, and should be accounted for in the design of the API: '
 		}
 
-	}
+	};
 
 	/**
 	* @description returns the list of categories
@@ -170,14 +171,31 @@
 
 	/**
 	* @description creates an object that gets added to statuscodes
-	* @param {string} title - The title of the book
-	* @param {string} author - The author of the book
+	* @param {string} path - resource path
+	* @param {string} method - HTTP method
+	* @param {array} statuses - HTTP statuses
 	*/
 	var createStatusObj = function(path, method, statuses) {
 		var obj = {};
 		obj.path = path;
 		obj.method = method;
 		obj.statuses = statuses;
+
+		return obj;
+	};
+
+	/**
+	* @description creates an object that gets added to statuscodes
+	* @param {string}  - The title of the book
+	* @param {string} author - The author of the book
+	*/
+	var createMethodObj = function(path, method, produces, consumes, paramlocation) {
+		var obj = {};
+		obj.path = path;
+		obj.method = method;
+		obj.produces = produces;
+		obj.consumes = consumes;
+		obj.paramlocation = paramlocation;
 
 		return obj;
 	};
@@ -360,8 +378,17 @@ var checkMethods = function(s) {
 
 		if (allowedHttpMethods.indexOf(method) < 0) {
 			msg = 'The only HTTP methods allowed are: ' + allowedHttpMethods.join(',');
-			obj = createErrorObj(method, 'error', msg);
-			errors.httpmethods.push(obj);				
+			obj = createErrorObj(method + ' ' + key.path, 'error', msg);
+			errors.httpmethods.push(obj);
+		}
+// 		console.log('METHODS: ' + key + ' ' + s);
+// if (s[key].hasOwnProperty('produces')) {
+// 	console.log('PRODUCES: ' + s + ' ' + s[key].produces);
+// }
+		if (method === 'GET' && key.hasOwnProperty('consumes') && key.consumes.length > 0) {
+			msg = 'GET HTTP methods must only <em>produce</em> (response body), not <em>consume</em> (request body)';
+			obj = createErrorObj(method + ' ' + key.path, 'error', msg);
+			errors.httpmethods.push(obj);
 		}
 
 	});
@@ -450,8 +477,7 @@ var clearData = function() {
 
 	/**
 	* @description load JSON (Swagger/OpenAPI) file into internal data structure
-	* @param {string} title - The title of the book
-	* @param {string} author - The author of the book
+	* @param {string} data - the JSON data
 	*/
 	var loadJson = function(data) {
 		var jsdata = JSON.parse(data);
@@ -473,6 +499,24 @@ var clearData = function() {
 					arr.push(kk);
 				});
 				pData.statuscodes.push(createStatusObj(key, k, arr));
+
+
+				var produces = [];
+				if (jsdata.paths[key][k].hasOwnProperty('produces')) {
+					produces = jsdata.paths[key][k].produces;
+				}
+
+				var consumes = [];
+				if (jsdata.paths[key][k].hasOwnProperty('consumes')) {
+					consumes = jsdata.paths[key][k].consumes;
+				}
+
+				var loc = '';
+				if (jsdata.paths[key][k].parameters.hasOwnProperty('in')) {
+					loc = jsdata.paths[key][k].parameters.in;
+				}
+
+				pData.httpmethods.push(createMethodObj(key, k, produces, consumes, loc));
 			});
 
 			getProps('', pData.paths[index]).forEach(function(key, idx) {
