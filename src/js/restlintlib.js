@@ -405,6 +405,19 @@ var checkMethods = function(s) {
 			errors.httpmethods.push(obj);
 		}
 
+		// the next 2 should probably be in a different category than HTTP methods.
+		if ((key.produces.length != 0 && key.produces.indexOf('application/json') < 0) || key.produces.length > 1) {
+			msg = 'Textual response payloads (produces) should only be in JSON format.';
+			obj = createErrorObj(method + ' ' + key.path, 'warning', msg);
+			errors.httpmethods.push(obj);
+		}
+
+		if ((key.consumes.length != 0 && key.consumes.indexOf('application/json') < 0) || key.consumes.length > 1) {
+			msg = 'Textual request payloads (consumes) should only be in JSON format.';
+			obj = createErrorObj(method + ' ' + key.path, 'warning', msg);
+			errors.httpmethods.push(obj);
+		}
+
 	});
 
 	return;
