@@ -105,6 +105,7 @@
       "version": "3.0.2"
     },
     "wordnet-magic": "^0.3.0",
+    "xlsx": "^0.13.0",
     "yallist": {
       "integrity": "sha1-hFK0u36Dx8GI2AQcGoN8dz1ti7k=",
       "resolved": "https://registry.npmjs.org/yallist/-/yallist-3.0.2.tgz",
