@@ -34,7 +34,7 @@
         ],
         "summary": "junk",
         "operationId": "get",
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "parameters": [
@@ -63,14 +63,14 @@
         }
       }
     },
-    "/service/entity/{entity}": {
+    "/myservice/entity/{entity}": {
       "delete": {
         "tags": [
           "ABC"
         ],
         "summary": "junk",
         "operationId": "get",
-        "produces": [
+        "consumes": [
           "application/json"
         ],
         "parameters": [
