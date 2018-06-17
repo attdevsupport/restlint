@@ -77,7 +77,7 @@
         "parameters": [
           {
             "name": "request body",
-            "in": "query",
+            "in": "body",
             "required": false,
             "schema": {
               "$ref": "#/definitions/abcInput"
