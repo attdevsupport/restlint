@@ -25,6 +25,13 @@
             });
             $("#summary-table-footer").children("tr").remove();
             
+            getCategories().forEach(function(key) {
+                xlsdata = {};
+            });
+
+            $('#export_btn').addClass('disabled');
+            $('#clear_btn').addClass('disabled');
+
             return;
         }
 
@@ -38,6 +45,8 @@
             checkStatusCodes(getData('statuscodes'));
             // checkMethods(getData('statuscodes'));
             checkMethods(getData('httpmethods'));
+            $('#export_btn').removeClass('disabled');
+            $('#clear_btn').removeClass('disabled');
 
             // var xlsdata = {};
             xlsdata['summary'] = [];
@@ -143,10 +152,12 @@
                 clearData();
             });
             $("#export_btn").click(function() {
+
+                if (Object.keys(xlsdata).length === 0) {
+                    return;
+                }
                 var wb = XLSX.utils.book_new();
-console.log(getCategories());
                 getCategories().forEach(function(key, idx) {
-                    console.log('TABLE: ' + key);
                     // var tbl = document.getElementById(key + '-table');
                     // var ws = XLSX.utils.table_to_sheet(tbl);
                     var ws = XLSX.utils.aoa_to_sheet(xlsdata[key]);
@@ -173,8 +184,8 @@ console.log(getCategories());
     <br>
 
 	<button id="open_btn" class="btn btn-primary">Open files</button>
-    <button id="clear_btn" class="btn btn-secondary">Clear</button>
-    <button id="export_btn" class="btn btn-secondary">Export</button>
+    <button id="clear_btn" class="btn btn-secondary disabled">Clear</button>
+    <button id="export_btn" class="btn btn-secondary disabled">Export</button>
     <br>
     <h4 id="output">  </h4>
     <br>
