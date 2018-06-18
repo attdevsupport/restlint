@@ -71,12 +71,13 @@
         "summary": "junk",
         "operationId": "get",
         "consumes": [
-          "application/json"
+          "application/json",
+          "application/xml"
         ],
         "parameters": [
           {
             "name": "request body",
-            "in": "query",
+            "in": "body",
             "required": false,
             "schema": {
               "$ref": "#/definitions/abcInput"
@@ -107,7 +108,7 @@
         "summary": "junk",
         "operationId": "get",
         "produces": [
-          "application/json"
+          "application/xml"
         ],
         "parameters": [
           {
