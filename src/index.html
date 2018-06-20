@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>REST Lint</title>
 	<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="styles/bootstrap.fd.css" inline>
@@ -17,6 +18,10 @@
     <script src="js/bootstrap.fd.js"></script>
     <script src="js/restlintlib.js"></script>
     <script type="text/javascript">
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();   
+        });
+
         var xlsdata = {};
         function clearTables() {
             getCategories().forEach(function(k) {
@@ -184,9 +189,9 @@
     <h2> RestLint - A ReST API Design Static Checker</h2>
     <br>
 
-	<button id="open_btn" class="btn btn-primary">Open files</button>
-    <button id="clear_btn" class="btn btn-secondary disabled">Clear</button>
-    <button id="export_btn" class="btn btn-secondary disabled">Export</button>
+	<button id="open_btn" class="btn btn-primary" data-toggle="tooltip" title="Open a Swagger 2.0 File">Open files</button>
+    <button id="clear_btn" class="btn btn-secondary disabled" data-toggle="tooltip" title="Clear the page and start from scratch.">Clear</button>
+    <button id="export_btn" class="btn btn-secondary disabled" data-toggle="tooltip" title="Export Results to an Excel file">Export</button>
     <br>
     <h4 id="output">  </h4>
     <br>
@@ -217,13 +222,13 @@
 
 
     <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#summary">Summary</a></li>
-        <li><a data-toggle="tab" href="#general">General</a></li>
-        <li><a data-toggle="tab" href="#http-methods">HTTP Methods</a></li>
-        <li><a data-toggle="tab" href="#paths">Paths</a></li>
-        <li><a data-toggle="tab" href="#parameters">Parameters</a></li>
-        <li><a data-toggle="tab" href="#status-codes">Status Codes</a></li>
-        <li><a data-toggle="tab" href="#errors">Exceptions</a></li>
+        <li class="active"><a data-toggle="tab" href="#summary" data-toggle="tooltip" title="Summary of Issues across all categories">Summary</a></li>
+        <li><a data-toggle="tab" href="#general" data-toggle="tooltip" title="General or top level issues with the design">General</a></li>
+        <li><a data-toggle="tab" href="#http-methods" title="Issues related to HTTP methods (verbs)">HTTP Methods</a></li>
+        <li><a data-toggle="tab" href="#paths" title="Issues related to the URI paths or resources">Paths</a></li>
+        <li><a data-toggle="tab" href="#parameters" title="Issues related to the parameters and data definitions">Parameters</a></li>
+        <li><a data-toggle="tab" href="#status-codes" title="Issues related to HTTP status code usage">Status Codes</a></li>
+        <li><a data-toggle="tab" href="#errors" title="Issues related to exceptions returned by service">Exceptions</a></li>
     </ul>
 
     <div class="tab-content">
