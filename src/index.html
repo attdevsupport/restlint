@@ -36,9 +36,10 @@
         }
 
         function onReaderLoad(event){
-            // var obj = JSON.parse(event.target.result);
+            var jsdata = JSON.parse(event.target.result);
+
             loadJson(event.target.result);
-            checkGeneral();
+            checkDefinitions();
             checkPathStructure('paths', getData('paths'));
             checkResources(getData('paths'));
             checkBasePath();

@@ -63,7 +63,6 @@
 	* @description returns the list of categories
 	*/
 	var getCategories = function() {
-		console.log('CATS: ' + categories);
 		return categories;
 	};
 
@@ -80,6 +79,26 @@
 		return ret.join(' ');
 	};
 
+
+	var getDefinitions = function(obj) {
+
+		/**
+		* loop through all the definitions 
+		*/
+		Object.keys(obj).forEach(function(key, index) {
+			// console.log('DEFN: ' + key);
+			var values = [];
+			if (obj[key].hasOwnProperty('properties')) {
+				values = getProps('', obj[key].properties);
+			} else if (obj[key].hasOwnProperty('type')) {
+				// console.log(key + ' ' + obj[key].type);
+				values.push(key + ',' + obj[key].type);
+			}
+			pData.parameters.push(createDefinitionObj(key, values));
+		});
+	}
+
+
 	/**
 	* @description gets the properties of 'obj', with a name prefix of 'prefix'
 	* @param {string} prefix - the name to prefix to any properties found (for recursion)
@@ -92,6 +111,7 @@
 		* loop through all the keys extracted from the object
 		*/
 		Object.keys(obj).forEach(function(key, index) {
+			// console.log('PROPS: ' + key);
 			var type = 'object', desc = '';
 			
 			var names = [];
@@ -113,18 +133,27 @@
 
 				if (obj[key].items.hasOwnProperty('$ref')) {
 						var v = obj[key].items['$ref'];
-						getProps(names.join('.'), jsdata.schemas[v].properties).forEach(function(kk, ii) {
-							names.push(kk);
-							values.push(kk);
-						});
+						// getProps(names.join('.'), jsdata.schemas[v].properties).forEach(function(kk, ii) {
+						// 	names.push(kk);
+						// 	values.push(kk);
+						// });
+						// type = v;
+						values.push(names.join('.') + ',' + v);
 				} else if (obj[key].items.hasOwnProperty('type')) {
 					values.push(names.join('.') + ',' + obj[key].items.type);
 				}
 			} else if (obj[key].hasOwnProperty('$ref')) {
 				var v = obj[key]['$ref'];
-				getProps(names.join('.'), jsdata.schemas[v].properties).forEach(function(kk, ii) {
-					// names.push(kk);
+				// getProps(names.join('.'), jsdata.schemas[v].properties).forEach(function(kk, ii) {
+				// 	// names.push(kk);
 
+				// 	names.push(kk);
+				// 	values.push(kk);
+				// });
+				// type = v;
+				values.push(names.join('.') + ',' + v);
+			} else if (obj[key].hasOwnProperty('properties')) {
+				getProps(names.join('.'), obj[key].properties).forEach(function(kk, ii) {
 					names.push(kk);
 					values.push(kk);
 				});
@@ -185,6 +214,19 @@
 	};
 
 	/**
+	* @description creates an object that gets added to parameters
+	* @param {string} definition - defintion within the file
+	* @param {array} params - parameters that are defined under the definition
+	*/
+	var createDefinitionObj = function(definition, params) {
+		var obj = {};
+		obj.definition = definition;
+		obj.params = params;
+
+		return obj;
+	};
+
+	/**
 	* @description creates an object that gets added to statuscodes
 	* @param {string}  - The title of the book
 	* @param {string} author - The author of the book
@@ -228,6 +270,18 @@
 		return;
 	};
 
+
+	/**
+	* @description checks the definitions in the file
+	*/
+	var checkDefinitions = function() {
+		console.log('IN CHECK DEF');
+		pData.parameters.forEach(function(key, idx) {
+			console.log('DEF: ' + key.definition);
+			console.log('PARAMS: ' + key.params.join('|'));
+		});
+	}
+
 	/**
 	* @description checks the words that make up a path
 	* @param {array} paths - an array of paths
@@ -251,28 +305,55 @@
 				msg = "resource must be a noun";
 				errors.paths.push(createErrorObj(key, 'error', msg));
 			}
-			if (naming === 'lowerCamel') {
-				if (/^[A-Z_-]+|[_-]+/.test(k)) {
-					msg = "resource must be lowerCamel case";
-					errors.paths.push(createErrorObj(key, 'error', msg));
-				}
-			} else if (naming === 'UpperCamel') {
-				if (k.match(/^[a-z_-]+|[_-]+/)) {
-					msg = "resource must be UpperCamel case";
-					errors.paths.push(createErrorObj(key, 'error', msg));
-				}
-			} else if (naming === 'snake') {
-				if (k.match(/[_]/) == false) {
-					msg = "resource must be in snake_case";
-					errors.paths.push(createErrorObj(key, 'warning', msg));
-				}
+
+			var obj = checkCase(k)
+			if (Object.keys(obj).length) {
+				errors.paths.push(createErrorObj(key, obj.level, obj.msg));
 			}
+			// if (naming === 'lowerCamel') {
+			// 	if (/^[A-Z_-]+|[_-]+/.test(k)) {
+			// 		msg = "resource must be lowerCamel case";
+			// 		errors.paths.push(createErrorObj(key, 'error', msg));
+			// 	}
+			// } else if (naming === 'UpperCamel') {
+			// 	if (k.match(/^[a-z_-]+|[_-]+/)) {
+			// 		msg = "resource must be UpperCamel case";
+			// 		errors.paths.push(createErrorObj(key, 'error', msg));
+			// 	}
+			// } else if (naming === 'snake') {
+			// 	if (k.match(/[_]/) == false) {
+			// 		msg = "resource must be in snake_case";
+			// 		errors.paths.push(createErrorObj(key, 'warning', msg));
+			// 	}
+			// }
 
 		});
 
 		return;
 	};
 
+	var checkCase = function(name) {
+		var obj = {};
+
+		if (naming === 'lowerCamel') {
+			if (/^[A-Z_-]+|[_-]+/.test(name)) {
+				obj.msg = "resource must be lowerCamel case";
+				obj.level = 'error';
+			}
+		} else if (naming === 'UpperCamel') {
+			if (name.match(/^[a-z_-]+|[_-]+/)) {
+				obj.msg = "resource must be UpperCamel case";
+				obj.level = 'error';
+			}
+		} else if (naming === 'snake') {
+			if (name.match(/[_]/) == false) {
+				obj.msg = "resource must be in snake_case";
+				obj.level = 'warning';
+			}
+		}
+
+		return obj;
+	}
 	/**
 	* @description checks if the paths have the correct path separator
 	* @param {string} name - name of the path (paths or basePath)
@@ -554,9 +635,10 @@ var clearData = function() {
 				pData.httpmethods.push(createMethodObj(key, k, produces, consumes, loc));
 			});
 
-			getProps('', pData.paths[index]).forEach(function(key, idx) {
-				// console.log(key);
-			});
+			getDefinitions(jsdata.definitions);
+			// getProps('', pData.paths[index]).forEach(function(key, idx) {
+			// 	// console.log(key);
+			// });
 		});
 
 		return;
