@@ -99,7 +99,7 @@ var xcnt = 0;
 			}
 			pData.parameters.push(createDefinitionObj(key, values));
 		});
-	}
+	};
 
 
 	/**
@@ -315,7 +315,7 @@ var xcnt = 0;
 				});
 			});
 		});
-	}
+	};
 
 	/**
 	* @description checks the words that make up a path
@@ -341,7 +341,7 @@ var xcnt = 0;
 				errors.paths.push(createErrorObj(key, 'error', msg));
 			}
 
-			var obj = checkCase(k)
+			var obj = checkCase(k);
 			if (Object.keys(obj).length) {
 				errors.paths.push(createErrorObj(key, obj.level, obj.msg));
 			}
@@ -388,7 +388,8 @@ var xcnt = 0;
 		}
 
 		return obj;
-	}
+	};
+	
 	/**
 	* @description checks if the paths have the correct path separator
 	* @param {string} name - name of the path (paths or basePath)
