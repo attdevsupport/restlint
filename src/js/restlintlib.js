@@ -79,12 +79,15 @@
 		return ret.join(' ');
 	};
 
+var xcnt = 0;
 
 	var getDefinitions = function(obj) {
 
 		/**
 		* loop through all the definitions 
 		*/
+		console.log('NUMBER OF DEF: ' + xcnt + ' '+ Object.keys(obj).length);
+		xcnt++;
 		Object.keys(obj).forEach(function(key, index) {
 			// console.log('DEFN: ' + key);
 			var values = [];
@@ -92,7 +95,7 @@
 				values = getProps('', obj[key].properties);
 			} else if (obj[key].hasOwnProperty('type')) {
 				// console.log(key + ' ' + obj[key].type);
-				values.push(key + ',' + obj[key].type);
+				values.push(key + ':' + obj[key].type);
 			}
 			pData.parameters.push(createDefinitionObj(key, values));
 		});
@@ -138,9 +141,9 @@
 						// 	values.push(kk);
 						// });
 						// type = v;
-						values.push(names.join('.') + ',' + v);
+						values.push(names.join('.') + ':' + v);
 				} else if (obj[key].items.hasOwnProperty('type')) {
-					values.push(names.join('.') + ',' + obj[key].items.type);
+					values.push(names.join('.') + ':' + obj[key].items.type);
 				}
 			} else if (obj[key].hasOwnProperty('$ref')) {
 				var v = obj[key]['$ref'];
@@ -151,17 +154,17 @@
 				// 	values.push(kk);
 				// });
 				// type = v;
-				values.push(names.join('.') + ',' + v);
+				values.push(names.join('.') + ':' + v);
 			} else if (obj[key].hasOwnProperty('properties')) {
 				getProps(names.join('.'), obj[key].properties).forEach(function(kk, ii) {
 					names.push(kk);
 					values.push(kk);
 				});
 			} else if (obj[key].hasOwnProperty('type')) {
-					values.push(names.join('.') + ',' + obj[key].type);
+					values.push(names.join('.') + ':' + obj[key].type);
 			} else {
 
-				values.push(names.join('.') + ',' + type);
+				values.push(names.join('.') + ':' + type);
 			}
 		
 		});
@@ -275,10 +278,42 @@
 	* @description checks the definitions in the file
 	*/
 	var checkDefinitions = function() {
-		console.log('IN CHECK DEF');
+		console.log('********** IN CHECK DEF');
+		
+		var refs = [];
+		console.log('########PARAMS NUMBER: ' + pData.parameters.length);
+		// var checked = [];
 		pData.parameters.forEach(function(key, idx) {
-			console.log('DEF: ' + key.definition);
-			console.log('PARAMS: ' + key.params.join('|'));
+			var checked = [];
+			key.params.forEach(function(param, ii) {
+				var ps = param.split(':');
+				var par = ps[0];
+				var type = ps[1];
+				if (type.match(/^#\//)) {
+					if (refs.indexOf(type) < 0) {
+						refs.push(type);
+					}
+				}
+				var errs = [];
+				par.split('.').forEach(function(word) {
+					if (checked.indexOf(word) >= 0) {
+						console.log('CHECKED: ' + word);
+						return;
+					}
+					checked.push(word);
+
+					var obj = checkCase(word);
+					if (Object.keys(obj).length) {
+						obj.name = key.definition + ': ' + word;
+						errs.push(obj);
+						return;
+					}
+				});
+
+				errs.forEach(function(E) {
+					errors.parameters.push(createErrorObj(E.name, E.level, E.msg));
+				});
+			});
 		});
 	}
 
@@ -337,17 +372,17 @@
 
 		if (naming === 'lowerCamel') {
 			if (/^[A-Z_-]+|[_-]+/.test(name)) {
-				obj.msg = "resource must be lowerCamel case";
+				obj.msg = "names must be lowerCamel case";
 				obj.level = 'error';
 			}
 		} else if (naming === 'UpperCamel') {
 			if (name.match(/^[a-z_-]+|[_-]+/)) {
-				obj.msg = "resource must be UpperCamel case";
+				obj.msg = "names must be UpperCamel case";
 				obj.level = 'error';
 			}
 		} else if (naming === 'snake') {
 			if (name.match(/[_]/) == false) {
-				obj.msg = "resource must be in snake_case";
+				obj.msg = "names must be in snake_case";
 				obj.level = 'warning';
 			}
 		}
@@ -635,11 +670,13 @@ var clearData = function() {
 				pData.httpmethods.push(createMethodObj(key, k, produces, consumes, loc));
 			});
 
-			getDefinitions(jsdata.definitions);
+			
 			// getProps('', pData.paths[index]).forEach(function(key, idx) {
 			// 	// console.log(key);
 			// });
 		});
+
+		getDefinitions(jsdata.definitions);
 
 		return;
 	};
