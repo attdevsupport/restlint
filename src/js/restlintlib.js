@@ -18,7 +18,61 @@
 		errors: []
 	};
 
-	var categories = ['summary', 'general', 'http-methods', 'paths', 'parameters', 'status-codes', 'errors'];
+	var categories = [
+		{
+			title: 'summary',
+			tooltip: 'Summary of Issues across all categories',
+			columns: ['Category', '# of Infos', '# of Warnings', '# of Errors', 'Total']
+		},
+		{
+			title: 'general',
+			tooltip: 'General or top level issues with the design',
+			columns: ['#', 'Issue', 'Message']
+		},
+		{
+			title: 'http-methods',
+			tooltip: 'Issues related to HTTP methods (verbs)',
+			columns: ['#', 'Issue', 'Message']
+		},
+		{
+			title: 'paths',
+			tooltip: 'Issues related to the URI paths or resources',
+			columns: ['#', 'Issue', 'Message']
+		},
+		{
+			title: 'parameters',
+			tooltip: 'Issues related to the parameters and data definitions',
+			columns: ['#', 'Issue', 'Message']
+		},
+		{
+			title: 'status-codes',
+			tooltip: 'Issues related to HTTP status code usage',
+			columns: ['#', 'Issue', 'Message']
+		},
+		{
+			title: 'errors',
+			tooltip: 'Issues related to exceptions returned by service',
+			columns: ['#', 'Issue', 'Message']
+		}
+		];
+
+	var legends = [
+		{
+			title: 'info',
+			tooltip: 'User should research issue',
+			description: 'There is not enough information to make a solid determination, or is just a suggestion. But user should investigate further to determine if the suggestion makes sense.'
+		},
+		{
+			title: 'warning',
+			tooltip: 'User should investigate further to determine if it is an issue',
+			description: 'There\'s a high probability that the issue is a violation, but further investigation is needed. Check with the <a href="https://tools.ietf.org/html/rfc7230" target="_blank"> HTTP standards (RFC 7230-7235)</a> and <a href="http://tss.att.com/document/R113140.pdf" target="_blank">AT&T RESTful Standards</a>.'
+		},
+		{
+			title: 'error',
+			tooltip: 'User must take corrective action',
+			description: 'The issue is a violation of a standard (HTTP, AT&T, etc) or best practice. This issue <em>must</em> be fixed. Check with the <a href="https://tools.ietf.org/html/rfc7230" target="_blank"> HTTP standards (RFC 7230-7235)</a> and <a href="http://tss.att.com/document/R113140.pdf" target="_blank">AT&T RESTful Standards</a>.'
+		}
+	];
 
 	var allowedHttpMethods = ['POST', 'PUT', 'GET', 'DELETE'];
 	var allowedHostsExt = ['lgw.att.com', 'api.att.com'];
@@ -389,7 +443,7 @@ var xcnt = 0;
 
 		return obj;
 	};
-	
+
 	/**
 	* @description checks if the paths have the correct path separator
 	* @param {string} name - name of the path (paths or basePath)
@@ -690,3 +744,48 @@ var clearData = function() {
  //  	} else {
  //    	root.jsonic = jsonic;
  //  	}
+
+
+/**
+* @description category class
+* @constructor
+* @param {object} data - the data object to initialize the class
+* @param {number} author - the index of this location in the array of locations
+*/
+var Category = function(data, index) {
+	var self = this;
+	self.name = ko.observable(data.title);
+	self.title = capitalize(data.title);
+	self.columns = data.columns;
+	self.tooltip = data.tooltip;
+	self.index = index;
+
+	self.ref = '#' + data.title;
+	self.tablename = data.title + '-table';
+	self.tablefooter = data.title + '-table-footer';
+	self.tablebody = data.title + '-table-body';
+	self.issueid = data.title + '-issues';
+
+};
+
+/**
+* @description view model of the listings
+* @constructor
+*/
+function appViewModel() {
+  var self = this;
+
+  self.categoryList = ko.observableArray([]);
+
+  for (var i = 0, len = categories.length; i < len; i++) {
+    var cat = new Category(categories[i], i);
+    self.categoryList.push( cat );
+  }
+
+}
+
+
+// different way to call bindings, from here:
+// https://robinsr.github.io/blog/post/knockoutjs-best-practices
+var appView = { viewModel : new appViewModel() };
+ko.applyBindings(appView.viewModel);

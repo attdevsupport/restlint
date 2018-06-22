@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="REST Lint - Static REST Design Checker">
+
+	<title>REST Lint</title>
+	<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="styles/bootstrap.fd.css" inline>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
+    <script lang="javascript" src="js/xlsx.full.min.js"></script>
+    <script src="js/bootstrap.fd.js"></script>
+    <script src="js/restlintlib.js" defer></script>
+	<!-- <script src="js/bootstrap.fd.js"></script> -->
+
+	<!-- Creating a template so can re-use for each location -->
+    <script type="text/html" id="tab-template">
+       <div data-bind="attr: { id: name}" class="tab-pane fade in active">
+            <table data-bind="attr: { id: tablename}" class="table table-hover table-sm table-responsive table-condensed table-striped">
+                <thead>
+                <tr>
+                	<!-- ko foreach: columns -->
+                	<th scope="col" data-bind="text: $data"></th>
+					<!-- /ko -->
+                </tr>
+                </thead>
+                <tfoot  data-bind="attr: { id: tablefooter}">
+                </tfoot>
+                <tbody data-bind="attr: { id: tablebody}">
+                </tbody>
+            </table>
+            <h5 data-bind="attr: { id: issueid}"></h5>
+        </div>
+    </script>
+
+</head>
+
+
+
+<body class="container">
+
+    <br>
+    <h2> RestLint - A ReST API Design Static Checker</h2>
+    <br>
+
+	<button id="open_btn" class="btn btn-primary" data-toggle="tooltip" title="Open a Swagger 2.0 File">Open files</button>
+    <button id="clear_btn" class="btn btn-secondary disabled" data-toggle="tooltip" title="Clear the page and start from scratch.">Clear</button>
+    <button id="export_btn" class="btn btn-secondary disabled" data-toggle="tooltip" title="Export Results to an Excel file">Export</button>
+    <br>
+    <h4 id="output">  </h4>
+    <br>
+
+
+
+    <ul class="nav nav-tabs" data-bind="foreach: categoryList">
+    	<li>
+    		<a data-bind="attr: { href: ref, title: tooltip}" data-toggle="tab" data-toggle="tooltip"><span data-bind="text: title"></span></a>
+    	</li>
+    </ul>
+
+
+    <div class="tab-content" data-bind="foreach: categoryList">
+
+       <div data-bind="attr: { id: name}" class="tab-pane fade in active">
+            <table data-bind="attr: { id: tablename}" class="table table-hover table-sm table-responsive table-condensed table-striped">
+                <thead>
+                <tr>
+                	<!-- ko foreach: columns -->
+                	<th scope="col" data-bind="text: $data"></th>
+					<!-- /ko -->
+                </tr>
+                </thead>
+                <tfoot  data-bind="attr: { id: tablefooter}">
+                </tfoot>
+                <tbody data-bind="attr: { id: tablebody}">
+                </tbody>
+            </table>
+            <h5 data-bind="attr: { id: issueid}"></h5>
+        </div>
+    </div>
+
+    <div class="panel-group">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h4 class="panel-title text-center">
+              <a data-toggle="collapse" href="#collapse1">Legend for Issue Levels</a>
+            </h4>
+          </div>
+          <div id="collapse1" class="panel-collapse collapse">
+            <div class="panel-body">
+            <table id="parameters-table" class="table table-hover table-sm table-responsive">
+                <tbody>
+                    <tr>
+                        <td scope="col" class="info col-sm-4"><small><b>info</b> - There is not enough information to make a solid determination, or is just a suggestion. But user should investigate further to determine if the suggestion makes sense.
+                        <td scope="col" class="warning col-sm-4"><small><b>warning</b> - There's a high probability that the issue is a violation, but further investigation is needed. Check with the <a href='https://tools.ietf.org/html/rfc7230' target='_blank'> HTTP standards (RFC 7230-7235)</a> and <a href='http://tss.att.com/document/R113140.pdf' target='_blank'>AT&T RESTful Standards</a>.</small></td>
+                        <td scope="col" class="danger col-sm-4"><small><b>error</b> - The issue is a violation of a standard (HTTP, AT&T, etc) or best practice. This issue <em>must</em> be fixed. Check with the <a href='https://tools.ietf.org/html/rfc7230' target='_blank'> HTTP standards (RFC 7230-7235)</a> and <a href='http://tss.att.com/document/R113140.pdf' target='_blank'>AT&T RESTful Standards</a>.</small></td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+    </div>
+</body>
+</html>	
