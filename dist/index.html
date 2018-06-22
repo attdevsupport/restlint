@@ -1,18 +1,21 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>REST Lint</title><link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"><style>.bfd-dropfield{display:inline;padding:5px}.bfd-dropfield-inner{border:5px dashed #888;color:#888;cursor:pointer;font-size:32px;text-align:center}.bfd-dropfield-inner.bfd-dragover,.bfd-dropfield-inner:hover{border-color:#bbb;color:#bbb}.bfd-info{overflow:hidden;white-space:nowrap}.bfd-error-message{text-align:center}.bfd-remove{cursor:pointer}</style></head><body class="container"><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script lang="javascript" src="js/xlsx.full.min.js"></script><script src="js/bootstrap.fd.js"></script><script src="js/restlintlib.js"></script><script type="text/javascript">$(document).ready(function(){
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>REST Lint</title><link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"><style>.bfd-dropfield{display:inline;padding:5px}.bfd-dropfield-inner{border:5px dashed #888;color:#888;cursor:pointer;font-size:32px;text-align:center}.bfd-dropfield-inner.bfd-dragover,.bfd-dropfield-inner:hover{border-color:#bbb;color:#bbb}.bfd-info{overflow:hidden;white-space:nowrap}.bfd-error-message{text-align:center}.bfd-remove{cursor:pointer}</style><script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script><script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script><script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script><script lang="javascript" src="js/xlsx.full.min.js"></script><script src="js/bootstrap.fd.js"></script><script src="js/restlintlib.js" defer="defer"></script></head><body class="container"><script type="text/javascript">$(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();   
         });
 
-        var xlsdata = {};
+        var xlsdata = [];
         function clearTables() {
             getCategories().forEach(function(k) {
-                $("#"+k+"-table-body").children("tr").remove();
-                $("#"+k+"-issues").html('');
+                $("#"+k.title+"-table-body").children("tr").remove();
+                $("#"+k.title+"-issues").html('');
+                if (typeof xlsdata[k.title] !== 'undefined') {
+                    xlsdata[k.title].length = 0;
+                }
             });
             $("#summary-table-footer").children("tr").remove();
             
-            getCategories().forEach(function(key) {
-                xlsdata = {};
-            });
+            // getCategories().forEach(function(key) {
+            //     xlsdata[k.title].length = 0;
+            // });
 
             $('#export_btn').addClass('disabled');
             $('#clear_btn').addClass('disabled');
@@ -43,13 +46,14 @@
             // var index = cats.indexOf('summary');
             // cats.splice(index, 1);
             cats.forEach(function(cat, idx) {
-                if (cat === 'summary') {return;}
-                console.log('CAT: ' + cat);
-                xlsdata[cat] = [];
-                xlsdata[cat].push(['#', 'Issue', 'Level', 'Message']);
+                if (cat.title === 'summary') {return;}
+                console.log('CAT: ' + cat.title);
+                xlsdata[cat.title] = [];
+                // xlsdata[cat.title].push(['#', 'Issue', 'Level', 'Message']);
+                xlsdata[cat.title].push(cat.columns);
                 var w = 0, e = 0, i = 0, cnt = 1;
-                getErrors(cat).forEach(function(key) {
-                    addRow(cat, cnt, key.name, key.level, key.msg);
+                getErrors(cat.title).forEach(function(key) {
+                    addRow(cat.title, cnt, key.name, key.level, key.msg);
                     // xlsdata[cat].push([cnt, key.name, key.level, key.msg]);
                     cnt += 1;
                     if (key.level === 'warning') {
@@ -60,8 +64,8 @@
                         i++;
                     }
                 });
-                $('#' + cat + '-issues').html(`Total ${capitalize(cat)} issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-                addSummaryRow(cat, i, w, e);
+                $('#' + cat.title + '-issues').html(`Total ${capitalize(cat.title)} issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+                addSummaryRow(cat.title, i, w, e);
                 // xlsdata['summary'].push([cat, i, w, e, i+w+e]);
                 it += i;
                 wt += w;
@@ -147,8 +151,8 @@
                 getCategories().forEach(function(key, idx) {
                     // var tbl = document.getElementById(key + '-table');
                     // var ws = XLSX.utils.table_to_sheet(tbl);
-                    var ws = XLSX.utils.aoa_to_sheet(xlsdata[key]);
-                    var ws_name = capitalize(key);
+                    var ws = XLSX.utils.aoa_to_sheet(xlsdata[key.title]);
+                    var ws_name = capitalize(key.title);
 
                     // /* make worksheet */
                     // var ws_data = [
