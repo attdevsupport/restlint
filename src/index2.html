@@ -4,6 +4,7 @@
 	<meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="REST Lint - Static REST Design Checker">
+    <meta name="author" content="Brett Schwarz">
 
 	<title>REST Lint</title>
 	<link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
@@ -15,27 +16,6 @@
     <script lang="javascript" src="js/xlsx.full.min.js"></script>
     <script src="js/bootstrap.fd.js"></script>
     <script src="js/restlintlib.js" defer></script>
-	<!-- <script src="js/bootstrap.fd.js"></script> -->
-
-	<!-- Creating a template so can re-use for each location -->
-    <script type="text/html" id="tab-template">
-       <div data-bind="attr: { id: name}" class="tab-pane fade in active">
-            <table data-bind="attr: { id: tablename}" class="table table-hover table-sm table-responsive table-condensed table-striped">
-                <thead>
-                <tr>
-                	<!-- ko foreach: columns -->
-                	<th scope="col" data-bind="text: $data"></th>
-					<!-- /ko -->
-                </tr>
-                </thead>
-                <tfoot  data-bind="attr: { id: tablefooter}">
-                </tfoot>
-                <tbody data-bind="attr: { id: tablebody}">
-                </tbody>
-            </table>
-            <h5 data-bind="attr: { id: issueid}"></h5>
-        </div>
-    </script>
 
 </head>
 
@@ -47,9 +27,16 @@
     <h2> RestLint - A ReST API Design Static Checker</h2>
     <br>
 
-	<button id="open_btn" class="btn btn-primary" data-toggle="tooltip" title="Open a Swagger 2.0 File">Open files</button>
-    <button id="clear_btn" class="btn btn-secondary disabled" data-toggle="tooltip" title="Clear the page and start from scratch.">Clear</button>
-    <button id="export_btn" class="btn btn-secondary disabled" data-toggle="tooltip" title="Export Results to an Excel file">Export</button>
+	<button id="open-btn" class="btn btn-primary" data-toggle="tooltip" title="Open a Swagger 2.0 File">
+		Open files
+	</button>
+    <button id="clear-btn" class="btn btn-secondary disabled" data-toggle="tooltip" title="Clear the page and start from scratch.">
+    	Clear
+    </button>
+    <button id="export-btn" class="btn btn-secondary disabled" data-toggle="tooltip" title="Export Results to an Excel file">
+    	Export
+    </button>
+
     <br>
     <h4 id="output">  </h4>
     <br>
@@ -83,6 +70,7 @@
         </div>
     </div>
 
+
     <div class="panel-group">
         <div class="panel panel-default">
           <div class="panel-heading">
@@ -105,5 +93,6 @@
           </div>
         </div>
     </div>
+
 </body>
 </html>	
