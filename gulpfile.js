@@ -44,7 +44,7 @@ gulp.task('css', function() {
 gulp.task('html', ['css'], function() {
   return gulp.src(['src/index.html', '!dist/', '!dist/**'])
     .pipe(inlinesrc())
-    .pipe(htmlmin({collapseWhitespace: true,minifyJS:true,minifyCSS:false,removeComments:true}))
+    .pipe(htmlmin({collapseWhitespace: true,minifyJS:true,minifyCSS:true,removeComments:true}))
     .pipe(gulp.dest(DEST));
 });
 
