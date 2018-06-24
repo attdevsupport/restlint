@@ -701,6 +701,9 @@ var clearData = function() {
 				var arr = [];
 				Object.keys(jsdata.paths[key][k].responses).forEach(function(kk, ii) {
 					arr.push(kk);
+					if (kk >= 400) {
+						pData.errors.push(createExceptionObj(key, k, kk, d, s));
+					}
 				});
 				pData.statuscodes.push(createStatusObj(key, k, arr));
 
@@ -752,7 +755,7 @@ var clearData = function() {
 * @param {object} data - the data object to initialize the class
 * @param {number} author - the index of this location in the array of locations
 */
-var Category = function(data, index) {
+var Category = function(data, index, selected) {
 	var self = this;
 	self.name = ko.observable(data.title);
 	self.title = capitalize(data.title);
@@ -761,10 +764,15 @@ var Category = function(data, index) {
 	self.index = index;
 
 	self.ref = '#' + data.title;
+	self.tabid = data.title + '-tab';
 	self.tablename = data.title + '-table';
 	self.tablefooter = data.title + '-table-footer';
 	self.tablebody = data.title + '-table-body';
 	self.issueid = data.title + '-issues';
+
+	self.isSelected = ko.computed(function() {
+       return self === selected();  
+    }, self);
 
 };
 
@@ -773,15 +781,17 @@ var Category = function(data, index) {
 * @constructor
 */
 function appViewModel() {
-  var self = this;
+	var self = this;
 
-  self.categoryList = ko.observableArray([]);
+	self.selectedSection = ko.observable();
+	self.categoryList = ko.observableArray([]);
 
-  for (var i = 0, len = categories.length; i < len; i++) {
-    var cat = new Category(categories[i], i);
-    self.categoryList.push( cat );
-  }
-
+	for (var i = 0, len = categories.length; i < len; i++) {
+		var cat = new Category(categories[i], i, self.selectedSection);
+		self.categoryList.push( cat );
+	}
+	//inialize to the first section
+    self.selectedSection(self.categoryList()[0]);
 }
 
 
