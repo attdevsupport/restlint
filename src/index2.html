@@ -8,7 +8,8 @@
 
 	<title>REST Lint</title>
 	<!-- <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"> -->
+	<link rel="stylesheet" href="styles/bootstrap.min3.css" crossorigin="anonymous">
 	<link rel="stylesheet" href="styles/bootstrap.fd.css" inline>
 
 
@@ -26,18 +27,65 @@
     <script type="text/javascript">
         // This just initializes the tooptips
         $(document).ready(function(){
-            $('[data-toggle="tooltip"]').tooltip();   
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // $('.nav-tabs a[href="#parameters"]').tab('show');
+            // $('.nav-tabs a[href="#summary"]').tab('show');
+            $("#open-btn").click(function() {
+            	console.log("CLICKED");
+                $.FileDialog({multiple: true, accept: "text/csv, application/json"}).on('files.bs.filedialog', function(ev) {
+                    clearTables();
+                    clearData();
+                    var files = ev.files;
+                    var text = [], cells, row;
+                    files.forEach(function(f) {
+                        var reader = new FileReader();
+                        reader.onload = onReaderLoad;
+                        reader.readAsText(f);
+                        text.push(f.name);
+                    });
+                    $("#output").html("Checking files: " + text.join(','));
+                    
+                }).on('cancel.bs.filedialog', function(ev) {
+                    // $("#output").html("Cancelled!");
+                });
+            });
+            $("#clear-btn").click(function() {
+                clearTables();
+                clearData();
+            });
+            $("#export-btn").click(function() {
+
+                if (Object.keys(xlsdata).length === 0) {
+                    return;
+                }
+                var wb = XLSX.utils.book_new();
+                getCategories().forEach(function(key, idx) {
+                    // var tbl = document.getElementById(key + '-table');
+                    // var ws = XLSX.utils.table_to_sheet(tbl);
+                    var ws = XLSX.utils.aoa_to_sheet(xlsdata[key.title]);
+                    var ws_name = capitalize(key.title);
+
+                    // /* make worksheet */
+                    // var ws_data = [
+                    //   [ "S", "h", "e", "e", "t", "J", "S" ],
+                    //   [  1 ,  2 ,  3 ,  4 ,  5 ]
+                    // ];
+                    // var ws = XLSX.utils.aoa_to_sheet(ws_data);
+
+                    /* Add the worksheet to the workbook */
+                    XLSX.utils.book_append_sheet(wb, ws, ws_name);
+                });
+
+                XLSX.writeFile(wb, 'out.xlsb');
+                delete wb;
+            });
         });
 
-   		 // $('#maintab a:first ')[0].click();
-   		 // $('#maintab > li:first-child > a')[0].click();
-   		 // $('#parameters-tab').tab('show')
-   		 // $('#summary-tab').tab('show')
-   		 // $('#summary').addClass('show')
-   		 // $('#summary-tab').addClass('active')
-
-        // $('.nav-tabs a[href="#parameters"]').tab('show');
-        $('#summary-tab').click();
+		$('.bfd-dropfield-inner').on('click', function() {
+			console.log('CLOCKED:');
+			$('#file-upload').trigger('click');
+		});
 	</script>
 
 </head>
@@ -56,7 +104,7 @@
     <button id="clear-btn" class="btn btn-secondary btn-sm disabled" data-toggle="tooltip" title="Clear the page and start from scratch.">
     	Clear
     </button>
-    <button id="export-btn" class="btn btn-secondary btn-sm disabled" data-toggle="tooltip" title="Export Results to an Excel file">
+    <button  id="export-btn" class="btn btn-secondary btn-sm disabled" data-toggle="tooltip" title="Export Results to an Excel file">
     	Export
     </button>
 
@@ -65,50 +113,104 @@
     <br>
 
 
+		<!-- Accordian for Files -->
+   <div class="accordion" id="accordion" >
+    <div class="accordion-group">
+      <div class="accordion-heading">              
+        <h4 class="panel-title text-center">
+          <a data-toggle="collapse" href="#files">Files for Analysis</a>
+        </h4>
+        </a>
+      </div>
+      <div id="files" class=" collapse in">
+        <div class="accordion-inner">
+        	<div class='modal-body'>
+        		<input type='file' if='file-upload'/>
+        		<div class='bfd-dropfield'>
+        			<div class='bfd-dropfield-inner'>
+        				Drop files here or click here
+        			</div>
+        		</div>
+        		<div class='container-fluid bfd-files'>
+        		</div>
+        	</div>
+        	<div class='modal-footer'>
+            	<button type='button' class='btn btn-primary bfd-ok'>
+                                 OK
+            	</button>
+            	<button type='button' class='btn btn-default bfd-cancel' data-dismiss='modal'>
+                                 Close
+            	</button>
+        	</div>
 
-    <ul class="nav nav-tabs nav-justified" id="maintab" role="tablist" data-bind="foreach: categoryList">
-    	<li class="nav-item" data-bind="css: { active: isSelected }">
-    		<a class="nav-link" role="tab"  data-bind="attr: { href: ref, title: tooltip, 'aria-controls': name, id: tabid}, click: $parent.selectedSection" data-toggle="tab" data-toggle="tooltip"><span data-bind="text: title"></span></a>
-    	</li>
-    </ul>
-
-
-    <div class="tab-content" id="tab-content" data-bind="foreach: categoryList">
-
-       <div data-bind="attr: { id: name, 'aria-labelledby': tabid}, css: { active: isSelected, show: isSelected }" class="tab-pane fade" role="tabpanel">
-       		<div class="table-responsive">
-	            <table data-bind="attr: { id: tablename}" class="table table-hover table-responsive table-striped">
-	                <thead>
-	                <tr>
-	                	<!-- ko foreach: columns -->
-	                	<th scope="col" data-bind="text: $data"></th>
-						<!-- /ko -->
-	                </tr>
-	                </thead>
-	                <tfoot  data-bind="attr: { id: tablefooter}">
-	                </tfoot>
-	                <tbody data-bind="attr: { id: tablebody}">
-	                </tbody>
-	            </table>
-	        </div>
-            <h5 data-bind="attr: { id: issueid}"></h5>
         </div>
+      </div>
     </div>
 
-	<a data-toggle="collapse" href="#legend"><span class="text-center">Legend for Issue Levels</span></a>
 
-	<div class="collapse" id="legend">
-		<table id="parameters-table" class="table table-hover table-sm table-responsive">
-            <tbody>
-                <tr>
-                    <td scope="col" class="table-info"><small><b>info</b> - There is not enough information to make a solid determination, or is just a suggestion. But user should investigate further to determine if the suggestion makes sense.
-                    <td scope="col" class="table-warning"><small><b>warning</b> - There's a high probability that the issue is a violation, but further investigation is needed. Check with the <a href='https://tools.ietf.org/html/rfc7230' target='_blank'> HTTP standards (RFC 7230-7235)</a> and <a href='http://tss.att.com/document/R113140.pdf' target='_blank'>AT&T RESTful Standards</a>.</small></td>
-                    <td scope="col" class="table-danger"><small><b>error</b> - The issue is a violation of a standard (HTTP, AT&T, etc) or best practice. This issue <em>must</em> be fixed. Check with the <a href='https://tools.ietf.org/html/rfc7230' target='_blank'> HTTP standards (RFC 7230-7235)</a> and <a href='http://tss.att.com/document/R113140.pdf' target='_blank'>AT&T RESTful Standards</a>.</small></td>
-                </tr>
-            </tbody>
-        </table>
-	</div>
+    <!-- Accordian for Results -->
+    <div class="accordion-group">
+      <div class="accordion-heading">
+      	<h4 class="panel-title text-center">
+          <a data-toggle="collapse" href="#results">Results of Analysis</a>
+        </h4>
+      </div>
+      <div id="results" class=" collapse">
+        <div class="accordion-inner">
+		    <ul class="nav nav-tabs nav-justified" id="maintab" role="tablist" data-bind="foreach: categoryList">
+		    	<li class="nav-item" data-bind="css: { active: isSelected }">
+		    		<a class="nav-link" role="tab"  data-bind="attr: { href: ref, title: tooltip, 'aria-controls': name, id: tabid}, click: $parent.selectedSection" data-toggle="tab" data-toggle="tooltip"><span data-bind="text: title"></span></a>
+		    	</li>
+		    </ul>
 
+
+		    <div class="tab-content" id="tab-content" data-bind="foreach: categoryList">
+
+		       <div data-bind="attr: { id: name, 'aria-labelledby': tabid}, css: { active: isSelected, show: isSelected }" class="tab-pane fade" role="tabpanel">
+		       		<div class="table-responsive">
+			            <table data-bind="attr: { id: tablename}" class="table table-hover table-responsive table-striped">
+			                <thead>
+			                <tr>
+			                	<!-- ko foreach: columns -->
+			                	<th scope="col" data-bind="text: $data"></th>
+								<!-- /ko -->
+			                </tr>
+			                </thead>
+			                <tfoot  data-bind="attr: { id: tablefooter}">
+			                </tfoot>
+			                <tbody data-bind="attr: { id: tablebody}">
+			                </tbody>
+			            </table>
+			        </div>
+		            <h5 data-bind="attr: { id: issueid}"></h5>
+		        </div>
+		    </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Accordian for Legend -->
+    <div class="accordion-group">
+      <div class="accordion-heading">
+      	<h4 class="panel-title text-center">
+          <a data-toggle="collapse" href="#legend">Legend for Issue Levels</a>
+        </h4>
+      </div>
+      <div id="legend" class=" collapse">
+        <div class="accordion-inner">
+			<table id="parameters-table" class="table table-hover table-sm table-responsive">
+	            <tbody>
+	                <tr>
+	                    <td scope="col" class="table-info"><small><b>info</b> - There is not enough information to make a solid determination, or is just a suggestion. But user should investigate further to determine if the suggestion makes sense.
+	                    <td scope="col" class="table-warning"><small><b>warning</b> - There's a high probability that the issue is a violation, but further investigation is needed. Check with the <a href='https://tools.ietf.org/html/rfc7230' target='_blank'> HTTP standards (RFC 7230-7235)</a> and <a href='http://tss.att.com/document/R113140.pdf' target='_blank'>AT&T RESTful Standards</a>.</small></td>
+	                    <td scope="col" class="table-danger"><small><b>error</b> - The issue is a violation of a standard (HTTP, AT&T, etc) or best practice. This issue <em>must</em> be fixed. Check with the <a href='https://tools.ietf.org/html/rfc7230' target='_blank'> HTTP standards (RFC 7230-7235)</a> and <a href='http://tss.att.com/document/R113140.pdf' target='_blank'>AT&T RESTful Standards</a>.</small></td>
+	                </tr>
+	            </tbody>
+	        </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </body>
 </html>	
