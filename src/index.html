@@ -8,17 +8,17 @@
 
 	<title>REST Lint</title>
 
-    <!-- <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
-	<link href="styles/bootstrap.min.css" rel="stylesheet">
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+	<!-- <link href="styles/bootstrap.min.css" rel="stylesheet"> -->
 	<link rel="stylesheet" href="styles/bootstrap.fd.css" inline>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <!-- <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
-    <script src="js/bootstrap.min.js" inline></script>
+    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- <script src="js/bootstrap.min.js" inline></script> -->
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
     <script lang="javascript" src="js/xlsx.full.min.js" defer></script>
     <script src="js/bootstrap.fd.js" inline></script>
-    <script src="js/restlintlib.js" inline></script>
+    <script src="js/restlintlib.js" defer></script>
         
 </head>
 <body class="container">
@@ -247,7 +247,7 @@
 
     <div class="tab-content">
 
-       <div id="summary" class="tab-pane fade in active">
+       <div id="summary" class="tab-pane fade active">
             <table id="summary-table" class="table table-hover table-sm table-responsive table-condensed table-striped">
                 <thead>
                 <tr>
@@ -266,7 +266,7 @@
             <h5 id="summary-issues"></h5>
         </div>
 
-        <div id="general" class="tab-pane fade in active">
+        <div id="general" class="tab-pane fade">
             <table id="general-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
@@ -282,7 +282,7 @@
             <h5 id="general-issues"></h5>
         </div>
 
-       <div id="http-methods" class="tab-pane fade in active">
+       <div id="http-methods" class="tab-pane fade">
             <table id="http-methods-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
@@ -298,7 +298,7 @@
             <h5 id="http-methods-issues"></h5>
         </div>
 
-        <div id="paths" class="tab-pane fade in active">
+        <div id="paths" class="tab-pane fade">
             <table id="paths-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
@@ -314,7 +314,7 @@
             <h5 id="paths-issues"></h5>
         </div>
 
-        <div id="parameters" class="tab-pane fade in active">
+        <div id="parameters" class="tab-pane fade">
             <table id="parameters-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
@@ -329,7 +329,7 @@
             </table>
         </div>
 
-        <div id="status-codes" class="tab-pane fade in active">
+        <div id="status-codes" class="tab-pane fade">
             <table id="status-codes-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
                 <tr>
@@ -345,7 +345,7 @@
             <h5 id="status-codes-issues"></h5>
         </div>
 
-        <div id="errors" class="tab-pane fade in active">
+        <div id="errors" class="tab-pane fade">
             <h3>NOT IMPLEMENTED YET</h3>
             <table id="errors-table" class="table table-hover table-sm table-responsive table-condensed">
                 <thead>
