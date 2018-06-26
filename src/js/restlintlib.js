@@ -340,16 +340,25 @@ var xcnt = 0;
 		pData.parameters.forEach(function(key, idx) {
 			var checked = [];
 			key.params.forEach(function(param, ii) {
+				var errs = []
 				var ps = param.split(':');
 				var par = ps[0];
 				var type = ps[1];
+				var words = par.split('.');
+
 				if (type.match(/^#\//)) {
 					if (refs.indexOf(type) < 0) {
 						refs.push(type);
 					}
+				} else if (type === 'boolean' && ! words[words.length-1].match(/Indicator$/)) {
+					var obj = {};
+					obj.msg = 'All boolean fields should end with "Indicator"';
+					obj.level = 'warning';
+					obj.name = key.definition + ': ' + words[words.length-1];
+					errs.push(obj);
 				}
-				var errs = [];
-				par.split('.').forEach(function(word) {
+
+				words.forEach(function(word) {
 					if (checked.indexOf(word) >= 0) {
 						console.log('CHECKED: ' + word);
 						return;
@@ -702,7 +711,15 @@ var clearData = function() {
 				Object.keys(jsdata.paths[key][k].responses).forEach(function(kk, ii) {
 					arr.push(kk);
 					if (kk >= 400) {
-						pData.errors.push(createExceptionObj(key, k, kk, d, s));
+						var d = '';
+						if (typeof jsdata.paths[key][k].responses[kk].description != 'undefined') {
+							d = jsdata.paths[key][k].responses[kk].description; 
+						}
+						var s= '';
+						if (typeof jsdata.paths[key][k].responses[kk].description != 'undefined') {
+							d = jsdata.paths[key][k].responses[kk].description; 
+						}
+						// pData.errors.push(createExceptionObj(key, k, kk, d, s));
 					}
 				});
 				pData.statuscodes.push(createStatusObj(key, k, arr));
@@ -755,7 +772,7 @@ var clearData = function() {
 * @param {object} data - the data object to initialize the class
 * @param {number} author - the index of this location in the array of locations
 */
-var Category = function(data, index, selected) {
+var Category = function(data, index) {
 	var self = this;
 	self.name = ko.observable(data.title);
 	self.title = capitalize(data.title);
@@ -770,9 +787,9 @@ var Category = function(data, index, selected) {
 	self.tablebody = data.title + '-table-body';
 	self.issueid = data.title + '-issues';
 
-	self.isSelected = ko.computed(function() {
-       return self === selected();  
-    }, self);
+	// self.isSelected = ko.computed(function() {
+ //       return self === selected();  
+ //    }, self);
 
 };
 
@@ -783,15 +800,16 @@ var Category = function(data, index, selected) {
 function appViewModel() {
 	var self = this;
 
-	self.selectedSection = ko.observable();
+	// self.selectedSection = ko.observable();
 	self.categoryList = ko.observableArray([]);
 
 	for (var i = 0, len = categories.length; i < len; i++) {
-		var cat = new Category(categories[i], i, self.selectedSection);
+		var cat = new Category(categories[i], i);
+		// var cat = new Category(categories[i], i, self.selectedSection);
 		self.categoryList.push( cat );
 	}
 	//inialize to the first section
-    self.selectedSection(self.categoryList()[0]);
+    // self.selectedSection(self.categoryList()[0]);
 }
 
 
