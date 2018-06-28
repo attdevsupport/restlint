@@ -102,7 +102,7 @@ function addRow(cat, num, item, level, msg) {
     if (level === 'error') {
         lvl = 'danger';
     }
-    row = $("<tr class='" + lvl + "'></tr>");
+    row = $("<tr class='table-" + lvl + "'></tr>");
     cells = `<td>${num}</td><td>${item}</td><td>${msg}</td>`;
     // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
     row.append(cells);
@@ -114,10 +114,10 @@ function addRow(cat, num, item, level, msg) {
 function addSummaryRow(cat, infos, warnings, errors) {
     var total = infos + warnings + errors;
     if (cat === 'total') {
-        row = `<tr><th>${capitalize(cat)}</th><th class='info'>${infos}</th><th class='warning'>${warnings}</th><th class='danger'>${errors}</th><th>${total}</th></tr>`;
+        row = `<tr><th>${capitalize(cat)}</th><th class='table-info'>${infos}</th><th class='table-warning'>${warnings}</th><th class='table-danger'>${errors}</th><th>${total}</th></tr>`;
         $("#summary-table-footer").append(row);
     } else {
-        row = `<tr><td>${capitalize(cat)}</td><td class='info'>${infos}</td><td class='warning'>${warnings}</td><td class='danger'>${errors}</td><td>${total}</td><tr>`;
+        row = `<tr><td>${capitalize(cat)}</td><td class='table-info'>${infos}</td><td class='table-warning'>${warnings}</td><td class='table-danger'>${errors}</td><td>${total}</td><tr>`;
         $("#summary-table-body").append(row);
     }
     xlsdata['summary'].push([capitalize(cat), infos, warnings, errors, total]);
