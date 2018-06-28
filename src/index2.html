@@ -22,71 +22,9 @@
     <!-- <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
     <script lang="javascript" src="js/xlsx.full.min.js"></script>
-    <script src="js/bootstrap.fd.js"></script>
+    <!-- <script src="js/bootstrap.fd.js"></script> -->
     <script src="js/restlintlib.js" defer></script>
-    <script type="text/javascript">
-        // This just initializes the tooptips
-        $(document).ready(function(){
-            $('[data-toggle="tooltip"]').tooltip();
-
-            // $('.nav-tabs a[href="#parameters"]').tab('show');
-            // $('.nav-tabs a[href="#summary"]').tab('show');
-            $("#open-btn").click(function() {
-            	console.log("CLICKED");
-                $.FileDialog({multiple: true, accept: "text/csv, application/json"}).on('files.bs.filedialog', function(ev) {
-                    clearTables();
-                    clearData();
-                    var files = ev.files;
-                    var text = [], cells, row;
-                    files.forEach(function(f) {
-                        var reader = new FileReader();
-                        reader.onload = onReaderLoad;
-                        reader.readAsText(f);
-                        text.push(f.name);
-                    });
-                    $("#output").html("Checking files: " + text.join(','));
-                    
-                }).on('cancel.bs.filedialog', function(ev) {
-                    // $("#output").html("Cancelled!");
-                });
-            });
-            $("#clear-btn").click(function() {
-                clearTables();
-                clearData();
-            });
-            $("#export-btn").click(function() {
-
-                if (Object.keys(xlsdata).length === 0) {
-                    return;
-                }
-                var wb = XLSX.utils.book_new();
-                getCategories().forEach(function(key, idx) {
-                    // var tbl = document.getElementById(key + '-table');
-                    // var ws = XLSX.utils.table_to_sheet(tbl);
-                    var ws = XLSX.utils.aoa_to_sheet(xlsdata[key.title]);
-                    var ws_name = capitalize(key.title);
-
-                    // /* make worksheet */
-                    // var ws_data = [
-                    //   [ "S", "h", "e", "e", "t", "J", "S" ],
-                    //   [  1 ,  2 ,  3 ,  4 ,  5 ]
-                    // ];
-                    // var ws = XLSX.utils.aoa_to_sheet(ws_data);
-
-                    /* Add the worksheet to the workbook */
-                    XLSX.utils.book_append_sheet(wb, ws, ws_name);
-                });
-
-                XLSX.writeFile(wb, 'out.xlsb');
-                delete wb;
-            });
-        });
-
-		$('.bfd-dropfield-inner', modal).on('click', function() {
-			console.log('CLOCKED:');
-			$('#file-upload').trigger('click');
-		});
-	</script>
+    <script src="js/restlintgui.js" defer></script>
 
 </head>
 
@@ -126,20 +64,20 @@
 	    	<div class="card-body">
 	     		<div class='modal-body'>
 	    			<input type='file' if='file-upload'/>
-	    			<div class='bfd-dropfield'>
-	    				<div class='bfd-dropfield-inner'>
-	    					Drop files here or click here
+	    			<div class='dropfield'>
+	    				<div class='dropfield-inner' id='droparea'  ondragenter='dragenter(event);' ondragover='dragover(event);' ondrop='drop(event);' ondragleave='dragleave(event);'>
+	    					Drop files here<br>ddd
 	    				</div>
 	    			</div>
-	    			<div class='container-fluid bfd-files'>
+	    			<div class='container-fluid darea-files'>
 	    			</div>
 	    		</div>
 	    		<div class='modal-footer'>
-	        		<button type='button' class='btn btn-primary bfd-ok'>
-	                    OK
+	        		<button id='analyze-btn' type='button' class='btn btn-primary darea-ok'>
+	                    Analyze files
 	        		</button>
-	        		<button type='button' class='btn btn-default bfd-cancel' data-dismiss='modal'>
-	                    Close
+	        		<button id='cancel-btn' type='button' class='btn btn-default darea-cancel' data-dismiss=''>
+	                    Cancel
 	        		</button>
 	    		</div>
 	      	</div>
@@ -167,14 +105,14 @@
 			    </button>
 
 			    <ul class="nav nav-tabs nav-justified" id="maintab" role="tablist" data-bind="foreach: categoryList">
-			    	<li class="nav-item" data-bind="css: { active: isSelected }">
-			    		<a class="nav-link" role="tab"  data-bind="attr: { href: ref, title: tooltip, 'aria-controls': name, id: tabid}, click: $parent.selectedSection" data-toggle="tab" data-toggle="tooltip"><span data-bind="text: title"></span></a>
+			    	<li class="nav-item">
+			    		<a class="nav-link" role="tab"  data-bind="attr: { href: ref, title: tooltip, 'aria-controls': name, id: tabid}" data-toggle="tab" data-toggle="tooltip"><span data-bind="text: title"></span></a>
 			    	</li>
 			    </ul>
 
 			    <div class="tab-content" id="tab-content" data-bind="foreach: categoryList">
 
-			    	<div data-bind="attr: { id: name, 'aria-labelledby': tabid}, css: { active: isSelected, show: isSelected }" class="tab-pane fade" role="tabpanel">
+			    	<div data-bind="attr: { id: name, 'aria-labelledby': tabid}" class="tab-pane fade" role="tabpanel">
 			       		<div class="table-responsive">
 				            <table data-bind="attr: { id: tablename}" class="table table-hover table-responsive table-striped">
 				                <thead>
