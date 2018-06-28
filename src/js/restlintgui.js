@@ -139,8 +139,8 @@ function readFiles() {
         checkStatusCodes(getData('statuscodes'));
         // checkMethods(getData('statuscodes'));
         checkMethods(getData('httpmethods'));
-        $('#export_btn').removeClass('disabled');
-        $('#clear_btn').removeClass('disabled');
+        $('#export-btn').removeClass('disabled');
+        $('#clear-btn').removeClass('disabled');
 
         // var xlsdata = {};
         xlsdata['summary'] = [];
@@ -183,6 +183,27 @@ function readFiles() {
     return;
 };
 
+
+function clearTables() {
+    getCategories().forEach(function(k) {
+        $("#"+k.title+"-table-body").children("tr").remove();
+        $("#"+k.title+"-issues").html('');
+        if (typeof xlsdata[k.title] !== 'undefined') {
+            xlsdata[k.title].length = 0;
+        }
+    });
+    $("#summary-table-footer").children("tr").remove();
+    $("#output").html('');
+    
+    // getCategories().forEach(function(key) {
+    //     xlsdata[k.title].length = 0;
+    // });
+
+    $('#export_btn').addClass('disabled');
+    $('#clear_btn').addClass('disabled');
+
+    return;
+}
 
 $(document).ready(function(){
 
