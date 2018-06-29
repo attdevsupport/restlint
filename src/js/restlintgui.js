@@ -159,7 +159,7 @@ function getFiles(files) {
             return;
         }
 
-        $('droparea').html('');
+        $('#droparea').text('');
         output('<ol>');
         for (var file of files) {
             // loadedFiles.push(file);
@@ -180,8 +180,8 @@ function getFiles(files) {
 */
 function readFiles() {
     for (var file of loadedFiles) {
-        console.log('FILE NAME: ' + file.name);
-        console.log(file.content);
+        // console.log('FILE NAME: ' + file.name);
+        // console.log(file.content);
         var jsdata = JSON.parse(file.content);
 
         loadJson(file.content);
@@ -205,7 +205,7 @@ function readFiles() {
         // cats.splice(index, 1);
         cats.forEach(function(cat, idx) {
             if (cat.title === 'summary') {return;}
-            console.log('CAT: ' + cat.title);
+            // console.log('CAT: ' + cat.title);
             xlsdata[cat.title] = [];
             // xlsdata[cat.title].push(['#', 'Issue', 'Level', 'Message']);
             xlsdata[cat.title].push(cat.columns);
@@ -249,7 +249,10 @@ function clearTables() {
         if (typeof xlsdata[k.title] !== 'undefined') {
             xlsdata[k.title].length = 0;
         }
+        
     });
+    // xlsdata.length = 0;
+    xlsdata= [];
     $("#summary-table-footer").children("tr").remove();
     $("#output").html('');
     
@@ -257,13 +260,20 @@ function clearTables() {
     //     xlsdata[k.title].length = 0;
     // });
 
-    $('#export_btn').addClass('disabled');
-    $('#clear_btn').addClass('disabled');
-    $('#droparea').textContent = '';
+    $('#export-btn').addClass('disabled');
+    $('#clear-btn').addClass('disabled');
+    $('#droparea').text('');
+    $('#file-upload').val('');
     loadedFiles.length = 0;
     return;
 }
 
+/**
+* @description Represents a book
+* @constructor
+* @param {string} title - The title of the book
+* @param {string} author - The author of the book
+*/
 $(document).ready(function(){
 
 
@@ -274,8 +284,16 @@ $(document).ready(function(){
     // $('.nav-tabs a[href="#parameters"]').tab('show');
     // $('.nav-tabs a[href="#summary"]').tab('show');
     $("#analyze-btn").click(function () {
+        if (loadedFiles.length === 0) {
+            return;
+        }
         readFiles();
         $('#results').collapse('show');
+    });
+
+    $("#cancel-btn").click(function() {
+        clearTables();
+        clearData();
     });
 
     $("#clear-btn").click(function() {
@@ -284,6 +302,7 @@ $(document).ready(function(){
     });
     $("#export-btn").click(function() {
 
+        console.log('KEYS: ' + Object.keys(xlsdata));
         if (Object.keys(xlsdata).length === 0) {
             return;
         }
@@ -305,7 +324,8 @@ $(document).ready(function(){
             XLSX.utils.book_append_sheet(wb, ws, ws_name);
         });
 
-        XLSX.writeFile(wb, 'out.xlsb');
+        const nm = 'restlint-' + new Date().toISOString() + '.xlsb';
+        XLSX.writeFile(wb, nm);
         delete wb;
     });
 });
