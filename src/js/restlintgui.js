@@ -58,7 +58,7 @@ function drop(e) {
 
     var dt = e.dataTransfer;
     var files = dt.files;
-    document.getElementById('droparea').textContent = '';
+    
     var count = files.length;
     // output("File Count: " + count + "\n");
 
@@ -68,27 +68,7 @@ function drop(e) {
         // console.log('YYYYYYY ' + f);
         output('<li>' + files[i].name);
 
-        var reader = new FileReader();
-
-        readers.push(reader);
-
-        reader.onerror = function(e) {
-            if(e.target.error.code === e.target.error.ABORT_ERR) {
-                return;
-            }
-        };
-
-        reader.onprogress = function(e) {
-        };
-
-        reader.onload = function(e) {
-            f.content = e.target.result;
-            // console.log('XXXXXXXXXXXXXXXXXX ' + f.content);
-            loadedFiles.push(f);
-            // progressBar.removeClass("active");
-        };
-
-        reader.readAsText(f); 
+        genReader(f);
     }
     output('</ol>');
 
@@ -96,7 +76,41 @@ function drop(e) {
     return;
 }
 
+/**
+* @description Represents a book
+* @param {string} title - The title of the book
+* @param {string} author - The author of the book
+*/
+function genReader(f) {
+    var reader = new FileReader();
 
+    readers.push(reader);
+
+    reader.onerror = function(e) {
+        if(e.target.error.code === e.target.error.ABORT_ERR) {
+            return;
+        }
+    };
+
+    reader.onprogress = function(e) {
+    };
+
+    reader.onload = function(e) {
+        f.content = e.target.result;
+        // console.log('XXXXXXXXXXXXXXXXXX ' + f.content);
+        loadedFiles.push(f);
+        // progressBar.removeClass("active");
+    };
+
+    reader.readAsText(f); 
+};
+
+
+/**
+* @description Represents a book
+* @param {string} title - The title of the book
+* @param {string} author - The author of the book
+*/
 function addRow(cat, num, item, level, msg) {
     var lvl = level;
     if (level === 'error') {
@@ -111,6 +125,11 @@ function addRow(cat, num, item, level, msg) {
     return;
 };
 
+/**
+* @description Represents a book
+* @param {string} title - The title of the book
+* @param {string} author - The author of the book
+*/
 function addSummaryRow(cat, infos, warnings, errors) {
     var total = infos + warnings + errors;
     if (cat === 'total') {
@@ -124,6 +143,36 @@ function addSummaryRow(cat, infos, warnings, errors) {
     return;
 };
 
+/**
+* @description Represents a book
+* @param {string} title - The title of the book
+* @param {string} author - The author of the book
+*/
+function getFiles(files) {
+    var inp = $('#file-upload');
+
+    // 'files' in input
+    if (true) {
+
+        if (files.length === 0) {
+            alert('Select one or more files');
+            return;
+        }
+
+        for (var file of files) {
+            // loadedFiles.push(file);
+            genReader(file);
+        }
+
+        readFiles();
+    }
+}
+
+/**
+* @description Represents a book
+* @param {string} title - The title of the book
+* @param {string} author - The author of the book
+*/
 function readFiles() {
     for (var file of loadedFiles) {
         console.log('FILE NAME: ' + file.name);
@@ -183,7 +232,11 @@ function readFiles() {
     return;
 };
 
-
+/**
+* @description Represents a book
+* @param {string} title - The title of the book
+* @param {string} author - The author of the book
+*/
 function clearTables() {
     getCategories().forEach(function(k) {
         $("#"+k.title+"-table-body").children("tr").remove();
@@ -201,7 +254,8 @@ function clearTables() {
 
     $('#export_btn').addClass('disabled');
     $('#clear_btn').addClass('disabled');
-
+    document.getElementById('droparea').textContent = '';
+    loadedFiles.length = 0;
     return;
 }
 
@@ -249,9 +303,4 @@ $(document).ready(function(){
         XLSX.writeFile(wb, 'out.xlsb');
         delete wb;
     });
-});
-
-$('.bfd-dropfield-inner').on('click', function() {
-	console.log('CLOCKED:');
-	$('#file-upload').trigger('click');
 });

@@ -63,7 +63,7 @@
 	    <div id="files" class="collapse show" aria-labelledby="files-header" data-parent="#accordion">
 	    	<div class="card-body">
 	     		<div class='modal-body'>
-	    			<input type='file' if='file-upload'/>
+	    			<input type='file' id='file-upload' onchange="getFiles(this.files)" multiple />
 	    			<div class='dropfield'>
 	    				<div class='dropfield-inner' id='droparea'  ondragenter='dragenter(event);' ondragover='dragover(event);' ondrop='drop(event);' ondragleave='dragleave(event);'>
 	    					Drop files here<br>ddd
