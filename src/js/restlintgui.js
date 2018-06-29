@@ -289,6 +289,7 @@ $(document).ready(function(){
         }
         readFiles();
         $('#results').collapse('show');
+        $('#summary-tab').tab('show');
     });
 
     $("#cancel-btn").click(function() {
