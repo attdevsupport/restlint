@@ -159,11 +159,16 @@ function getFiles(files) {
             return;
         }
 
+        $('droparea').html('');
+        output('<ol>');
         for (var file of files) {
             // loadedFiles.push(file);
             genReader(file);
-        }
 
+            output('<li>' + file.name);
+    
+        }
+        output('</ol>');
         readFiles();
     }
 }
@@ -254,7 +259,7 @@ function clearTables() {
 
     $('#export_btn').addClass('disabled');
     $('#clear_btn').addClass('disabled');
-    document.getElementById('droparea').textContent = '';
+    $('#droparea').textContent = '';
     loadedFiles.length = 0;
     return;
 }
