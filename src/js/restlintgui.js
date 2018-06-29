@@ -41,9 +41,10 @@ function dragover(e) {
 
 function output(text)
 {
-  var txt = $('#droparea').html();
-  txt += text;
-  $('#droparea').html(txt);
+  // var txt = $('#droparea').html();
+  // txt += text;
+  // $('#droparea').html(txt);
+  $('#droparea').append(txt);
   return;
 }
 
@@ -62,15 +63,17 @@ function drop(e) {
     var count = files.length;
     // output("File Count: " + count + "\n");
 
-    output('<ol>');
+    // output('<ol>');
+    $('#droparea-title').addClass('d-none');
     for (var i = 0; i < files.length; i++) {
         var f = files[i];
         // console.log('YYYYYYY ' + f);
-        output('<li>' + files[i].name);
+        // output('<li>' + files[i].name);
+        $('#droparea-filelist').append('<li>' + files[i].name);
 
         genReader(f);
     }
-    output('</ol>');
+    // output('</ol>');
 
     // $('#results').collapse('show');
     return;
@@ -159,16 +162,17 @@ function getFiles(files) {
             return;
         }
 
-        $('#droparea').text('');
-        output('<ol>');
+        $('#droparea-title').addClass('d-none');
+        // output('<ol>');
         for (var file of files) {
             // loadedFiles.push(file);
             genReader(file);
 
-            output('<li>' + file.name);
+            // output('<li>' + file.name);
+            $('#droparea-filelist').append('<li>' + file.name);
     
         }
-        output('</ol>');
+        // output('</ol>');
         readFiles();
     }
 }
@@ -254,7 +258,8 @@ function clearTables() {
     // xlsdata.length = 0;
     xlsdata= [];
     $("#summary-table-footer").children("tr").remove();
-    $("#output").html('');
+    // $("#output").html('');
+    $('#droparea-title').removeClass('d-none');
     
     // getCategories().forEach(function(key) {
     //     xlsdata[k.title].length = 0;
@@ -262,7 +267,7 @@ function clearTables() {
 
     $('#export-btn').addClass('disabled');
     $('#clear-btn').addClass('disabled');
-    $('#droparea').text('');
+    $('#droparea-filelist').text('');
     $('#file-upload').val('');
     loadedFiles.length = 0;
     return;
