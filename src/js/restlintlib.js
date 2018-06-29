@@ -140,7 +140,7 @@ var xcnt = 0;
 		/**
 		* loop through all the definitions 
 		*/
-		console.log('NUMBER OF DEF: ' + xcnt + ' '+ Object.keys(obj).length);
+		// console.log('NUMBER OF DEF: ' + xcnt + ' '+ Object.keys(obj).length);
 		xcnt++;
 		Object.keys(obj).forEach(function(key, index) {
 			// console.log('DEFN: ' + key);
@@ -332,10 +332,10 @@ var xcnt = 0;
 	* @description checks the definitions in the file
 	*/
 	var checkDefinitions = function() {
-		console.log('********** IN CHECK DEF');
+		// console.log('********** IN CHECK DEF');
 		
 		var refs = [];
-		console.log('########PARAMS NUMBER: ' + pData.parameters.length);
+		// console.log('########PARAMS NUMBER: ' + pData.parameters.length);
 		// var checked = [];
 		pData.parameters.forEach(function(key, idx) {
 			var checked = [];
@@ -360,7 +360,7 @@ var xcnt = 0;
 
 				words.forEach(function(word) {
 					if (checked.indexOf(word) >= 0) {
-						console.log('CHECKED: ' + word);
+						// console.log('CHECKED: ' + word);
 						return;
 					}
 					checked.push(word);
