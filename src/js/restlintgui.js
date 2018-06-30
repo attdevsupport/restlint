@@ -124,7 +124,8 @@ function addRow(cat, num, item, level, msg) {
     // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
     row.append(cells);
     $("#" + cat + "-table-body").append(row);
-    xlsdata[cat].push([num, item, level, msg]);
+    var arr = [num, item, level, msg];
+    xlsdata[cat].push(arr);
     return;
 };
 
@@ -312,26 +313,82 @@ $(document).ready(function(){
         if (Object.keys(xlsdata).length === 0) {
             return;
         }
-        var wb = XLSX.utils.book_new();
+        // var wb = XLSX.utils.book_new();
         getCategories().forEach(function(key, idx) {
-            // var tbl = document.getElementById(key + '-table');
-            // var ws = XLSX.utils.table_to_sheet(tbl);
-            var ws = XLSX.utils.aoa_to_sheet(xlsdata[key.title]);
-            var ws_name = capitalize(key.title);
+                        // var tbl = document.getElementById(key + '-table');
+                        // var ws = XLSX.utils.table_to_sheet(tbl);
+            // var ws = XLSX.utils.aoa_to_sheet(xlsdata[key.title]);
+            // var ws_name = capitalize(key.title);
 
-            // /* make worksheet */
-            // var ws_data = [
-            //   [ "S", "h", "e", "e", "t", "J", "S" ],
-            //   [  1 ,  2 ,  3 ,  4 ,  5 ]
-            // ];
-            // var ws = XLSX.utils.aoa_to_sheet(ws_data);
+                        // /* make worksheet */
+                        // var ws_data = [
+                        //   [ "S", "h", "e", "e", "t", "J", "S" ],
+                        //   [  1 ,  2 ,  3 ,  4 ,  5 ]
+                        // ];
+                        // var ws = XLSX.utils.aoa_to_sheet(ws_data);
 
-            /* Add the worksheet to the workbook */
-            XLSX.utils.book_append_sheet(wb, ws, ws_name);
+                        /* Add the worksheet to the workbook */
+            // XLSX.utils.book_append_sheet(wb, ws, ws_name);
+            for (row of xlsdata[key.title]) {
+
+            }
         });
+// sheet.row(1).style("bold", true);
+        var colors = {
+            info: 'D6DBDF',
+            warning: 'F5CBA7',
+            error: 'F1948A'
+        };
 
-        const nm = 'restlint-' + new Date().toISOString() + '.xlsb';
-        XLSX.writeFile(wb, nm);
-        delete wb;
+        XlsxPopulate.fromBlankAsync()
+            .then(workbook => {
+                for (var cat of getCategories()) {
+                    const newSheet = workbook.addSheet(capitalize(cat.title));
+                    // newSheet.column
+                    var cnt = 1;
+                    for (var row of xlsdata[cat.title]) {
+                        // console.log('ROW ' + row);
+                        // console.log(typeof row);
+                        const lvl = row[2];
+                        newSheet.cell('A' + cnt).value([row]);
+                        var row = 'A'+cnt+':D'+cnt;
+                        if (typeof colors[lvl] != 'undefined') {
+                            newSheet.range(row).style("fill", colors[lvl]);
+                        }
+                        cnt++;
+                    }
+                    newSheet.row(1).style("bold", true);
+                    // newSheet.column(1).style("bold", true);
+                    // workbook.sheet("cat.title").cell("A1").value("This is neat!");
+                
+                }
+                var numrows = xlsdata['summary'].length;
+                workbook.sheet('Summary').range("B2:B"+numrows).style("fill", colors['info']);
+                workbook.sheet('Summary').range("C2:C"+numrows).style("fill", colors['warning']);
+                workbook.sheet('Summary').range("D2:D"+numrows).style("fill", colors['error']);
+                
+                workbook.deleteSheet("Sheet1");
+                // return workbook.toFileAsync(nm);
+                workbook.outputAsync()
+                    .then(function (blob) {
+                        const nm = 'restlint-' + new Date().toISOString() + '.xlsb';
+                        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                            // If IE, you must uses a different method.
+                            window.navigator.msSaveOrOpenBlob(blob, nm);
+                        } else {
+                            var url = window.URL.createObjectURL(blob);
+                            var a = document.createElement("a");
+                            document.body.appendChild(a);
+                            a.href = url;
+                            a.download = nm;
+                            a.click();
+                            window.URL.revokeObjectURL(url);
+                            document.body.removeChild(a);
+                        }
+                    });
+            });
+        // const nm = 'restlint-' + new Date().toISOString() + '.xlsb';
+        // XLSX.writeFile(wb, nm);
+        // delete wb;
     });
 });

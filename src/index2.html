@@ -21,6 +21,7 @@
 
     <!-- <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
+    <script lang="javascript" src="js/xlsx-populate.min.js"></script>
     <script lang="javascript" src="js/xlsx.full.min.js"></script>
     <!-- <script src="js/bootstrap.fd.js"></script> -->
     <script src="js/restlintlib.js" defer></script>
@@ -106,6 +107,8 @@
 			    	Export
 			    </button>
 
+			    <br>
+			    
 			    <ul class="nav nav-tabs" id="maintab" role="tablist" data-bind="foreach: categoryList">
 			    	<li class="nav-item">
 			    		<a class="nav-link" role="tab"  data-bind="attr: { href: ref, title: tooltip, 'aria-controls': name, id: tabid}" data-toggle="tab" data-toggle="tooltip"><span data-bind="text: title"></span></a>
