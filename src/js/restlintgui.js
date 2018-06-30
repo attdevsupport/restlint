@@ -143,7 +143,7 @@ function addSummaryRow(cat, infos, warnings, errors) {
         row = `<tr><td>${capitalize(cat)}</td><td class='table-info'>${infos}</td><td class='table-warning'>${warnings}</td><td class='table-danger'>${errors}</td><td>${total}</td><tr>`;
         $("#summary-table-body").append(row);
     }
-    xlsdata['summary'].push([capitalize(cat), infos, warnings, errors, total]);
+    xlsdata.summary.push([capitalize(cat), infos, warnings, errors, total]);
     return;
 };
 
@@ -202,8 +202,8 @@ function readFiles() {
         $('#clear-btn').removeClass('disabled');
 
         // var xlsdata = {};
-        xlsdata['summary'] = [];
-        xlsdata['summary'].push(['Category', '# of Infos', '# of Warnings', '# on Errors', 'Total']);
+        xlsdata.summary = [];
+        xlsdata.summary.push(['Category', '# of Infos', '# of Warnings', '# on Errors', 'Total']);
         var wt = 0, et = 0, it = 0;
         var cats = getCategories();
         // var index = cats.indexOf('summary');
@@ -362,10 +362,10 @@ $(document).ready(function(){
                     // workbook.sheet("cat.title").cell("A1").value("This is neat!");
                 
                 }
-                var numrows = xlsdata['summary'].length;
-                workbook.sheet('Summary').range("B2:B"+numrows).style("fill", colors['info']);
-                workbook.sheet('Summary').range("C2:C"+numrows).style("fill", colors['warning']);
-                workbook.sheet('Summary').range("D2:D"+numrows).style("fill", colors['error']);
+                var numrows = xlsdata.summary.length;
+                workbook.sheet('Summary').range("B2:B"+numrows).style("fill", colors.info);
+                workbook.sheet('Summary').range("C2:C"+numrows).style("fill", colors.warning);
+                workbook.sheet('Summary').range("D2:D"+numrows).style("fill", colors.error);
                 
                 workbook.deleteSheet("Sheet1");
                 // return workbook.toFileAsync(nm);
