@@ -2,387 +2,167 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="REST Lint - Static REST Design Checker">
     <meta name="author" content="Brett Schwarz">
 
 	<title>REST Lint</title>
-
-    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
-	<!-- <link href="styles/bootstrap.min.css" rel="stylesheet"> -->
+	<!-- <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
+	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"> -->
+	<link rel="stylesheet" href="styles/bootstrap.min3.css" crossorigin="anonymous">
 	<link rel="stylesheet" href="styles/bootstrap.fd.css" inline>
 
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <!-- <script src="js/bootstrap.min.js" inline></script> -->
+
+
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+    <!-- <script src="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
     <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js'></script>
-    <script lang="javascript" src="js/xlsx.full.min.js" defer></script>
-    <script src="js/bootstrap.fd.js" inline></script>
+    <script lang="javascript" src="js/xlsx-populate.min.js"></script>
+    <script lang="javascript" src="js/xlsx.full.min.js"></script>
+    <!-- <script src="js/bootstrap.fd.js"></script> -->
     <script src="js/restlintlib.js" defer></script>
-        
+    <script src="js/restlintgui.js" defer></script>
+
 </head>
-<body class="container">
-    
-
-    <script type="text/javascript">
-        // This just initializes the tooptips
-        $(document).ready(function(){
-            $('[data-toggle="tooltip"]').tooltip();   
-        });
-
-        var xlsdata = [];
-        function clearTables() {
-            getCategories().forEach(function(k) {
-                $("#"+k.title+"-table-body").children("tr").remove();
-                $("#"+k.title+"-issues").html('');
-                if (typeof xlsdata[k.title] !== 'undefined') {
-                    xlsdata[k.title].length = 0;
-                }
-            });
-            $("#summary-table-footer").children("tr").remove();
-            $("#output").html('');
-            
-            // getCategories().forEach(function(key) {
-            //     xlsdata[k.title].length = 0;
-            // });
-
-            $('#export_btn').addClass('disabled');
-            $('#clear_btn').addClass('disabled');
-
-            return;
-        }
-
-        function onReaderLoad(event){
-            var jsdata = JSON.parse(event.target.result);
-
-            loadJson(event.target.result);
-            checkDefinitions();
-            checkGeneral();
-            checkPathStructure('paths', getData('paths'));
-            checkResources(getData('paths'));
-            checkBasePath();
-            checkStatusCodes(getData('statuscodes'));
-            // checkMethods(getData('statuscodes'));
-            checkMethods(getData('httpmethods'));
-            $('#export_btn').removeClass('disabled');
-            $('#clear_btn').removeClass('disabled');
-
-            // var xlsdata = {};
-            xlsdata['summary'] = [];
-            xlsdata['summary'].push(['Category', '# of Infos', '# of Warnings', '# on Errors', 'Total']);
-            var wt = 0, et = 0, it = 0;
-            var cats = getCategories();
-            // var index = cats.indexOf('summary');
-            // cats.splice(index, 1);
-            cats.forEach(function(cat, idx) {
-                if (cat.title === 'summary') {return;}
-                console.log('CAT: ' + cat.title);
-                xlsdata[cat.title] = [];
-                // xlsdata[cat.title].push(['#', 'Issue', 'Level', 'Message']);
-                xlsdata[cat.title].push(cat.columns);
-                var w = 0, e = 0, i = 0, cnt = 1;
-                getErrors(cat.title).forEach(function(key) {
-                    addRow(cat.title, cnt, key.name, key.level, key.msg);
-                    // xlsdata[cat].push([cnt, key.name, key.level, key.msg]);
-                    cnt += 1;
-                    if (key.level === 'warning') {
-                        w++;
-                    } else if (key.level === 'error') {
-                        e++;
-                    } else if (key.level === 'info') {
-                        i++;
-                    }
-                });
-                $('#' + cat.title + '-issues').html(`Total ${capitalize(cat.title)} issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-                addSummaryRow(cat.title, i, w, e);
-                // xlsdata['summary'].push([cat, i, w, e, i+w+e]);
-                it += i;
-                wt += w;
-                et += e;
-            });
-
-            addSummaryRow('total', it, wt, et);
-            // xlsdata['summary'].push(['total', it, wt, et, it+wt+et]);
-
-            return;
-        };
-
-        function addRow(cat, num, item, level, msg) {
-            var lvl = level;
-            if (level === 'error') {
-                lvl = 'danger';
-            }
-            row = $("<tr class='" + lvl + "'></tr>");
-            cells = `<td>${num}</td><td>${item}</td><td>${msg}</td>`;
-            // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
-            row.append(cells);
-            $("#" + cat + "-table-body").append(row);
-            xlsdata[cat].push([num, item, level, msg]);
-            return;
-        };
-
-        function addSummaryRow(cat, infos, warnings, errors) {
-            var total = infos + warnings + errors;
-            if (cat === 'total') {
-                row = `<tr><th>${capitalize(cat)}</th><th class='info'>${infos}</th><th class='warning'>${warnings}</th><th class='danger'>${errors}</th><th>${total}</th></tr>`;
-                $("#summary-table-footer").append(row);
-            } else {
-                row = `<tr><td>${capitalize(cat)}</td><td class='info'>${infos}</td><td class='warning'>${warnings}</td><td class='danger'>${errors}</td><td>${total}</td><tr>`;
-                $("#summary-table-body").append(row);
-            }
-            xlsdata['summary'].push([capitalize(cat), infos, warnings, errors, total]);
-            return;
-        };
 
 
 
-        $(document).ready(function() {
-// $('#paths-table').on('click-row.bs.table', function (e, row, $element) {
-//     alert(row, $element);
-// });
+<body class="container-fluid">
 
-// $('#paths-table').bootstrapTable({
-//     onClickRow: function (row, $element) {
-//         alert(row, $element);
-//     };
-// });
-
-            $('.nav-tabs a[href="#parameters"]').tab('show');
-            $('.nav-tabs a[href="#summary"]').tab('show');
-            $("#open_btn").click(function() {
-                $.FileDialog({multiple: true, accept: "text/csv, application/json"}).on('files.bs.filedialog', function(ev) {
-                    clearTables();
-                    clearData();
-                    var files = ev.files;
-                    var text = [], cells, row;
-                    files.forEach(function(f) {
-                        var reader = new FileReader();
-                        reader.onload = onReaderLoad;
-                        reader.readAsText(f);
-                        text.push(f.name);
-                    });
-                    $("#output").html("Checking files: " + text.join(','));
-                    
-                }).on('cancel.bs.filedialog', function(ev) {
-                    // $("#output").html("Cancelled!");
-                });
-            });
-            $("#clear_btn").click(function() {
-                clearTables();
-                clearData();
-            });
-            $("#export_btn").click(function() {
-
-                if (Object.keys(xlsdata).length === 0) {
-                    return;
-                }
-                var wb = XLSX.utils.book_new();
-                getCategories().forEach(function(key, idx) {
-                    // var tbl = document.getElementById(key + '-table');
-                    // var ws = XLSX.utils.table_to_sheet(tbl);
-                    var ws = XLSX.utils.aoa_to_sheet(xlsdata[key.title]);
-                    var ws_name = capitalize(key.title);
-
-                    // /* make worksheet */
-                    // var ws_data = [
-                    //   [ "S", "h", "e", "e", "t", "J", "S" ],
-                    //   [  1 ,  2 ,  3 ,  4 ,  5 ]
-                    // ];
-                    // var ws = XLSX.utils.aoa_to_sheet(ws_data);
-
-                    /* Add the worksheet to the workbook */
-                    XLSX.utils.book_append_sheet(wb, ws, ws_name);
-                });
-
-                XLSX.writeFile(wb, 'out.xlsb');
-                delete wb;
-            });
-         });
-    </script>
     <br>
     <h2> RestLint - A ReST API Design Static Checker</h2>
     <br>
 
-	<button id="open_btn" class="btn btn-primary" data-toggle="tooltip" title="Open a Swagger 2.0 File">Open files</button>
-    <button id="clear_btn" class="btn btn-secondary disabled" data-toggle="tooltip" title="Clear the page and start from scratch.">Clear</button>
-    <button id="export_btn" class="btn btn-secondary disabled" data-toggle="tooltip" title="Export Results to an Excel file">Export</button>
-    <br>
+<!-- 	<button id="open-btn" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Open a Swagger 2.0 File">
+		Open files
+	</button> -->
+
+ 
+
+<!--     <br>
     <h4 id="output">  </h4>
-    <br>
-    
-
-<!--     <div class="panel-group">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4 class="panel-title text-center">
-                  <a data-toggle="collapse" href="#collapsefile">Files</a>
-                </h4>
-              </div>
-              <div id="collapsefile" class="panel-collapse collapse">
-                <div class="panel-body">
-                <table id="parameters-table" class="table table-hover table-sm table-responsive">
-                    <tbody>
-                        <tr>
-                            <td scope="col" class="info col-sm-4"><small><b>info</b> - there is not enough information to make a solid determination, but user should investigate further if issue is a violation of standards or best practices</small></td>
-                            <td scope="col" class="warning col-sm-4"><small><b>warning</b> - there's a high probability that the issue is a violation</small></td>
-                            <td scope="col" class="danger col-sm-4"><small><b>error</b> - the issue is a violation of a standard (HTTP, etc) or best practice</small></td>
-                        </tr>
-                    </tbody>
-                </table>
-                </div>
-              </div>
-            </div>
-        </div> -->
+    <br> -->
 
 
-    <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#summary" data-toggle="tooltip" title="Summary of Issues across all categories">Summary</a></li>
-        <li><a data-toggle="tab" href="#general" data-toggle="tooltip" title="General or top level issues with the design">General</a></li>
-        <li><a data-toggle="tab" href="#http-methods" title="Issues related to HTTP methods (verbs)">HTTP Methods</a></li>
-        <li><a data-toggle="tab" href="#paths" title="Issues related to the URI paths or resources">Paths</a></li>
-        <li><a data-toggle="tab" href="#parameters" title="Issues related to the parameters and data definitions">Parameters</a></li>
-        <li><a data-toggle="tab" href="#status-codes" title="Issues related to HTTP status code usage">Status Codes</a></li>
-        <li><a data-toggle="tab" href="#errors" title="Issues related to exceptions returned by service">Exceptions</a></li>
-    </ul>
+	<!-- Accordian  -->
+	<div id="accordion">
 
-    <div class="tab-content">
+		<!-- Files Card -->
+	  <div class="card">
+	    <div class="card-header" id="files-header">
+	    	<h5 class="mb-0">
+	        	<button class="btn btn-link" data-toggle="collapse" data-target="#files" aria-expanded="true" aria-controls="files">
+	        		Files for Analysis
+	        	</button>
+	      	</h5>
+	    </div>
 
-       <div id="summary" class="tab-pane fade in active">
-            <table id="summary-table" class="table table-hover table-sm table-responsive table-condensed table-striped">
-                <thead>
-                <tr>
-                    <th scope="col">Category</th>
-                    <th scope="col"># of Infos</th>
-                    <th scope="col"># of Warnings</th>
-                    <th scope="col"># of Errors</th>
-                    <th scope="col">Total</th>
-                </tr>
-                </thead>
-                <tfoot  id='summary-table-footer'>
-                </tfoot>
-                <tbody id="summary-table-body">
-                </tbody>
-            </table>
-            <h5 id="summary-issues"></h5>
-        </div>
+	    <div id="files" class="collapse show" aria-labelledby="files-header" data-parent="#accordion">
+	    	<div class="card-body">
+	     		<div class='modal-body'>
+	    			<input type='file' id='file-upload' onchange="getFiles(this.files)" multiple />
+	    			<br/>
+	    			<div class='dropfield'>
+	    				<div class='dropfield-inner' id='droparea'  ondragenter='dragenter(event);' ondragover='dragover(event);' ondrop='drop(event);' ondragleave='dragleave(event);'>
+	    					<span id='droparea-title' class="display-3">Drop files here</span>
+	    					<ol id='droparea-filelist' class="text-left"></ol>
+	    				</div>
+	    			</div>
+	    			<div class='container-fluid darea-files'>
+	    			</div>
+	    		</div>
+	    		<div class='modal-footer'>
+	        		<button id='analyze-btn' type='button' class='btn btn-primary darea-ok'>
+	                    Analyze files
+	        		</button>
+	        		<button id='cancel-btn' type='button' class='btn btn-default darea-cancel' data-dismiss=''>
+	                    Cancel
+	        		</button>
+	    		</div>
+	      	</div>
+	    </div>
+	  </div>
 
-        <div id="general" class="tab-pane fade in active">
-            <table id="general-table" class="table table-hover table-sm table-responsive table-condensed">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Issue</th>
-                    <!-- <th scope="col">Level</th> -->
-                    <th scope="col">Message</th>
-                </tr>
-                </thead>
-                <tbody id="general-table-body">
-                </tbody>
-            </table>
-            <h5 id="general-issues"></h5>
-        </div>
+		<!-- Results Card -->
+	  <div class="card">
+	    <div class="card-header" id="results-header">
+	    	<h5 class="mb-0">
+	        	<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#results" aria-expanded="false" aria-controls="results">
+	          		Results of Analysis
+	        	</button>
+	      	</h5>
+	    </div>
+	    <div id="results" class="collapse" aria-labelledby="results-header" data-parent="#accordion">
+	    	<div class="card-body">
 
-       <div id="http-methods" class="tab-pane fade in active">
-            <table id="http-methods-table" class="table table-hover table-sm table-responsive table-condensed">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Issue</th>
-                    <!-- <th scope="col">Level</th> -->
-                    <th scope="col">Message</th>
-                </tr>
-                </thead>
-                <tbody id="http-methods-table-body">
-                </tbody>
-            </table>
-            <h5 id="http-methods-issues"></h5>
-        </div>
+	    		<button id="clear-btn" class="btn btn-primary btn-sm disabled" data-toggle="tooltip" title="Clear the page and start from scratch.">
+			    	Clear
+			    </button>
 
-        <div id="paths" class="tab-pane fade in active">
-            <table id="paths-table" class="table table-hover table-sm table-responsive table-condensed">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Issue</th>
-                    <!-- <th scope="col">Level</th> -->
-                    <th scope="col">Message</th>
-                </tr>
-                </thead>
-                <tbody id="paths-table-body">
-                </tbody>
-            </table>
-            <h5 id="paths-issues"></h5>
-        </div>
+			    <button  id="export-btn" class="btn btn-primary btn-sm disabled" data-toggle="tooltip" title="Export Results to an Excel file">
+			    	Export
+			    </button>
 
-        <div id="parameters" class="tab-pane fade in active">
-            <table id="parameters-table" class="table table-hover table-sm table-responsive table-condensed">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Issue</th>
-                    <!-- <th scope="col">Level</th> -->
-                    <th scope="col">Message</th>
-                </tr>
-                </thead>
-                <tbody id="parameters-table-body">
-                </tbody>
-            </table>
-        </div>
+			    <br>
+			    
+			    <ul class="nav nav-tabs" id="maintab" role="tablist" data-bind="foreach: categoryList">
+			    	<li class="nav-item">
+			    		<a class="nav-link" role="tab"  data-bind="attr: { href: ref, title: tooltip, 'aria-controls': name, id: tabid}" data-toggle="tab" data-toggle="tooltip"><span data-bind="text: title"></span></a>
+			    	</li>
+			    </ul>
 
-        <div id="status-codes" class="tab-pane fade in active">
-            <table id="status-codes-table" class="table table-hover table-sm table-responsive table-condensed">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Issue</th>
-                    <!-- <th scope="col">Level</th> -->
-                    <th scope="col">Message</th>
-                </tr>
-                </thead>
-                <tbody id="status-codes-table-body">
-                </tbody>
-            </table>
-            <h5 id="status-codes-issues"></h5>
-        </div>
+			    <div class="tab-content" id="tab-content" data-bind="foreach: categoryList">
 
-        <div id="errors" class="tab-pane fade in active">
-            <h3>NOT IMPLEMENTED YET</h3>
-            <table id="errors-table" class="table table-hover table-sm table-responsive table-condensed">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Issue</th>
-                    <!-- <th scope="col">Level</th> -->
-                    <th scope="col">Message</th>
-                </tr>
-                </thead>
-                <tbody id="errors-table-body">
-                </tbody>
-            </table>
-        </div>
-    </div>
+			    	<div data-bind="attr: { id: name, 'aria-labelledby': tabid}" class="tab-pane fade" role="tabpanel">
+			       		<div class="table-responsive">
+				            <table data-bind="attr: { id: tablename}" class="table table-hover table-responsive table-striped table-sm">
+				                <thead>
+				                <tr>
+				                	<!-- ko foreach: columns -->
+				                	<th scope="col" data-bind="text: $data"></th>
+									<!-- /ko -->
+				                </tr>
+				                </thead>
+				                <tfoot  data-bind="attr: { id: tablefooter}">
+				                </tfoot>
+				                <tbody data-bind="attr: { id: tablebody}">
+				                </tbody>
+				            </table>
+				        </div>
+			            <h5 data-bind="attr: { id: issueid}"></h5>
+			        </div>
+			    </div>
+	        </div>
+	    </div>
+	  </div>
+	  <div class="card">
+	    <div class="card-header" id="legend-header">
+	      	<h5 class="mb-0">
+	        	<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#legend" aria-expanded="false" aria-controls="legend">
+	          		Legend for Issue Levels
+	        	</button>
+	        </h5>
+	    </div>
+	    <div id="legend" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+	    	<div class="card-body">
+	 			<table id="parameters-table" class="table table-hover table-sm table-responsive">
+		            <tbody>
+		                <tr>
+		                    <td scope="col" class="table-info"><small><b>info</b> - There is not enough information to make a solid determination, or is just a suggestion. But user should investigate further to determine if the suggestion makes sense.
+		                    <td scope="col" class="table-warning"><small><b>warning</b> - There's a high probability that the issue is a violation, but further investigation is needed. Check with the <a href='https://tools.ietf.org/html/rfc7230' target='_blank'> HTTP standards (RFC 7230-7235)</a> and <a href='http://tss.att.com/document/R113140.pdf' target='_blank'>AT&T RESTful Standards</a>.</small></td>
+		                    <td scope="col" class="table-danger"><small><b>error</b> - The issue is a violation of a standard (HTTP, AT&T, etc) or best practice. This issue <em>must</em> be fixed. Check with the <a href='https://tools.ietf.org/html/rfc7230' target='_blank'> HTTP standards (RFC 7230-7235)</a> and <a href='http://tss.att.com/document/R113140.pdf' target='_blank'>AT&T RESTful Standards</a>.</small></td>
+		                </tr>
+		            </tbody>
+		        </table>
+	        </div>
+	    </div>
+	  </div>
+	</div>
 
-    <div class="panel-group">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <h4 class="panel-title text-center">
-              <a data-toggle="collapse" href="#collapse1">Legend for Issue Levels</a>
-            </h4>
-          </div>
-          <div id="collapse1" class="panel-collapse collapse">
-            <div class="panel-body">
-            <table id="parameters-table" class="table table-hover table-sm table-responsive">
-                <tbody>
-                    <tr>
-                        <td scope="col" class="info col-sm-4"><small><b>info</b> - There is not enough information to make a solid determination, or is just a suggestion. But user should investigate further to determine if the suggestion makes sense.
-                        <td scope="col" class="warning col-sm-4"><small><b>warning</b> - There's a high probability that the issue is a violation, but further investigation is needed. Check with the <a href='https://tools.ietf.org/html/rfc7230' target='_blank'> HTTP standards (RFC 7230-7235)</a> and <a href='http://tss.att.com/document/R113140.pdf' target='_blank'>AT&T RESTful Standards</a>.</small></td>
-                        <td scope="col" class="danger col-sm-4"><small><b>error</b> - The issue is a violation of a standard (HTTP, AT&T, etc) or best practice. This issue <em>must</em> be fixed. Check with the <a href='https://tools.ietf.org/html/rfc7230' target='_blank'> HTTP standards (RFC 7230-7235)</a> and <a href='http://tss.att.com/document/R113140.pdf' target='_blank'>AT&T RESTful Standards</a>.</small></td>
-                    </tr>
-                </tbody>
-            </table>
-            </div>
-          </div>
-        </div>
-    </div>
+
 </body>
-</html>
+</html>	

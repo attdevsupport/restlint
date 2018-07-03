@@ -4,6 +4,7 @@ var htmlmin = require('gulp-htmlmin');
 var jshint = require('gulp-jshint');
 var inlinesrc = require('gulp-inline-source');
 var csslint = require('gulp-csslint');
+var babel = require('gulp-babel');
 
 // Note: the '**/' is needed as a prefix to
 // preserve the directory structure.
@@ -19,7 +20,10 @@ gulp.task('jshint', function() {
 
 gulp.task('js', ['jshint'], function() {
   return gulp.src(['src/**/*.js', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
-    .pipe(uglify())
+    .pipe(babel())
+    .pipe(uglify().on('error', function(e){
+            console.log(e);
+         }))
     .pipe(gulp.dest(DEST));
 });
 
@@ -42,9 +46,11 @@ gulp.task('css', function() {
 });
 
 gulp.task('html', ['css'], function() {
-  return gulp.src(['src/index.html', '!dist/', '!dist/**'])
+  return gulp.src(['src/index.html', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
     .pipe(inlinesrc())
-    .pipe(htmlmin({collapseWhitespace: true,minifyJS:true,minifyCSS:true,removeComments:true}))
+    .pipe(htmlmin({collapseWhitespace: true,minifyJS:true,minifyCSS:true,removeComments:true}).on('error', function(e){
+            console.log(e);
+         }))
     .pipe(gulp.dest(DEST));
 });
 
