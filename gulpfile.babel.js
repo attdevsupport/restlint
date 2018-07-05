@@ -13,14 +13,16 @@ var babel = require('gulp-babel');
 // To move and minify JS assests.
 var DEST = 'dist/';
 gulp.task('jshint', function() {
-  return gulp.src(['src/**/*.js', '!**/boot*', '!**/jquery*',  '!**/knock*', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
+  return gulp.src(['src/**/*.js', '!**/boot*', '!**/jquery*',  '!**/knock*', '!**/xlsx*', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
     .pipe(jshint())
     .pipe(jshint.reporter('default'));
 });
 
 gulp.task('js', ['jshint'], function() {
   return gulp.src(['src/**/*.js', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
-    .pipe(babel())
+    .pipe(babel({
+            presets: ['env']
+        }))
     .pipe(uglify().on('error', function(e){
             console.log(e);
          }))
