@@ -20,9 +20,7 @@ gulp.task('jshint', function() {
 
 gulp.task('js', ['jshint'], function() {
   return gulp.src(['src/**/*.js', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
-    .pipe(babel({
-            presets: ['env']
-        }))
+    .pipe(babel())
     .pipe(uglify().on('error', function(e){
             console.log(e);
          }))
