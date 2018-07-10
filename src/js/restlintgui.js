@@ -119,7 +119,7 @@ function genReader(f) {
 * @param {string} author - The author of the book
 */
 function addRow(cat, num, item, level, msg) {
-    var lvl = level;
+    var lvl = level, row = '';
     if (level === 'error') {
         lvl = 'danger';
     }
@@ -139,7 +139,7 @@ function addRow(cat, num, item, level, msg) {
 * @param {string} author - The author of the book
 */
 function addSummaryRow(cat, infos, warnings, errors) {
-    var total = infos + warnings + errors;
+    var total = infos + warnings + errors, row = '';
     if (cat === 'total') {
         row = `<tr><th>${capitalize(cat)}</th><th class='table-info'>${infos}</th><th class='table-warning'>${warnings}</th><th class='table-danger'>${errors}</th><th>${total}</th></tr>`;
         $("#summary-table-footer").append(row);
