@@ -610,7 +610,7 @@ var checkMethods = function(s) {
 var checkGeneral = function() {
 	var msg = '', obj = {};
 	if (pData.general.schemes.length != 1 || pData.general.schemes.indexOf('https') < 0) {
-		msg = 'schemes must only have <em>https</em>';
+		msg = 'schemes must have https and only have https';
 		obj = createErrorObj(pData.general.schemes.join(','), 'error', msg);
 		errors.general.push(obj);
 	}
@@ -695,9 +695,10 @@ var loadCsv = function(type, data) {
 var loadJson = function(data) {
 	var jsdata = JSON.parse(data);
 
-	pData.general.basePath = jsdata.basePath;
-	pData.general.host = jsdata.host;
-	pData.general.schemes = jsdata.schemes;
+	
+	pData.general.basePath = jsdata.hasOwnProperty('basePath') ? jsdata.basePath : '';
+	pData.general.host = jsdata.hasOwnProperty('host') ? jsdata.host : '';
+	pData.general.schemes = jsdata.hasOwnProperty('schemes') ? jsdata.schemes : [];
 	if (jsdata.swagger) {
 		pData.general.version = jsdata.swagger;
 	} else {
@@ -723,7 +724,7 @@ var loadJson = function(data) {
 				}
 			});
 			pData.statuscodes.push(createStatusObj(key, k, arr));
-
+console.log('XXXXXXXX ' + key + ' ' + k);
 			var produces = [];
 			if (jsdata.paths[key][k].hasOwnProperty('produces')) {
 				produces = jsdata.paths[key][k].produces;
@@ -735,12 +736,13 @@ var loadJson = function(data) {
 			}
 
 			var loc = [];
-			jsdata.paths[key][k].parameters.forEach(function(key, idx) {
-				if (key.hasOwnProperty('in')) {
-					loc.push(key.in);
-				}
-			});
-			
+			if (jsdata.paths[key][k].hasOwnProperty('parameters')) {
+				jsdata.paths[key][k].parameters.forEach(function(key, idx) {
+					if (key.hasOwnProperty('in')) {
+						loc.push(key.in);
+					}
+				});
+			}
 
 			pData.httpmethods.push(createMethodObj(key, k, produces, consumes, loc));
 		});
