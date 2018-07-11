@@ -610,14 +610,14 @@ var checkMethods = function(s) {
 var checkGeneral = function() {
 	var msg = '', obj = {};
 	if (pData.general.schemes.length != 1 || pData.general.schemes.indexOf('https') < 0) {
-		msg = 'schemes must have https and only have https';
+		msg = 'schemes must have <em>https</em> and only have <em>https</em>';
 		obj = createErrorObj(pData.general.schemes.join(','), 'error', msg);
 		errors.general.push(obj);
 	}
 
 	// this might depend if it's being exposed externally or not.
 	if (isExternal && allowedHostsExt.indexOf(pData.general.host) < 0) {
-		msg = 'host names for externally exposed APIs must be either <em>lgw.att.com</em> or <em>api.att.com</em>';
+		msg = 'host names for externally exposed APIs must be one of the following: <em>' + allowedHostsExt.join(', ') + '</em>';
 		obj = createErrorObj(pData.general.host, 'error', msg);
 		errors.general.push(obj);
 	}
