@@ -389,6 +389,7 @@ var checkDefinitions = function() {
 * @param {array} paths - an array of paths
 */
 var checkResources = function(paths) {
+
 	paths.forEach(function(key, idx) {
 
 		// remove first forward slashes for easier matching
@@ -403,9 +404,19 @@ var checkResources = function(paths) {
 			errors.paths.push(createErrorObj(key, 'error', msg));
 		}
 
-		if (k.match(/create|make|delete|update|get|del|remove/i)) {
+		if (k.match(/(create|make|delete|update|get|del|generate|remove)([A-Z]+|$)/i)) {
 			msg = "resource must be a noun";
 			errors.paths.push(createErrorObj(key, 'error', msg));
+		}
+
+		var mat = k.match(/\.(json|xml|txt|html)/i);
+		var mat2 = k.match(/\.[0-9a-z]{1,5}$/i);
+		if (mat) {
+			msg = "resource name must not contain content negotiation indicators (" + mat[0] + ").";
+			errors.paths.push(createErrorObj(key, 'error', msg));
+		} else if (mat2) {
+			msg = "resource name should not contain file extentions (" + mat2[0] + ").";
+			errors.paths.push(createErrorObj(key, 'warning', msg));
 		}
 
 		var obj = checkCase(k);
