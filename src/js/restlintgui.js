@@ -323,8 +323,14 @@ $(document).ready(function(){
                 var cnt = 1;
                 for (var row of xlsdata[cat.title]) {
                     // console.log('ROW ' + row);
-                    // console.log(typeof row);
+                    // console.log('ROW UP' + row[3]);
+                    // console.log(typeof row[3]);
                     const lvl = row[2];
+                    if (typeof row[3] === 'string') {
+                        row[3] = row[3].replace(/<em>|<\/em>/gi, '');
+                    }
+                    // var nrow = row[3];
+                    // row[3] = nrow.replace(/<em>|<\/em>/gi, '');
                     newSheet.cell('A' + cnt).value([row]);
                     var clrrow = 'A'+cnt+':D'+cnt;
                     if (typeof colors[lvl] != 'undefined') {
@@ -337,6 +343,7 @@ $(document).ready(function(){
                 // workbook.sheet("cat.title").cell("A1").value("This is neat!");
             
             }
+
             var numrows = xlsdata.summary.length;
             workbook.sheet('Summary').range("B2:B"+numrows).style("fill", colors.info);
             workbook.sheet('Summary').range("C2:C"+numrows).style("fill", colors.warning);
