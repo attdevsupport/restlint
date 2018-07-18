@@ -217,7 +217,11 @@ function readFiles() {
             // console.log('CAT: ' + cat.title);
             xlsdata[cat.title] = [];
             // xlsdata[cat.title].push(['#', 'Issue', 'Level', 'Message']);
-            xlsdata[cat.title].push(cat.columns);
+            var cp = cat.columns.slice(0);
+            console.log('CP: ' + cp);
+            cp.splice(2,0,'Level');
+            console.log('CP2: ' + cp);
+            xlsdata[cat.title].push(cp);
             var w = 0, e = 0, i = 0, cnt = 1;
             getErrors(cat.title).forEach(function(key) {
                 addRow(cat.title, cnt, key.name, key.level, key.msg);
@@ -353,7 +357,7 @@ $(document).ready(function(){
             // return workbook.toFileAsync(nm);
             workbook.outputAsync()
             .then(function (blob) {
-                const nm = 'restlint-' + new Date().toISOString() + '.xlsb';
+                const nm = 'restlint-' + new Date().toISOString() + '.xlsx';
                 if (window.navigator && window.navigator.msSaveOrOpenBlob) {
                     // If IE, you must uses a different method.
                     window.navigator.msSaveOrOpenBlob(blob, nm);
