@@ -119,7 +119,7 @@ function genReader(f) {
 * @param {string} author - The author of the book
 */
 function addRow(cat, num, item, level, msg) {
-    var lvl = level, row = '';
+    var lvl = level, row = '', cells = '';
     if (level === 'error') {
         lvl = 'danger';
     }
