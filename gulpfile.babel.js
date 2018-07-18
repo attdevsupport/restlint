@@ -48,7 +48,7 @@ gulp.task('css', function() {
 gulp.task('html', ['css'], function() {
   return gulp.src(['src/index.html', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
     .pipe(inlinesrc())
-    .pipe(htmlmin({collapseWhitespace: true,minifyJS:true,minifyCSS:true,removeComments:true}).on('error', function(e){
+    .pipe(htmlmin({collapseWhitespace: true,minifyJS:true,minifyCSS:true,removeComments:false}).on('error', function(e){
             console.log(e);
          }))
     .pipe(gulp.dest(DEST));
