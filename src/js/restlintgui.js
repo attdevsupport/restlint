@@ -169,15 +169,15 @@ function getFiles(files) {
 
         $('#droparea-title').addClass('d-none');
         // output('<ol>');
-        for (var file of files) {
+        Object.keys(files).forEach(function(key, idx) {
             // loadedFiles.push(file);
-            genReader(file);
+            genReader(files[idx]);
 
             // output('<li>' + file.name);
-            $('#droparea-filelist').append('<li>' + file.name);
-    
-        }
-        // output('</ol>');
+            $('#droparea-filelist').append('<li>' + files[idx].name);
+
+        })
+
         readFiles();
     }
 }
