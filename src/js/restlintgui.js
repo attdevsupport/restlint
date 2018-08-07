@@ -176,7 +176,7 @@ function getFiles(files) {
             // output('<li>' + file.name);
             $('#droparea-filelist').append('<li>' + files[idx].name);
 
-        })
+        });
 
         readFiles();
     }
@@ -210,6 +210,7 @@ function readFiles() {
         xlsdata.summary.push(['Category', '# of Infos', '# of Warnings', '# on Errors', 'Total']);
         var wt = 0, et = 0, it = 0;
         var cats = getCategories();
+
         // var index = cats.indexOf('summary');
         // cats.splice(index, 1);
         cats.forEach(function(cat, idx) {
@@ -248,7 +249,7 @@ function readFiles() {
     }
 
     return;
-};
+}
 
 /**
 * @description Represents a book
