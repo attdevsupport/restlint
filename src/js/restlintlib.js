@@ -7,6 +7,7 @@ var pData = {
 	parameters: [],
 	paths: [],
 	statuscodes: [],
+	security: [],
 	errors: []
 };
 
@@ -17,6 +18,7 @@ var errors = {
 	parameters: [],
 	paths: [],
 	statuscodes: [],
+	security: [],
 	errors: []
 };
 
@@ -55,6 +57,11 @@ var categories = [
 	{
 		title: 'errors',
 		tooltip: 'Issues related to exceptions returned by service',
+		columns: ['#', 'Issue', 'Message']
+	},
+	{
+		title: 'security',
+		tooltip: 'Issues related to security',
 		columns: ['#', 'Issue', 'Message']
 	}
 ];
@@ -345,6 +352,7 @@ var checkDefinitions = function() {
 		var checked = [];
 		key.params.forEach(function(param, ii) {
 			var errs = [];
+			var errsSec = [];
 			var ps = param.split(':');
 			var par = ps[0];
 			var type = ps[1];
@@ -375,10 +383,43 @@ var checkDefinitions = function() {
 					errs.push(obj);
 					return;
 				}
+
+
+				// ASPR Checks
+				var obj = {};
+				if (word.match(/expirationdate|expdate|expiredate/i)) {
+					obj.msg = "May be in violation of ASPR - Restricted Personal Information - Payment Card Expiration Date";
+					obj.name = key.definition + ': ' + word;
+					obj.level = 'warning';
+					errsSec.push(obj);
+				}
+				if (word.match(/(passwdhint|passwordhint)/i)) {
+					obj.msg = "May be in violation of ASPR-Restricted Personal Information - Employee Authentication Credential Hint ";
+					obj.name = key.definition + ': ' + word;
+					obj.level = 'warning';
+					errsSec.push(obj);
+				}
+				if (word.match(/(customerid|attuid|attid|expirationdate|user|passwd|password)/i)) {
+					obj.msg = "May be in violation of ASPR-Restricted Personal Information - Customer User ID";
+					obj.name = key.definition + ': ' + word;
+					obj.level = 'warning';
+					errsSec.push(obj);
+				}
+				if (word.match(/(address|zip|telephone|phone|fax|facsimile|email|mobile|cell|wireless)([A-Z]+|$)/i)) {
+					obj.msg = "May be in violation of ASPR-Restricted Personal Information - Personal Directory Information ";
+					obj.name = key.definition + ': ' + word;
+					obj.level = 'warning';
+					errsSec.push(obj);
+				}
+
 			});
 
 			errs.forEach(function(E) {
 				errors.parameters.push(createErrorObj(E.name, E.level, E.msg));
+			});
+
+			errsSec.forEach(function(E) {
+				errors.security.push(createErrorObj(E.name, E.level, E.msg));
 			});
 		});
 	});
