@@ -332,7 +332,7 @@ $(document).ready(function(){
                     // console.log(typeof row[3]);
                     const lvl = row[2];
                     if (typeof row[3] === 'string') {
-                        row[3] = row[3].replace(/<em>|<\/em>/gi, '');
+                        row[3] = row[3].replace(/<em>|<\/em>|<u>|<\/u>/gi, '');
                     }
                     // var nrow = row[3];
                     // row[3] = nrow.replace(/<em>|<\/em>/gi, '');

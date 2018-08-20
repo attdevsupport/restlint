@@ -7,6 +7,7 @@ var pData = {
 	parameters: [],
 	paths: [],
 	statuscodes: [],
+	responses: [],
 	security: [],
 	errors: []
 };
@@ -17,9 +18,8 @@ var errors = {
 	httpmethods: [],
 	parameters: [],
 	paths: [],
-	statuscodes: [],
-	security: [],
-	errors: []
+	responses: [],
+	security: []
 };
 
 // This is for the various categories of issues, structured so that we can loop over them
@@ -50,13 +50,8 @@ var categories = [
 		columns: ['#', 'Issue', 'Message']
 	},
 	{
-		title: 'status-codes',
-		tooltip: 'Issues related to HTTP status code usage',
-		columns: ['#', 'Issue', 'Message']
-	},
-	{
-		title: 'errors',
-		tooltip: 'Issues related to exceptions returned by service',
+		title: 'responses',
+		tooltip: 'Issues related to responses, including HTTP status codes and error messages',
 		columns: ['#', 'Issue', 'Message']
 	},
 	{
@@ -552,7 +547,7 @@ var checkStatusCodes = function(s) {
 				msg += " (only show: " + s[idx].statuses.join(',') + ")";
 				name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
 				obj = createErrorObj(name, 'warning', msg);
-				errors.statuscodes.push(obj);
+				errors.responses.push(obj);
 			}
 		}
 
@@ -569,7 +564,7 @@ var checkStatusCodes = function(s) {
 			msg = 'missing mandatory HTTP status codes: ' + man.join(', ');
 			name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
 			obj = createErrorObj(name, 'error', msg);
-			errors.statuscodes.push(obj);
+			errors.responses.push(obj);
 		}
 
 		// check optional status codes
@@ -585,7 +580,7 @@ var checkStatusCodes = function(s) {
 			msg = 'missing optional HTTP status codes (verify if codes are needed): ' + opt.join(', ');
 			name = s[idx].method.toUpperCase() + ' ' + s[idx].path;
 			obj = createErrorObj(name, 'warning', msg);
-			errors.statuscodes.push(obj);
+			errors.responses.push(obj);
 		}
 	});
 
@@ -776,7 +771,7 @@ var loadJson = function(data) {
 				}
 			});
 			pData.statuscodes.push(createStatusObj(key, k, arr));
-console.log('XXXXXXXX ' + key + ' ' + k);
+
 			var produces = [];
 			if (jsdata.paths[key][k].hasOwnProperty('produces')) {
 				produces = jsdata.paths[key][k].produces;
