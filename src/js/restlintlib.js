@@ -71,12 +71,12 @@ var legends = [
 	{
 		title: 'warning',
 		tooltip: 'User should investigate further to determine if it is an issue',
-		description: 'There\'s a high probability that the issue is a violation, but further investigation is needed. Check with the <a href="https://tools.ietf.org/html/rfc7230" target="_blank"> HTTP standards (RFC 7230-7235)</a> and <a href="http://tss.att.com/document/R113140.pdf" target="_blank">AT&T RESTful Standards</a>.'
+		description: 'There\'s a high probability that the issue is a violation, but further investigation is needed. Check with the <a href="https://tools.ietf.org/html/rfc7230" target="_blank"> HTTP standards (RFC 7230-7235)</a>, <a href="http://tss.att.com/document/R113140.pdf" target="_blank">AT&T RESTful Standards</a> and <a href="http://cso.att.com/SDI/index.html" target="_blank">AT&T Security Standards (ASPR)</a>.'
 	},
 	{
 		title: 'error',
 		tooltip: 'User must take corrective action',
-		description: 'The issue is a violation of a standard (HTTP, AT&T, etc) or best practice. This issue <em>must</em> be fixed. Check with the <a href="https://tools.ietf.org/html/rfc7230" target="_blank"> HTTP standards (RFC 7230-7235)</a> and <a href="http://tss.att.com/document/R113140.pdf" target="_blank">AT&T RESTful Standards</a>.'
+		description: 'The issue is a violation of a standard (HTTP, AT&T, etc) or best practice. This issue <em>must</em> be fixed. Check with the <a href="https://tools.ietf.org/html/rfc7230" target="_blank"> HTTP standards (RFC 7230-7235)</a>, <a href="http://tss.att.com/document/R113140.pdf" target="_blank">AT&T RESTful Standards</a> and <a href="http://cso.att.com/SDI/index.html" target="_blank">AT&T Security Standards (ASPR)</a>.'
 	}
 ];
 
