@@ -11,6 +11,7 @@
 	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"> -->
 	<link rel="stylesheet" href="styles/bootstrap.min3.css" crossorigin="anonymous">
 	<link rel="stylesheet" href="styles/bootstrap.fd.css" inline>
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
 
 
@@ -27,7 +28,12 @@
     <script src="js/restlintlib.js" defer></script>
     <script src="js/restlintgui.js" defer></script>
 
-</head>
+	<style type="text/css">
+	  body {
+	    font-family: Verdana;
+	  }
+	</head>
+	</style>
 
 
 
@@ -55,7 +61,8 @@
 	  <div class="card">
 	    <div class="card-header" id="files-header">
 	    	<h5 class="mb-0">
-	        	<button class="btn btn-link" data-toggle="collapse" data-target="#files" aria-expanded="true" aria-controls="files">
+			<span class="fas fa-upload btn-lg" aria-hidden="true"></span>
+			<button class="btn btn-lg btn-link" data-toggle="collapse" data-target="#files" aria-expanded="true" aria-controls="files">
 	        		Files for Analysis
 	        	</button>
 	      	</h5>
@@ -91,7 +98,8 @@
 	  <div class="card">
 	    <div class="card-header" id="results-header">
 	    	<h5 class="mb-0">
-	        	<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#results" aria-expanded="false" aria-controls="results">
+	    		<span class="fas fa-glasses btn-lg" aria-hidden="true"></span>
+	        	<button class="btn btn-lg btn-link collapsed" data-toggle="collapse" data-target="#results" aria-expanded="false" aria-controls="results">
 	          		Results of Analysis
 	        	</button>
 	      	</h5>
@@ -142,7 +150,8 @@
 	  <div class="card">
 	    <div class="card-header" id="legend-header">
 	      	<h5 class="mb-0">
-	        	<button class="btn btn-link collapsed" data-toggle="collapse" data-target="#legend" aria-expanded="false" aria-controls="legend">
+	      		<span class="fas fa-info-circle btn-lg" aria-hidden="true"></span>
+	        	<button class="btn btn-lg btn-link collapsed" data-toggle="collapse" data-target="#legend" aria-expanded="false" aria-controls="legend">
 	          		Legend for Issue Levels
 	        	</button>
 	        </h5>
