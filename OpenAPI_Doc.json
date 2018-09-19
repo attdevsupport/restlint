@@ -63,6 +63,42 @@
         }
       }
     },
+    "/service": {
+      "get": {
+        "tags": [
+          "ABC"
+        ],
+        "summary": "junk",
+        "operationId": "get",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "request body",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/abcInput"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "success message",
+            "schema": {
+              "$ref": "#/definitions/abcOutput"
+            }
+          },
+          "500": {
+            "description": "user/privAdmin exist with updated with details",
+            "schema": {
+              "$ref": "#/definitions/abcErrorRes"
+            }
+          }
+        }
+      }
+    },
     "/myservice/entity/{entity}": {
       "delete": {
         "tags": [
