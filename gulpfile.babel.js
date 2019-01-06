@@ -1,10 +1,11 @@
-var gulp = require('gulp');
-var uglify = require('gulp-uglify');
-var htmlmin = require('gulp-htmlmin');
-var jshint = require('gulp-jshint');
-var inlinesrc = require('gulp-inline-source');
-var csslint = require('gulp-csslint');
-var babel = require('gulp-babel');
+const gulp = require('gulp');
+const uglify = require('gulp-uglify');
+const htmlmin = require('gulp-htmlmin');
+const eslint = require('gulp-eslint');
+const inlinesrc = require('gulp-inline-source');
+const csslint = require('gulp-csslint');
+const babel = require('gulp-babel');
+const stripDebug = require('gulp-strip-debug');
 
 // Note: the '**/' is needed as a prefix to
 // preserve the directory structure.
@@ -12,14 +13,16 @@ var babel = require('gulp-babel');
 
 // To move and minify JS assests.
 var DEST = 'dist/';
-gulp.task('jshint', function() {
+gulp.task('eslint', function() {
   return gulp.src(['src/**/*.js', '!**/boot*', '!**/jquery*',  '!**/knock*', '!**/xlsx*', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
-    .pipe(jshint())
-    .pipe(jshint.reporter('default'));
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 });
 
-gulp.task('js', ['jshint'], function() {
+gulp.task('js', ['eslint'], function() {
   return gulp.src(['src/**/*.js', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
+    .pipe(stripDebug())
     .pipe(babel())
     .pipe(uglify().on('error', function(e){
             console.log(e);
