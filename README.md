@@ -16,11 +16,15 @@ You can load the website in two ways:
 -- Open the *dist/index.html* file that is in the root directory of the repo, with a browser (i.e. Chrome, Firefox).
 -- Host the files through a local web server, and use your browser to navigate to the local web server. For example, if you have python installed, you can run this command in the root of the repo directory to serve the files: 
 
-      ```
-      python -m SimpleHTTPServer 8080 # assuming port 8080 is not used already.
-      ```
-
-   Then you can navigate your browser to *localhost:8080/dist/*
+	Python2
+	```
+	python -m SimpleHTTPServer 8080 # assuming port 8080 is not used already.
+	```
+	Python3
+	```
+	python -m http.server 8080 # assuming port 8080 is not used already.
+	```
+	Then you can navigate your browser to *localhost:8080/dist/*
 
 -------------
 ## Using the website
@@ -35,10 +39,6 @@ You can load the website in two ways:
 -   Moved javascript to end of body to minimize blocking
 
 
-### Page Speed Insights Results:
-
-[Page Speed Insight analysis](https://developers.google.com/speed/pagespeed/insights/?url=https%3A%2F%2Fbschwarz.github.io%2Fneighborhood-map%2Fdist%2F&tab=desktop)
-
 
 -------
 ## Build Automation
@@ -46,7 +46,7 @@ Used Gulp to automate the building and common tasks of the website. Includes the
 - minification of javascript using ```uglify```
 - minification of HTML and CSS using ```htmlmin```
 - inlining CSS using ```inline source```
-- Javascript linting using ```jshint```
+- Javascript linting using ```eslint```
 - CSS linting using ```csslint```
 - moves all assets under the ```dist/``` directory
 
