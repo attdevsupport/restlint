@@ -1,0 +1,583 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "APIRegistration",
+    "description": "The APIRegistration microService provides the ability to perform several operations on an API during the Registration flow of API Provisioning, including create, update, retrieve and delete.",
+    "version": "1.0.0",
+    "contact": {
+      "email": "polycoders@att.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://att.non-prod.com/rest/apiregistration/v1",
+      "description": "Non-prod"
+    },
+    {
+      "url": "http://att.prod.com/rest/apiregistration/v1",
+      "description": "Production"
+    }
+  ],
+  "tags": [
+    {
+      "name": "apis"
+    }
+  ],
+  "paths": {
+    "/apis": {
+      "post": {
+        "summary": "Adds a new API/service.",
+        "description": "",
+        "operationId": "createAPI",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Content-Type",
+            "description": "Specifies the format of the body of the request.  Valid value is application/json.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Accept",
+            "description": "Specifies the format of the body of the response.  Valid value is application/json and if header is not sent, the default value of application/json will be used.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/API"
+              }
+            }
+          },
+          "description": "new service object",
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected Runtime error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "apis"
+        ]
+      }
+    },
+    "/apis/{tenant_namespace}/{name}": {
+      "get": {
+        "summary": "Retrieve a specific API/service.",
+        "description": "",
+        "operationId": "getAPI",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept",
+            "description": "Specifies the format of the body of the response.  Valid value is application/json and if header is not sent, the default value of application/json will be used.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tenant_namespace",
+            "in": "path",
+            "description": "the service's tenant_namespace",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "description": "existing service name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected Runtime error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "apis"
+        ]
+      },
+      "delete": {
+        "summary": "Removes an API/service.",
+        "description": "",
+        "operationId": "deleteAPI",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Accept",
+            "description": "Specifies the format of the body of the response.  Valid value is application/json and if header is not sent, the default value of application/json will be used.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tenant_namespace",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No content"
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected Runtime error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "apis"
+        ]
+      },
+      "patch": {
+        "summary": "Updates an existing API/service.",
+        "description": "",
+        "operationId": "updateAPI",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Content-Type",
+            "description": "Specifies the format of the body of the request.  Valid value is application/json.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Accept",
+            "description": "Specifies the format of the body of the response.  Valid value is application/json and if header is not sent, the default value of application/json will be used.",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tenant_namespace",
+            "in": "path",
+            "description": "the service's tenant_namespace",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "description": "existing service name or id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/API"
+              }
+            }
+          },
+          "description": "updated service object",
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/API"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Service not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected Runtime error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestError"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "apis"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "API": {
+        "type": "object",
+        "required": [
+          "tenant_namespace",
+          "name"
+        ],
+        "properties": {
+          "tenant_namespace": {
+            "type": "string",
+            "description": "The provider's tenant_namespace (e.g. com.att.lgw)."
+          },
+          "name": {
+            "type": "string"
+          },
+          "hosts": {
+            "type": "array",
+            "description": "A list of domain names that point to your API. For example: [ \"example.com\" ]. At least one of hosts, uris, or methods should be specified.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "uris": {
+            "type": "array",
+            "description": "A list of URIs prefixes that point to your API. For example: [ \"/my-path\" ]. At least one of hosts, uris, or methods should be specified.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "methods": {
+            "type": "array",
+            "description": "A comma-separated list of HTTP methods that point to your API. For example: [ \"GET\", \"POST\" ]. For example: example.com. At least one of hosts, uris, or methods should be specified.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "retries": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The number of retries to execute upon failure to proxy. The default is 5."
+          },
+          "plugins": {
+            "type": "array",
+            "description": "Zero or more plugins to apply to the API.",
+            "items": {
+              "$ref": "#/components/schemas/Ratelimiting"
+            }
+          },
+          "created_at": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "grm_service_name": {
+            "type": "string"
+          },
+          "grm_service_version": {
+            "type": "string"
+          },
+          "grm_environment_context": {
+            "type": "string"
+          },
+          "grm_partner": {
+            "type": "string"
+          },
+          "grm_route_offer": {
+            "type": "string"
+          },
+          "grm_subcontext": {
+            "type": "string"
+          },
+          "upstream_url": {
+            "type": "string",
+            "description": "The base target URL that points to your GRM-registered service. This will always present in responses, but only required in requests if GRM properties are not provided."
+          },
+          "strip_uri": {
+            "type": "boolean",
+            "description": "When matching an API via one of the uris prefixes, strip that matching prefix from the upstream URI to be requested. ",
+            "default": true
+          },
+          "preserve_host": {
+            "type": "boolean",
+            "description": "When matching an API via one of the hosts domain names, make sure the request Host header is forwarded to the upstream service. By default, this is false, and the upstream Host header will be extracted from the configured upstream_url."
+          },
+          "https_only": {
+            "type": "boolean",
+            "description": "To be enabled if you wish to only serve an API through HTTPS, on the appropriate port. ",
+            "default": false
+          },
+          "http_if_terminated": {
+            "type": "boolean",
+            "description": "Consider the X-Forwarded-Proto header when enforcing HTTPS only traffic. ",
+            "default": false
+          },
+          "upstream_connect_timeout": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The timeout in milliseconds for establishing a connection to your upstream service. Defaults to 60000."
+          },
+          "upstream_read_timeout": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The timeout in milliseconds between two successive read operations for transmitting a request to your upstream service.",
+            "default": 60000
+          },
+          "upstream_send_timeout": {
+            "type": "integer",
+            "format": "int32",
+            "description": "The timeout in milliseconds between two successive write operations for transmitting a request to your upstream service.",
+            "default": 60000
+          }
+        },
+        "description": "An API object represents an LGW api along with any associated plugins."
+      },
+      "Ratelimiting": {
+        "type": "object",
+        "properties": {
+          "tenant_namespace": {
+            "type": "string",
+            "description": "The api owning provider's tenant tenant_namespace (e.g. com.att.lgw)."
+          },
+          "apiname": {
+            "type": "string",
+            "description": "The name of the api the operation applies to"
+          },
+          "consumer": {
+            "type": "string",
+            "description": "The name of the specific consumer the operation applies to, if applicable"
+          },
+          "ratelimit": {
+            "$ref": "#/components/schemas/Ratelimit"
+          }
+        },
+        "required": [
+          "apiname",
+          "tenant_namespace"
+        ]
+      },
+      "Ratelimit": {
+        "type": "object",
+        "description": "The defined rate limits. One or more must exist in each configuration.",
+        "properties": {
+          "config.second": {
+            "type": "integer",
+            "description": "The maximum number of transactions allowed each second by this ratelimiting configuration."
+          },
+          "config.minute": {
+            "type": "integer",
+            "description": "The maximum number of transactions allowed each minute by this ratelimiting configuration."
+          },
+          "config.hour": {
+            "type": "integer",
+            "description": "The maximum number of transactions allowed each hour by this ratelimiting configuration."
+          },
+          "config.day": {
+            "type": "integer",
+            "description": "The maximum number of transactions allowed each day by this ratelimiting configuration."
+          },
+          "config.month": {
+            "type": "integer",
+            "description": "The maximum number of transactions allowed each month by this ratelimiting configuration."
+          },
+          "config.year": {
+            "type": "integer",
+            "description": "The maximum number of transactions allowed each year by this ratelimiting configuration."
+          }
+        }
+      },
+      "RequestError": {
+        "type": "object",
+        "required": [
+          "errorId",
+          "message",
+          "variables",
+          "error",
+          "errorUrl"
+        ],
+        "properties": {
+          "error": {
+            "type": "object",
+            "description": "Container for service exception",
+            "properties": {
+              "errorId": {
+                "type": "string",
+                "description": "The id for the error",
+                "example": "General-0003"
+              },
+              "message": {
+                "type": "string",
+                "description": "The error text for the error or the error message from the back end",
+                "example": "Error response format is not specified"
+              },
+              "errorUrl": {
+                "type": "string",
+                "description": "The error text for the error",
+                "example": "http://developer.att.com/apis/errors?id=General-0003"
+              },
+              "variables": {
+                "type": "string",
+                "description": "The variables that correspond to the error text",
+                "example": "[ Accept Header ]"
+              }
+            }
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "CompleteRateLimit": {
+        "description": "Definition of a new rate limiting configuration. The apiname field is required. If no consumer is specified, the configuration is the default rate limit for each consumer on the api, unless otherwise specified. If a consumer is specified, the rate limiting configuration applies to that consumer for that api and overrides the api default. One or more rate limits must be included.",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Ratelimiting"
+            }
+          }
+        }
+      },
+      "Ratelimit": {
+        "description": "Defined rate limits. One or more must exist in each rate limiting configuration.",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Ratelimit"
+            }
+          }
+        }
+      }
+    }
+  }
+}
