@@ -1,7 +1,7 @@
 'use strict';
 
 // internal data structure for the data from the files
-var pData = {
+let pData = {
 	general: {},
 	httpmethods: [],
 	parameters: [],
@@ -13,7 +13,7 @@ var pData = {
 };
 
 // Internal data structure for all the issues that are found
-var errors = {
+let errors = {
 	general: [],
 	httpmethods: [],
 	parameters: [],
@@ -23,7 +23,7 @@ var errors = {
 };
 
 // This is for the various categories of issues, structured so that we can loop over them
-var categories = [
+let categories = [
 	{
 		title: 'summary',
 		tooltip: 'Summary of Issues across all categories',
@@ -62,7 +62,7 @@ var categories = [
 ];
 
 // This is for the legends of the levels of issues, structured so that we can loop over them
-var legends = [
+let legends = [
 	{
 		title: 'info',
 		tooltip: 'User should research issue',
@@ -81,15 +81,15 @@ var legends = [
 ];
 
 // Specific to allowed values for ATT
-var allowedHttpMethods = ['POST', 'PUT', 'GET', 'DELETE'];
-var allowedHostsExt = ['lgw.att.com', 'api.att.com'];
-var jsdata = '';
+let allowedHttpMethods = ['POST', 'PUT', 'GET', 'DELETE'];
+let allowedHostsExt = ['lgw.att.com', 'api.att.com'];
+let jsdata = '';
 
-var naming = 'lowerCamel';
-var isExternal = true; // if the API is being exposed externally from the company's network
+let naming = 'lowerCamel';
+let isExternal = true; // if the API is being exposed externally from the company's network
 
 // The status codes that are mandatory and optional for each HTTP method
-var statuscodes = {
+let statuscodes = {
 	get: {
 		success: '200|204|206',
 		mandatory: ['400', '401', '403', '404', '405', '406', '410', '429', '431', '500', '503'],
@@ -113,7 +113,7 @@ var statuscodes = {
 };
 
 // WIP: for offering help text for the issues
-var errordetails = {
+let errordetails = {
 	STATUSCODES_GET_MAN: {
 		short: 'Missing mandatory HTTP status codes: $1',
 		long: 'The HTTP method GET should have the following status codes possible, and should be accounted for in the design of the API: '
@@ -124,7 +124,7 @@ var errordetails = {
 /**
 * @description convenience function to return the list of categories
 */
-var getCategories = function() {
+let getCategories = function() {
 	return categories;
 };
 
@@ -132,9 +132,9 @@ var getCategories = function() {
 * @description capitalizes and splits string at '-'
 * @param {string} title - string to capitalize
 */
-var capitalize = function(string) {
-	var ret = [];
-	string.split('-').forEach(function(k) {
+let capitalize = function(string) {
+	let ret = [];
+	string.split('-').forEach((k) => {
 		ret.push(k.charAt(0).toUpperCase() + k.substr(1));
 	});
 
@@ -145,14 +145,14 @@ var capitalize = function(string) {
 * @description gets the definitions in the Swagger file
 * @param {object} obj - JSON object with the definitions
 */
-var getDefinitions = function(obj) {
+let getDefinitions = function(obj) {
 
 	/**
 	* loop through all the definitions 
 	*/
-	Object.keys(obj).forEach(function(key, index) {
+	Object.keys(obj).forEach((key, index) => {
 		// console.log('DEFN: ' + key);
-		var values = [];
+		let values = [];
 		if (obj[key].hasOwnProperty('properties')) {
 			values = getProps('', obj[key].properties);
 		} else if (obj[key].hasOwnProperty('type')) {
@@ -169,17 +169,17 @@ var getDefinitions = function(obj) {
 * @param {string} prefix - the name to prefix to any properties found (for recursion)
 * @param {string} obj - the starting object within the file to start searching
 */
-var getProps = function(prefix, obj) {
-	var values = [];
+let getProps = function(prefix, obj) {
+	let values = [];
 
 	/**
 	* loop through all the keys extracted from the object
 	*/
-	Object.keys(obj).forEach(function(key, index) {
+	Object.keys(obj).forEach((key, index) => {
 		// console.log('PROPS: ' + key);
-		var type = 'object', desc = '';
+		let type = 'object', desc = '';
 		
-		var names = [];
+		let names = [];
 		if (prefix) {
 			names.push(prefix);
 		}
@@ -197,7 +197,7 @@ var getProps = function(prefix, obj) {
 		if (obj[key].hasOwnProperty('items')) {
 
 			if (obj[key].items.hasOwnProperty('$ref')) {
-					var v = obj[key].items['$ref'];
+					let v = obj[key].items['$ref'];
 					// getProps(names.join('.'), jsdata.schemas[v].properties).forEach(function(kk, ii) {
 					// 	names.push(kk);
 					// 	values.push(kk);
@@ -208,7 +208,7 @@ var getProps = function(prefix, obj) {
 				values.push(names.join('.') + ':' + obj[key].items.type);
 			}
 		} else if (obj[key].hasOwnProperty('$ref')) {
-			var v = obj[key]['$ref'];
+			let v = obj[key]['$ref'];
 			// getProps(names.join('.'), jsdata.schemas[v].properties).forEach(function(kk, ii) {
 			// 	// names.push(kk);
 
@@ -218,7 +218,7 @@ var getProps = function(prefix, obj) {
 			// type = v;
 			values.push(names.join('.') + ':' + v);
 		} else if (obj[key].hasOwnProperty('properties')) {
-			getProps(names.join('.'), obj[key].properties).forEach(function(kk, ii) {
+			getProps(names.join('.'), obj[key].properties).forEach((kk, ii) => {
 				names.push(kk);
 				values.push(kk);
 			});
@@ -239,10 +239,10 @@ var getProps = function(prefix, obj) {
 * @description retrieves the CSV file type based on the name embedded in the file name
 * @param {string} fname - the file name
 */
-var getCsvFileType = function(fname) {
-	var dash = (fname.lastIndexOf("-") - 1 >>> 0) + 2;
-	var dot = (fname.lastIndexOf(".") - 1 >>> 0) + 1;
-	var ftype = fname.slice(dash, dot);
+let getCsvFileType = function(fname) {
+	let dash = (fname.lastIndexOf("-") - 1 >>> 0) + 2;
+	let dot = (fname.lastIndexOf(".") - 1 >>> 0) + 1;
+	let ftype = fname.slice(dash, dot);
 
 	return ftype;
 };
@@ -254,8 +254,8 @@ var getCsvFileType = function(fname) {
 * @param {string} level - info, warning or error
 * @param {string} msg - error message to display
 */
-var createErrorObj = function(name, level, msg) {
-	var obj = {};
+let createErrorObj = function(name, level, msg) {
+	let obj = {};
 	obj.name = name;
 	obj.msg = msg;
 	obj.level = level;
@@ -269,8 +269,8 @@ var createErrorObj = function(name, level, msg) {
 * @param {string} method - HTTP method
 * @param {array} statuses - HTTP statuses
 */
-var createStatusObj = function(path, method, statuses) {
-	var obj = {};
+let createStatusObj = function(path, method, statuses) {
+	let obj = {};
 	obj.path = path;
 	obj.method = method;
 	obj.statuses = statuses;
@@ -283,8 +283,8 @@ var createStatusObj = function(path, method, statuses) {
 * @param {string} definition - defintion within the file
 * @param {array} params - parameters that are defined under the definition
 */
-var createDefinitionObj = function(definition, params) {
-	var obj = {};
+let createDefinitionObj = function(definition, params) {
+	let obj = {};
 	obj.definition = definition;
 	obj.params = params;
 
@@ -296,8 +296,8 @@ var createDefinitionObj = function(definition, params) {
 * @param {string}  - The title of the book
 * @param {string} author - The author of the book
 */
-var createMethodObj = function(path, method, produces, consumes, paramlocation) {
-	var obj = {};
+let createMethodObj = function(path, method, produces, consumes, paramlocation) {
+	let obj = {};
 	obj.path = path;
 	obj.method = method;
 	obj.produces = produces;
@@ -310,9 +310,9 @@ var createMethodObj = function(path, method, produces, consumes, paramlocation) 
 /**
 * @description checks the base path
 */
-var checkBasePath = function() {
-	var x = [];
-	var msg = '';
+let checkBasePath = function() {
+	let x = [];
+	let msg = '';
 	x.push(pData.general.basePath);
 	checkPathStructure('basePath', x);
 
@@ -339,40 +339,40 @@ var checkBasePath = function() {
 /**
 * @description checks the definitions in the file for any issues
 */
-var checkDefinitions = function() {
+let checkDefinitions = function() {
 	
-	var refs = [];
+	let refs = [];
 
-	pData.parameters.forEach(function(key, idx) {
-		var checked = [];
-		key.params.forEach(function(param, ii) {
-			var errs = [];
-			var errsSec = [];
-			var ps = param.split(':');
-			var par = ps[0];
-			var type = ps[1];
-			var words = par.split('.');
+	pData.parameters.forEach((key, idx) => {
+		let checked = [];
+		key.params.forEach((param, ii) => {
+			let errs = [];
+			let errsSec = [];
+			let ps = param.split(':');
+			let par = ps[0];
+			let type = ps[1];
+			let words = par.split('.');
 
 			if (type.match(/^#\//)) {
 				if (refs.indexOf(type) < 0) {
 					refs.push(type);
 				}
 			} else if (type === 'boolean' && ! words[words.length-1].match(/Indicator$/)) {
-				var obj = {};
+				let obj = {};
 				obj.msg = 'All boolean fields should end with "Indicator"';
 				obj.level = 'warning';
 				obj.name = key.definition + ': ' + words[words.length-1];
 				errs.push(obj);
 			}
 
-			words.forEach(function(word) {
+			words.forEach((word) => {
 				if (checked.indexOf(word) >= 0) {
 					// console.log('CHECKED: ' + word);
 					return;
 				}
 				checked.push(word);
 
-				var obj = checkCase(word);
+				let obj = checkCase(word);
 				if (Object.keys(obj).length) {
 					obj.name = key.definition + ': ' + word;
 					errs.push(obj);
@@ -381,7 +381,7 @@ var checkDefinitions = function() {
 
 
 				// ASPR Checks
-				var obj = {};
+				obj = {};
 				if (word.match(/expirationdate|expdate|expiredate/i)) {
 					obj.msg = "May be in violation of ASPR - Restricted Personal Information - Payment Card Expiration Date";
 					obj.name = key.definition + ': ' + word;
@@ -409,11 +409,11 @@ var checkDefinitions = function() {
 
 			});
 
-			errs.forEach(function(E) {
+			errs.forEach((E) => {
 				errors.parameters.push(createErrorObj(E.name, E.level, E.msg));
 			});
 
-			errsSec.forEach(function(E) {
+			errsSec.forEach((E) => {
 				errors.security.push(createErrorObj(E.name, E.level, E.msg));
 			});
 		});
@@ -424,15 +424,15 @@ var checkDefinitions = function() {
 * @description checks the words that make up a path for any issues
 * @param {array} paths - an array of paths
 */
-var checkResources = function(paths) {
+let checkResources = function(paths) {
 
-	paths.forEach(function(key, idx) {
+	paths.forEach((key, idx) => {
 
 		// remove first forward slashes for easier matching
-		var nkeys = key.replace(/^[/]+|[/]$/, '').split('/');
-		var k = nkeys[nkeys.length-1];
-		var k2 = nkeys[nkeys.length-2];
-		var msg = '', level='';
+		let nkeys = key.replace(/^[/]+|[/]$/, '').split('/');
+		let k = nkeys[nkeys.length-1];
+		let k2 = nkeys[nkeys.length-2];
+		let msg = '', level='';
 
 		// check if collection is plural
 		if ((k.match(/^{.*}$/)) && (k2[k2.length-1] != 's')) {
@@ -445,8 +445,8 @@ var checkResources = function(paths) {
 			errors.paths.push(createErrorObj(key, 'error', msg));
 		}
 
-		var mat = k.match(/\.(json|xml|txt|html)/i);
-		var mat2 = k.match(/\.[0-9a-z]{1,5}$/i);
+		let mat = k.match(/\.(json|xml|txt|html)/i);
+		let mat2 = k.match(/\.[0-9a-z]{1,5}$/i);
 		if (mat) {
 			msg = "resource name must not contain content negotiation indicators (" + mat[0] + ").";
 			errors.paths.push(createErrorObj(key, 'error', msg));
@@ -455,7 +455,7 @@ var checkResources = function(paths) {
 			errors.paths.push(createErrorObj(key, 'warning', msg));
 		}
 
-		var obj = checkCase(k);
+		let obj = checkCase(k);
 		if (Object.keys(obj).length) {
 			errors.paths.push(createErrorObj(key, obj.level, obj.msg));
 		}
@@ -469,8 +469,8 @@ var checkResources = function(paths) {
 * @description checks if a name follows the defined naming scheme
 * @param {string} name - the name or word that needs checked
 */
-var checkCase = function(name) {
-	var obj = {};
+let checkCase = function(name) {
+	let obj = {};
 
 	if (naming === 'lowerCamel') {
 		if (/^[A-Z_-]+|[_-]+/.test(name)) {
@@ -497,13 +497,13 @@ var checkCase = function(name) {
 * @param {string} name - name of the path (paths or basePath)
 * @param {array} paths - array of paths
 */
-var checkPathStructure = function(name, paths) {
+let checkPathStructure = function(name, paths) {
 	
 	// var allpaths = pData.paths.push(jsdata.basePath);
 
-	paths.forEach(function(key, idx) {
-		var msg = '';
-		var stripped = key.replace(/\/|{|}/g, '');
+	paths.forEach((key, idx) => {
+		let msg = '';
+		let stripped = key.replace(/\/|{|}/g, '');
 
 		if (key.match(/\/\//)) {
 			msg = name + " can not have double forward slash";
@@ -538,9 +538,9 @@ var checkPathStructure = function(name, paths) {
 */
 var checkStatusCodes = function(s) {
 	
-	s.forEach(function(key, idx) {
-		var msg = '', name = '', obj = {};
-		var method = s[idx].method.toLowerCase();
+	s.forEach((key, idx) => {
+		let msg = '', name = '', obj = {};
+		let method = s[idx].method.toLowerCase();
 		if (method === 'post') {
 			if (s[idx].statuses.indexOf('201') < 0) {
 				msg = 'POST for <u>creating</u> resources should return HTTP status code of 201';
@@ -552,9 +552,9 @@ var checkStatusCodes = function(s) {
 		}
 
 		// check mandatory status codes
-		var man = [];
+		let man = [];
 		if (typeof statuscodes[method] != 'undefined') {
-			statuscodes[method].mandatory.forEach(function(k, i) {
+			statuscodes[method].mandatory.forEach((k, i) => {
 				if (s[idx].statuses.indexOf(k)) {
 					man.push(k);
 				}
@@ -568,9 +568,9 @@ var checkStatusCodes = function(s) {
 		}
 
 		// check optional status codes
-		var opt = [];
+		let opt = [];
 		if (typeof statuscodes[method] != 'undefined') {
-			statuscodes[method].optional.forEach(function(k, i) {
+			statuscodes[method].optional.forEach((k, i) => {
 				if (s[idx].statuses.indexOf(k)) {
 					opt.push(k);
 				}
@@ -591,11 +591,11 @@ var checkStatusCodes = function(s) {
 * @description checks the HTTP methods to see if there are any issues
 * @param {array} s - array of HTTP method objects
 */
-var checkMethods = function(s) {
+let checkMethods = function(s) {
 		
-	s.forEach(function(key, idx) {
-		var msg = '', name = '', obj = {};
-		var method = key.method.toUpperCase();
+	s.forEach((key, idx) => {
+		let msg = '', name = '', obj = {};
+		let method = key.method.toUpperCase();
 
 		if (allowedHttpMethods.indexOf(method) < 0) {
 			msg = 'The only HTTP methods allowed are: ' + allowedHttpMethods.join(',');
@@ -654,8 +654,8 @@ var checkMethods = function(s) {
 /**
 * @description checks errors that fall into the General category
 */
-var checkGeneral = function() {
-	var msg = '', obj = {};
+let checkGeneral = function() {
+	let msg = '', obj = {};
 	if (pData.general.schemes.length != 1 || pData.general.schemes.indexOf('https') < 0) {
 		msg = 'schemes must have <em>https</em> and only have <em>https</em>';
 		obj = createErrorObj(pData.general.schemes.join(','), 'error', msg);
@@ -681,7 +681,7 @@ var checkGeneral = function() {
 * @description retrieves the errors for a specific type of check
 * @param {string} type - paths, parameters, statuscodes, errors
 */
-var getErrors = function(type) {
+let getErrors = function(type) {
 	type = type.replace('-', '');
 	return errors[type];
 };
@@ -690,16 +690,16 @@ var getErrors = function(type) {
 * @description retrieves the data for a specific type of check
 * @param {string} type - paths, parameters, statuscodes, errors
 */
-var getData = function(type) {
+let getData = function(type) {
 	return pData[type];
 };
 
 /**
 * @description clears all the data to start over
 */
-var clearData = function() {
+let clearData = function() {
 
-	Object.keys(pData).forEach(function(key, idx) {
+	Object.keys(pData).forEach((key, idx) => {
 		if (Array.isArray(pData[key])) {
 			pData[key].length = 0;
 		} else {
@@ -708,7 +708,7 @@ var clearData = function() {
 		
 	});
 
-	Object.keys(errors).forEach(function(key, idx) {
+	Object.keys(errors).forEach((key, idx) => {
 		errors[key].length = 0;
 	});
 
@@ -721,13 +721,13 @@ var clearData = function() {
 * @description load CSV files into internal data structure
 * @param {string} filenames - variable number of filenames
 */
-var loadCsv = function(type, data) {
+let loadCsv = function(type, data) {
 	
-	var jsonArray = [];
-	var dataArray = data.split('\n');
-	var head = dataArray[0].split(',');
-	dataArray.splice(1).forEach(function(line) {
-		line.split(',').forEach(function(val, idx) {
+	let jsonArray = [];
+	let dataArray = data.split('\n');
+	let head = dataArray[0].split(',');
+	dataArray.splice(1).forEach((line) => {
+		line.split(',').forEach((val, idx) => {
 			console.log(head[idx] + ' = ' +val);
 		});
  	});
@@ -739,8 +739,8 @@ var loadCsv = function(type, data) {
 * @description load JSON (Swagger/OpenAPI) file into internal data structure
 * @param {string} data - the JSON data
 */
-var loadJson = function(data) {
-	var jsdata = JSON.parse(data);
+let loadJson = function(data) {
+	let jsdata = JSON.parse(data);
 
 	
 	pData.general.basePath = jsdata.hasOwnProperty('basePath') ? jsdata.basePath : '';
@@ -752,18 +752,18 @@ var loadJson = function(data) {
 		pData.general.version = jsdata.openapi;
 	}
 
-	Object.keys(jsdata.paths).forEach(function(key, index) {
+	Object.keys(jsdata.paths).forEach((key, index) => {
 		pData.paths[index] = key;
-		Object.keys(jsdata.paths[key]).forEach(function(k, i) {
-			var arr = [];
-			Object.keys(jsdata.paths[key][k].responses).forEach(function(kk, ii) {
+		Object.keys(jsdata.paths[key]).forEach((k, i) => {
+			let arr = [];
+			Object.keys(jsdata.paths[key][k].responses).forEach((kk, ii) => {
 				arr.push(kk);
 				if (kk >= 400) {
-					var d = '';
+					let d = '';
 					if (typeof jsdata.paths[key][k].responses[kk].description != 'undefined') {
 						d = jsdata.paths[key][k].responses[kk].description; 
 					}
-					var s= '';
+					let s= '';
 					if (typeof jsdata.paths[key][k].responses[kk].description != 'undefined') {
 						d = jsdata.paths[key][k].responses[kk].description; 
 					}
@@ -772,19 +772,19 @@ var loadJson = function(data) {
 			});
 			pData.statuscodes.push(createStatusObj(key, k, arr));
 
-			var produces = [];
+			let produces = [];
 			if (jsdata.paths[key][k].hasOwnProperty('produces')) {
 				produces = jsdata.paths[key][k].produces;
 			}
 
-			var consumes = [];
+			let consumes = [];
 			if (jsdata.paths[key][k].hasOwnProperty('consumes')) {
 				consumes = jsdata.paths[key][k].consumes;
 			}
 
-			var loc = [];
+			let loc = [];
 			if (jsdata.paths[key][k].hasOwnProperty('parameters')) {
-				jsdata.paths[key][k].parameters.forEach(function(key, idx) {
+				jsdata.paths[key][k].parameters.forEach((key, idx) => {
 					if (key.hasOwnProperty('in')) {
 						loc.push(key.in);
 					}
@@ -812,8 +812,8 @@ var loadJson = function(data) {
 * @param {object} data - the data object to initialize the class
 * @param {number} author - the index of this location in the array of locations
 */
-var Category = function(data, index) {
-	var self = this;
+let Category = function(data, index) {
+	let self = this;
 	self.name = ko.observable(data.title);
 	self.title = capitalize(data.title);
 	self.columns = data.columns;
@@ -847,5 +847,5 @@ function appViewModel() {
 
 // different way to call bindings, from here:
 // https://robinsr.github.io/blog/post/knockoutjs-best-practices
-var appView = { viewModel : new appViewModel() };
+let appView = { viewModel : new appViewModel() };
 ko.applyBindings(appView.viewModel);
