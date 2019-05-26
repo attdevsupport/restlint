@@ -1,3 +1,4 @@
+ {
  var loadedFiles = [],
      xlsdata = [],
      readers = [];
@@ -377,3 +378,5 @@ $(document).ready(function(){
 
     });
 });
+
+ }
