@@ -834,12 +834,12 @@ var Category = function(data, index) {
 * @constructor
 */
 function appViewModel() {
-	var self = this;
+	let self = this;
 
 	self.categoryList = ko.observableArray([]);
 
-	for (var i = 0, len = categories.length; i < len; i++) {
-		var cat = new Category(categories[i], i);
+	for (let i = 0, len = categories.length; i < len; i++) {
+		let cat = new Category(categories[i], i);
 		self.categoryList.push( cat );
 	}
 }

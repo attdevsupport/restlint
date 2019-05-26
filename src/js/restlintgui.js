@@ -70,8 +70,8 @@ function drop(e) {
 
     // output('<ol>');
     $('#droparea-title').addClass('d-none');
-    for (var i = 0; i < files.length; i++) {
-        var f = files[i];
+    for (let i = 0; i < files.length; i++) {
+        let f = files[i];
         // console.log('YYYYYYY ' + f);
         // output('<li>' + files[i].name);
         $('#droparea-filelist').append('<li>' + files[i].name);
