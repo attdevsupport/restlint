@@ -170,7 +170,7 @@ function getFiles(files) {
 
         $('#droparea-title').addClass('d-none');
         // output('<ol>');
-        Object.keys(files).forEach(function(key, idx) {
+        Object.keys(files).forEach((key, idx) => {
             // loadedFiles.push(file);
             genReader(files[idx]);
 
@@ -214,7 +214,7 @@ function readFiles() {
 
         // var index = cats.indexOf('summary');
         // cats.splice(index, 1);
-        cats.forEach(function(cat, idx) {
+        cats.forEach((cat, idx) => {
             if (cat.title === 'summary') {return;}
             // console.log('CAT: ' + cat.title);
             xlsdata[cat.title] = [];
@@ -225,7 +225,7 @@ function readFiles() {
             console.log('CP2: ' + cp);
             xlsdata[cat.title].push(cp);
             var w = 0, e = 0, i = 0, cnt = 1;
-            getErrors(cat.title).forEach(function(key) {
+            getErrors(cat.title).forEach((key) => {
                 addRow(cat.title, cnt, key.name, key.level, key.msg);
                 // xlsdata[cat].push([cnt, key.name, key.level, key.msg]);
                 cnt += 1;
@@ -258,7 +258,7 @@ function readFiles() {
 * @param {string} author - The author of the book
 */
 function clearTables() {
-    getCategories().forEach(function(k) {
+    getCategories().forEach((k) => {
         $("#"+k.title+"-table-body").children("tr").remove();
         $("#"+k.title+"-issues").html('');
         if (typeof xlsdata[k.title] !== 'undefined') {
