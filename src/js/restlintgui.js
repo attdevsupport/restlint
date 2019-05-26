@@ -1,5 +1,5 @@
  {
- var loadedFiles = [],
+let loadedFiles = [],
      xlsdata = [],
      readers = [];
 
@@ -62,10 +62,10 @@ function drop(e) {
     e.stopPropagation();
     e.preventDefault();
 
-    var dt = e.dataTransfer;
-    var files = dt.files;
+    let dt = e.dataTransfer;
+    let files = dt.files;
     
-    var count = files.length;
+    let count = files.length;
     // output("File Count: " + count + "\n");
 
     // output('<ol>');
@@ -90,7 +90,7 @@ function drop(e) {
 * @param {string} author - The author of the book
 */
 function genReader(f) {
-    var reader = new FileReader();
+    let reader = new FileReader();
 
     readers.push(reader);
 
@@ -120,7 +120,7 @@ function genReader(f) {
 * @param {string} author - The author of the book
 */
 function addRow(cat, num, item, level, msg) {
-    var lvl = level, row = '', cells = '';
+    let lvl = level, row = '', cells = '';
     if (level === 'error') {
         lvl = 'danger';
     }
@@ -129,7 +129,7 @@ function addRow(cat, num, item, level, msg) {
     // cells = `<td>${num}</td><td>${item}</td><td>${level}</td><td>${msg}</td>`;
     row.append(cells);
     $("#" + cat + "-table-body").append(row);
-    var arr = [num, item, level, msg];
+    let arr = [num, item, level, msg];
     xlsdata[cat].push(arr);
     return;
 }
@@ -140,7 +140,7 @@ function addRow(cat, num, item, level, msg) {
 * @param {string} author - The author of the book
 */
 function addSummaryRow(cat, infos, warnings, errors) {
-    var total = infos + warnings + errors, row = '';
+    let total = infos + warnings + errors, row = '';
     if (cat === 'total') {
         row = `<tr><th>${capitalize(cat)}</th><th class='table-info'>${infos}</th><th class='table-warning'>${warnings}</th><th class='table-danger'>${errors}</th><th>${total}</th></tr>`;
         $("#summary-table-footer").append(row);
@@ -158,7 +158,7 @@ function addSummaryRow(cat, infos, warnings, errors) {
 * @param {string} author - The author of the book
 */
 function getFiles(files) {
-    var inp = $('#file-upload');
+    let inp = $('#file-upload');
 
     // 'files' in input
     if (true) {
@@ -189,10 +189,10 @@ function getFiles(files) {
 * @param {string} author - The author of the book
 */
 function readFiles() {
-    for (var file of loadedFiles) {
+    for (let file of loadedFiles) {
         // console.log('FILE NAME: ' + file.name);
         // console.log(file.content);
-        var jsdata = JSON.parse(file.content);
+        let jsdata = JSON.parse(file.content);
 
         loadJson(file.content);
         checkDefinitions();
@@ -209,8 +209,8 @@ function readFiles() {
         // var xlsdata = {};
         xlsdata.summary = [];
         xlsdata.summary.push(['Category', '# of Infos', '# of Warnings', '# on Errors', 'Total']);
-        var wt = 0, et = 0, it = 0;
-        var cats = getCategories();
+        let wt = 0, et = 0, it = 0;
+        let cats = getCategories();
 
         // var index = cats.indexOf('summary');
         // cats.splice(index, 1);
@@ -219,12 +219,12 @@ function readFiles() {
             // console.log('CAT: ' + cat.title);
             xlsdata[cat.title] = [];
             // xlsdata[cat.title].push(['#', 'Issue', 'Level', 'Message']);
-            var cp = cat.columns.slice(0);
+            let cp = cat.columns.slice(0);
             console.log('CP: ' + cp);
             cp.splice(2,0,'Level');
             console.log('CP2: ' + cp);
             xlsdata[cat.title].push(cp);
-            var w = 0, e = 0, i = 0, cnt = 1;
+            let w = 0, e = 0, i = 0, cnt = 1;
             getErrors(cat.title).forEach((key) => {
                 addRow(cat.title, cnt, key.name, key.level, key.msg);
                 // xlsdata[cat].push([cnt, key.name, key.level, key.msg]);
@@ -315,7 +315,7 @@ $(document).ready(function(){
             return;
         }
 
-        var colors = {
+        let colors = {
             info: 'D6DBDF',
             warning: 'F5CBA7',
             error: 'F1948A'
@@ -323,11 +323,11 @@ $(document).ready(function(){
 
         XlsxPopulate.fromBlankAsync()
         .then(workbook => {
-            for (var cat of getCategories()) {
+            for (let cat of getCategories()) {
                 const newSheet = workbook.addSheet(capitalize(cat.title));
                 // newSheet.column
-                var cnt = 1;
-                for (var row of xlsdata[cat.title]) {
+                let cnt = 1;
+                for (let row of xlsdata[cat.title]) {
                     // console.log('ROW ' + row);
                     // console.log('ROW UP' + row[3]);
                     // console.log(typeof row[3]);
@@ -338,7 +338,7 @@ $(document).ready(function(){
                     // var nrow = row[3];
                     // row[3] = nrow.replace(/<em>|<\/em>/gi, '');
                     newSheet.cell('A' + cnt).value([row]);
-                    var clrrow = 'A'+cnt+':D'+cnt;
+                    let clrrow = 'A'+cnt+':D'+cnt;
                     if (typeof colors[lvl] != 'undefined') {
                         newSheet.range(clrrow).style("fill", colors[lvl]);
                     }
@@ -350,7 +350,7 @@ $(document).ready(function(){
             
             }
 
-            var numrows = xlsdata.summary.length;
+            let numrows = xlsdata.summary.length;
             workbook.sheet('Summary').range("B2:B"+numrows).style("fill", colors.info);
             workbook.sheet('Summary').range("C2:C"+numrows).style("fill", colors.warning);
             workbook.sheet('Summary').range("D2:D"+numrows).style("fill", colors.error);
@@ -364,8 +364,8 @@ $(document).ready(function(){
                     // If IE, you must uses a different method.
                     window.navigator.msSaveOrOpenBlob(blob, nm);
                 } else {
-                    var url = window.URL.createObjectURL(blob);
-                    var a = document.createElement("a");
+                    let url = window.URL.createObjectURL(blob);
+                    let a = document.createElement("a");
                     document.body.appendChild(a);
                     a.href = url;
                     a.download = nm;
