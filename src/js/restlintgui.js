@@ -108,6 +108,8 @@ function genReader(f) {
         // console.log('XXXXXXXXXXXXXXXXXX ' + f.content);
         loadedFiles.push(f);
         // progressBar.removeClass("active");
+        $('#pastebin').val('');
+        $('#pastebin').val(f.content);
     };
 
     reader.readAsText(f); 
@@ -173,15 +175,24 @@ function getFiles(files) {
         Object.keys(files).forEach((key, idx) => {
             // loadedFiles.push(file);
             genReader(files[idx]);
+            console.log('FILE NAME ' + files[idx].name);
 
             // output('<li>' + file.name);
             $('#droparea-filelist').append('<li>' + files[idx].name);
+            $('#pastebin').val(files[idx].content);
 
         });
+console.log('HERERERER');
+        // readFiles();
+        // $('#pastebin').val('');
+        for (let file of loadedFiles) {
+            console.log('LOADED FILE ' + file.name);
+            $('#pastebin').val(file.content);
+        }
 
-        readFiles();
     }
 }
+
 
 /**
 * @description Represents a book
@@ -304,16 +315,17 @@ $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 
     $("#analyze-btn").click(function () {
-        // if ((loadedFiles.length === 0) && ($('#pastebin').val().trim().length === 0)) {
-        //     return;
-        // }
-        if (loadedFiles.length != 0) {
-            readFiles();
-        } else if ($('#pastebin').val().trim().length != 0) {
-            loadContent($('#pastebin').val().trim());
-        } else {
+        if ($('#pastebin').val().trim().length === 0) {
             return;
         }
+        loadContent($('#pastebin').val().trim());
+        // if (loadedFiles.length != 0) {
+        //     readFiles();
+        // } else if ($('#pastebin').val().trim().length != 0) {
+        //     loadContent($('#pastebin').val().trim());
+        // } else {
+        //     return;
+        // }
         
         $('#results').collapse('show');
         $('#summary-tab').tab('show');
