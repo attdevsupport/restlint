@@ -190,64 +190,76 @@ function getFiles(files) {
 */
 function readFiles() {
     for (let file of loadedFiles) {
-        // console.log('FILE NAME: ' + file.name);
-        // console.log(file.content);
-        let jsdata = JSON.parse(file.content);
-
-        loadJson(file.content);
-        checkDefinitions();
-        checkGeneral();
-        checkPathStructure('paths', getData('paths'));
-        checkResources(getData('paths'));
-        checkBasePath();
-        checkStatusCodes(getData('statuscodes'));
-        // checkMethods(getData('statuscodes'));
-        checkMethods(getData('httpmethods'));
-        $('#export-btn').removeClass('disabled');
-        $('#clear-btn').removeClass('disabled');
-
-        // var xlsdata = {};
-        xlsdata.summary = [];
-        xlsdata.summary.push(['Category', '# of Infos', '# of Warnings', '# on Errors', 'Total']);
-        let wt = 0, et = 0, it = 0;
-        let cats = getCategories();
-
-        // var index = cats.indexOf('summary');
-        // cats.splice(index, 1);
-        cats.forEach((cat, idx) => {
-            if (cat.title === 'summary') {return;}
-            // console.log('CAT: ' + cat.title);
-            xlsdata[cat.title] = [];
-            // xlsdata[cat.title].push(['#', 'Issue', 'Level', 'Message']);
-            let cp = cat.columns.slice(0);
-            console.log('CP: ' + cp);
-            cp.splice(2,0,'Level');
-            console.log('CP2: ' + cp);
-            xlsdata[cat.title].push(cp);
-            let w = 0, e = 0, i = 0, cnt = 1;
-            getErrors(cat.title).forEach((key) => {
-                addRow(cat.title, cnt, key.name, key.level, key.msg);
-                // xlsdata[cat].push([cnt, key.name, key.level, key.msg]);
-                cnt += 1;
-                if (key.level === 'warning') {
-                    w++;
-                } else if (key.level === 'error') {
-                    e++;
-                } else if (key.level === 'info') {
-                    i++;
-                }
-            });
-            $('#' + cat.title + '-issues').html(`Total ${capitalize(cat.title)} issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
-            addSummaryRow(cat.title, i, w, e);
-            // xlsdata['summary'].push([cat, i, w, e, i+w+e]);
-            it += i;
-            wt += w;
-            et += e;
-        });
-
-        addSummaryRow('total', it, wt, et);
-        // xlsdata['summary'].push(['total', it, wt, et, it+wt+et]);
+        loadContent(file.content);
     }
+
+    return;
+}
+
+/**
+* @description Represents a book
+* @param {string} title - The title of the book
+* @param {string} author - The author of the book
+*/
+function loadContent(content) {
+    // console.log('FILE NAME: ' + file.name);
+    // console.log(file.content);
+    let jsdata = JSON.parse(content);
+
+    loadJson(content);
+    checkDefinitions();
+    checkGeneral();
+    checkPathStructure('paths', getData('paths'));
+    checkResources(getData('paths'));
+    checkBasePath();
+    checkStatusCodes(getData('statuscodes'));
+    // checkMethods(getData('statuscodes'));
+    checkMethods(getData('httpmethods'));
+    $('#export-btn').removeClass('disabled');
+    $('#clear-btn').removeClass('disabled');
+
+    // var xlsdata = {};
+    xlsdata.summary = [];
+    xlsdata.summary.push(['Category', '# of Infos', '# of Warnings', '# on Errors', 'Total']);
+    let wt = 0, et = 0, it = 0;
+    let cats = getCategories();
+
+    // var index = cats.indexOf('summary');
+    // cats.splice(index, 1);
+    cats.forEach((cat, idx) => {
+        if (cat.title === 'summary') {return;}
+        // console.log('CAT: ' + cat.title);
+        xlsdata[cat.title] = [];
+        // xlsdata[cat.title].push(['#', 'Issue', 'Level', 'Message']);
+        let cp = cat.columns.slice(0);
+        console.log('CP: ' + cp);
+        cp.splice(2,0,'Level');
+        console.log('CP2: ' + cp);
+        xlsdata[cat.title].push(cp);
+        let w = 0, e = 0, i = 0, cnt = 1;
+        getErrors(cat.title).forEach((key) => {
+            addRow(cat.title, cnt, key.name, key.level, key.msg);
+            // xlsdata[cat].push([cnt, key.name, key.level, key.msg]);
+            cnt += 1;
+            if (key.level === 'warning') {
+                w++;
+            } else if (key.level === 'error') {
+                e++;
+            } else if (key.level === 'info') {
+                i++;
+            }
+        });
+        $('#' + cat.title + '-issues').html(`Total ${capitalize(cat.title)} issues: ${w+e+i}; error: ${e}; warning: ${w}; info: ${i}`);
+        addSummaryRow(cat.title, i, w, e);
+        // xlsdata['summary'].push([cat, i, w, e, i+w+e]);
+        it += i;
+        wt += w;
+        et += e;
+    });
+
+    addSummaryRow('total', it, wt, et);
+    // xlsdata['summary'].push(['total', it, wt, et, it+wt+et]);
+
 
     return;
 }
@@ -275,6 +287,7 @@ function clearTables() {
     $('#droparea-filelist').text('');
     $('#file-upload').val('');
     loadedFiles.length = 0;
+    $('#pastebin').val('');
     return;
 }
 
@@ -291,10 +304,17 @@ $(document).ready(function(){
     $('[data-toggle="tooltip"]').tooltip();
 
     $("#analyze-btn").click(function () {
-        if (loadedFiles.length === 0) {
+        // if ((loadedFiles.length === 0) && ($('#pastebin').val().trim().length === 0)) {
+        //     return;
+        // }
+        if (loadedFiles.length != 0) {
+            readFiles();
+        } else if ($('#pastebin').val().trim().length != 0) {
+            loadContent($('#pastebin').val().trim());
+        } else {
             return;
         }
-        readFiles();
+        
         $('#results').collapse('show');
         $('#summary-tab').tab('show');
     });
