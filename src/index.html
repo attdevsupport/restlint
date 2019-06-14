@@ -71,7 +71,7 @@
 	    	<h5 class="mb-0">
 			<span class="fas fa-upload btn-lg" aria-hidden="true"></span>
 			<button class="btn btn-lg btn-link" data-toggle="collapse" data-target="#files" aria-expanded="true" aria-controls="files">
-	        		Files for Analysis
+	        		File for Analysis
 	        	</button>
 	      	</h5>
 	    </div>
@@ -79,7 +79,7 @@
 	    <div id="files" class="collapse show" aria-labelledby="files-header" data-parent="#accordion">
 	    	<div class="card-body">
 	     		<div class='modal-body'>
-	    			<input type='file' id='file-upload' onchange="getFiles(this.files)" multiple />
+	    			<input type='file' id='file-upload' onchange="getFiles(this.files)"/>
 	    			<br/>
 	    			<br/>
 	    			<!-- <div class='dropfield'>
@@ -90,7 +90,7 @@
 	    			</div> -->
 	    			<h4>Or paste text below</h4>
 	    			<div class='form-group'>
-	    				<textarea id='pastebin' rows="30" style="min-width: 100%">
+	    				<textarea id='pastebin' rows="25" style="min-width: 100%">
 	    					
 	    				</textarea>
 	    			</div>
