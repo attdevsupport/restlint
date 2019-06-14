@@ -8,12 +8,13 @@
 
 	<title>REST Lint</title>
 	<!-- <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet"> -->
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"> -->
 	<!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> -->
 
 
-	<link rel="stylesheet" href="styles/bootstrap.min3.css" crossorigin="anonymous">
+	<link rel="stylesheet" href="styles/bootstrap-materia.min.css" crossorigin="anonymous">
+	<!-- <link rel="stylesheet" href="styles/bootstrap.min3.css" crossorigin="anonymous"> -->
 	<link rel="stylesheet" href="styles/bootstrap.fd.css" inline>
 
 
@@ -80,13 +81,18 @@
 	     		<div class='modal-body'>
 	    			<input type='file' id='file-upload' onchange="getFiles(this.files)" multiple />
 	    			<br/>
-	    			<div class='dropfield'>
+	    			<br/>
+	    			<!-- <div class='dropfield'>
 	    				<div class='dropfield-inner' id='droparea'  ondragenter='dragenter(event);' ondragover='dragover(event);' ondrop='drop(event);' ondragleave='dragleave(event);'>
 	    					<span id='droparea-title' class="display-3">Drop files here</span>
 	    					<ol id='droparea-filelist' class="text-left"></ol>
 	    				</div>
-	    			</div>
-	    			<div class='container-fluid darea-files'>
+	    			</div> -->
+	    			<h4>Or paste text below</h4>
+	    			<div class='form-group'>
+	    				<textarea class='' rows="30" style="min-width: 100%">
+	    					
+	    				</textarea>
 	    			</div>
 	    		</div>
 	    		<div class='modal-footer'>
