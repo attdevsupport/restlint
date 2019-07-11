@@ -44,7 +44,7 @@ gulp.task('img', function() {
 
 // just to run csslint, since CSS gets inlined in HTML, and copy over bootstrap
 gulp.task('css', function() {
-  return gulp.src(['src/**/boot*.css', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
+  return gulp.src(['src/**/boot*.css', 'src/**/all*.css', 'src/**/fa-*', '!node_modules/', '!node_modules/**', '!dist/', '!dist/**'])
     .pipe(gulp.dest(DEST));
 });
 
